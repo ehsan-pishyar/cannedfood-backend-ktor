@@ -12,13 +12,16 @@ object DatabaseFactory {
 
     fun init(){
         Database.connect(hikari())
-        SchemaUtils.create(StateTable, CityTable, TypeTable, CategoryTable, SellerTable, ResultsTable)
+
+        transaction {
+            SchemaUtils.create(StateTable, CityTable, TypeTable, CategoryTable, SellerTable, ResultsTable)
+        }
     }
 
     fun hikari(): HikariDataSource {
         val config = HikariConfig().apply {
-            driverClassName = ""
-            jdbcUrl = ""
+            driverClassName = System.getenv("JDBC_DRIVER")
+            jdbcUrl = System.getenv("DATABASE_URL")
             maximumPoolSize = 3
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"

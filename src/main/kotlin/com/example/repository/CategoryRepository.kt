@@ -4,7 +4,7 @@ import com.example.models.Category
 
 interface CategoryRepository {
 
-    suspend fun insertCategory(categoryTitle: String?)
+    suspend fun insertCategory(category: Category): Category?
 
     suspend fun getCategories(): List<Category?>
     suspend fun getCategoryById(categoryId: Int): Category?

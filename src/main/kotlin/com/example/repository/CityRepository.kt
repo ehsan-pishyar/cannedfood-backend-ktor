@@ -4,7 +4,7 @@ import com.example.models.City
 
 interface CityRepository {
 
-    suspend fun insertCity(cityTitle: String?)
+    suspend fun insertCity(city: City): City?
 
     suspend fun getCities(): List<City?>
     suspend fun getCityById(cityId: Int): City?

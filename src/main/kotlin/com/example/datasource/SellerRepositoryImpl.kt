@@ -5,7 +5,7 @@ import com.example.repository.SellerRepository
 
 class SellerRepositoryImpl : SellerRepository {
 
-    override suspend fun insertSeller(seller: Seller?) {
+    override suspend fun insertSeller(seller: Seller): Seller? {
         TODO("Not yet implemented")
     }
 

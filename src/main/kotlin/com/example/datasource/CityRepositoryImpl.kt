@@ -5,7 +5,7 @@ import com.example.repository.CityRepository
 
 class CityRepositoryImpl : CityRepository {
 
-    override suspend fun insertCity(cityTitle: String?) {
+    override suspend fun insertCity(city: City): City? {
         TODO("Not yet implemented")
     }
 

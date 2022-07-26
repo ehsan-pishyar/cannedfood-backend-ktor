@@ -7,8 +7,10 @@ import io.ktor.server.response.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
+        route("/") {
+            get {
+                call.respondText("Hello")
+            }
         }
         // Static plugin. Try to access `/static/index.html`
         static("/static") {

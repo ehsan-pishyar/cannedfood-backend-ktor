@@ -4,7 +4,7 @@ import com.example.models.Seller
 
 interface SellerRepository {
 
-    suspend fun insertSeller(seller: Seller?)
+    suspend fun insertSeller(seller: Seller): Seller?
 
     suspend fun getSellers(): List<Seller?>
     suspend fun getSellerById(sellerId: Int): Seller?

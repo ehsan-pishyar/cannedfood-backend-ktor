@@ -5,7 +5,7 @@ import com.example.repository.CategoryRepository
 
 class CategoryRepositoryImpl : CategoryRepository {
 
-    override suspend fun insertCategory(categoryTitle: String?) {
+    override suspend fun insertCategory(category: Category): Category? {
         TODO("Not yet implemented")
     }
 

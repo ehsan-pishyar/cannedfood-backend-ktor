@@ -4,7 +4,7 @@ import com.example.models.Results
 
 interface ResultsRepository {
 
-    suspend fun insertResult(result: Results?)
+    suspend fun insertResult(result: Results): Results?
 
     suspend fun getResults(): List<Results?>
     suspend fun getResultById(resultId: Int): Results?

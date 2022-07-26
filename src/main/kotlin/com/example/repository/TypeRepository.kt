@@ -4,7 +4,7 @@ import com.example.models.Type
 
 interface TypeRepository {
 
-    suspend fun insertType(typeName: String?)
+    suspend fun insertType(type: Type): Type?
 
     suspend fun getTypes(): List<Type?>
     suspend fun getTypeById(typeId: Int): Type?

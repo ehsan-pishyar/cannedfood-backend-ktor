@@ -5,7 +5,7 @@ import com.example.repository.ResultsRepository
 
 class ResultsRepositoryImpl : ResultsRepository {
 
-    override suspend fun insertResult(result: Results?) {
+    override suspend fun insertResult(result: Results): Results? {
         TODO("Not yet implemented")
     }
 

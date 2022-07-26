@@ -1,8 +1,6 @@
 package com.example
 
 import com.example.datasource.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import com.example.plugins.*
 import com.example.repository.*
 import com.example.routings.*

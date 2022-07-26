@@ -5,7 +5,7 @@ import com.example.repository.TypeRepository
 
 class TypeRepositoryImpl : TypeRepository {
 
-    override suspend fun insertType(typeName: String?) {
+    override suspend fun insertType(type: Type): Type? {
         TODO("Not yet implemented")
     }
 
