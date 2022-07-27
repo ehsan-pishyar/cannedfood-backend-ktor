@@ -7,9 +7,9 @@ import io.ktor.server.routing.*
 
 fun Application.sellerRoutes(sellerRepository: SellerRepository) {
     routing {
-        route("/seller") {
+        route("/sellers") {
 
-            get("/all") {
+            get("/") {
                 val sellers = sellerRepository.getSellers()
                 call.respond(sellers)
             }

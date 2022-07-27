@@ -3,7 +3,8 @@ package com.example.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Category(
+data class User(
     val id: Int,
-    val title: String
+    val username: String,
+    val password: String
 )

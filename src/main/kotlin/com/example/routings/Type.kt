@@ -7,9 +7,9 @@ import io.ktor.server.routing.*
 
 fun Application.typeRoutes(typeRepository: TypeRepository) {
     routing {
-        route("/type") {
+        route("/types") {
 
-            get("/all") {
+            get("/") {
                 val types = typeRepository.getTypes()
                 call.respond(types)
             }

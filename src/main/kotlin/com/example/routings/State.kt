@@ -11,7 +11,7 @@ fun Application.stateRoutes(stateRepository: StateRepository) {
     routing {
         route("/states") {
 
-            get("/all") {
+            get("/") {
                 val states = stateRepository.getStates()
                 call.respond(states)
             }

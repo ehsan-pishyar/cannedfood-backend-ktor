@@ -18,9 +18,11 @@ fun Application.module() {
     val stateRepository: StateRepository = StateRepositoryImpl()
     val cityRepository: CityRepository = CityRepositoryImpl()
     val typeRepository: TypeRepository = TypeRepositoryImpl()
-    val categoryRepository: CategoryRepository = CategoryRepositoryImpl()
+    val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
     val sellerRepository: SellerRepository = SellerRepositoryImpl()
     val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
+    val userRepository: UserRepository = UserRepositoryImpl()
+    val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
 
     configureSerialization()
     configureMonitoring()
@@ -30,7 +32,9 @@ fun Application.module() {
     stateRoutes(stateRepository)
     cityRouting(cityRepository)
     typeRoutes(typeRepository)
-    categoryRoutes(categoryRepository)
+    categoryRoutes(resultCategoryRepository)
     sellerRoutes(sellerRepository)
     resultsRoutes(resultsRepository)
+    userRoutes(userRepository)
+    sellerCategoryRoutes(sellerCategoryRepository)
 }

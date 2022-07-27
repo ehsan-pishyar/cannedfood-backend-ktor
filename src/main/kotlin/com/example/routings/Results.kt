@@ -9,7 +9,7 @@ fun Application.resultsRoutes(resultsRepository: ResultsRepository) {
     routing {
         route("/results") {
 
-            get("/all") {
+            get("/") {
                 val results = resultsRepository.getResults()
                 call.respond(results)
             }

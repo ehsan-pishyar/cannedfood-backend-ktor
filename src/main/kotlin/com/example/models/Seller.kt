@@ -7,6 +7,7 @@ data class Seller(
     val id: Int,
     val name: String,
     val description: String?,
+    val category_id: Int,
     val state_id: Int,
     val city_id: Int,
     val location: String,

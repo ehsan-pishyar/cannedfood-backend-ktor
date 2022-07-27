@@ -7,9 +7,9 @@ import io.ktor.server.routing.*
 
 fun Application.cityRouting(cityRepository: CityRepository) {
     routing {
-        route("/city") {
+        route("/cities") {
 
-            get("/all") {
+            get("/") {
                 val cities = cityRepository.getCities()
                 call.respond(cities)
             }

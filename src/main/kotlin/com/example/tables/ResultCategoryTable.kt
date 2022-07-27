@@ -2,7 +2,7 @@ package com.example.tables
 
 import org.jetbrains.exposed.sql.Table
 
-object CategoryTable: Table() {
+object ResultCategoryTable: Table() {
 
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 50)
