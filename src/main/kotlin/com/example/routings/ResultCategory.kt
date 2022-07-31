@@ -11,27 +11,28 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
     routing {
         route("/result-categories") {
 
-            post("/category") {
-                val requestBody = call.receive<ResultCategory>()
-                val categorySize = resultCategoryRepository.getCategories().size
-                val category = requestBody.copy(id = categorySize.plus(1))
-                val result = resultCategoryRepository.insertCategory(category)
-                call.respond(result!!)
-            }
+//            post("/category") {
+//                val requestBody = call.receive<ResultCategory>()
+//                val categorySize = resultCategoryRepository.getCategories().size
+//                val category = requestBody.copy(id = categorySize.plus(1))
+//                val result = resultCategoryRepository.insertCategory(category)
+//                call.respond(result!!)
+//            }
 
+            // sc = seller category & rc = result category
             get("/") {
-                val categories = resultCategoryRepository.getCategories()
-                call.respond(categories)
-            }
-            get("/[id]") {
-                val categoryId = call.parameters["id"]?.toInt()
-                val category = resultCategoryRepository.getCategoryById(categoryId!!)
-                call.respond(category!!)
-            }
-            get("/[title]") {
-                val categoryTitle = call.parameters["title"] // check if condition for null error
-                val category = resultCategoryRepository.getCategoryByTitle(categoryTitle!!)
-                call.respond(category!!)
+                val params = call.request.rawQueryParameters
+                val sellerCategoryId = params["sc_id"]?.toInt()
+                val resultCategoryTitle = params["rc_title"]
+
+                if (resultCategoryTitle == null) {
+                    val resultCategories = resultCategoryRepository.getResultCategories(sellerCategoryId!!)
+                    call.respond(resultCategories)
+                } else {
+                    val resultCategories =
+                        resultCategoryRepository.getResultCategoriesByTitle(sellerCategoryId!!, resultCategoryTitle)
+                    call.respond(resultCategories)
+                }
             }
         }
     }

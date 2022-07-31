@@ -9,27 +9,19 @@ class SellerRepositoryImpl : SellerRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellers(): List<Seller> {
+    override suspend fun getSellers(): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellerById(sellerId: Int): Seller {
+    override suspend fun getSellersByTitle(sellerTitle: String): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellerByTitle(sellerTitle: String): Seller? {
+    override suspend fun getSellersByDescription(description: String): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByTitleSlice(sellerTitleSlice: String): List<Seller?> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getSellersByDescription(description: String): List<Seller> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getSellersByStateId(stateId: Int): List<Seller> {
+    override suspend fun getSellersByStateId(stateId: Int): List<Seller?> {
         TODO("Not yet implemented")
     }
 
@@ -37,19 +29,19 @@ class SellerRepositoryImpl : SellerRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByCityId(cityId: Int): List<Seller> {
+    override suspend fun getSellersByCityId(stateId: Int, cityId: Int): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByCityTitle(cityTitle: String): List<Seller?> {
+    override suspend fun getSellersByCityTitle(stateId: Int, cityTitle: String): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByLocationTitle(locationTitle: String): List<Seller?> {
+    override suspend fun getSellersByLocationTitle(stateId: Int, cityId: Int, locationTitle: String): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByResultsId(resultId: Int): List<Seller> {
+    override suspend fun getSellersByResultsId(resultId: Int): List<Seller?> {
         TODO("Not yet implemented")
     }
 
@@ -57,15 +49,50 @@ class SellerRepositoryImpl : SellerRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByOpenStatus(isOpen: Boolean): List<Seller> {
+    override suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByDeliveryDuration(minutes: Int): List<Seller> {
+    override suspend fun getSellersBySellerCategoryTitle(sellerCategoryTitle: String?): List<Seller?> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSellersByDeliveryFee(fee: Int): List<Seller> {
+    override suspend fun getSellersByResultCategoryId(sellerCategoryId: Int, resultCategoryId: Int): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByResultCategoryTitle(
+        sellerCategoryId: Int,
+        resultCategoryTitle: String?
+    ): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByFoodCategoryId(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        foodCategoryId: Int
+    ): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByFoodCategoryTitle(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        foodTypeCategoryTitle: String?
+    ): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByOpenStatus(isOpen: Boolean): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByDeliveryDuration(minutes: Int): List<Seller?> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSellersByDeliveryFee(fee: Int): List<Seller?> {
         TODO("Not yet implemented")
     }
 
@@ -108,4 +135,5 @@ class SellerRepositoryImpl : SellerRepository {
     override suspend fun deleteSellers() {
         TODO("Not yet implemented")
     }
+
 }

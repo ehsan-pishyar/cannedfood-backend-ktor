@@ -10,18 +10,15 @@ fun Application.sellerCategoryRoutes(sellerCategoryRepository: SellerCategoryRep
         route("/seller-categories") {
 
             get("/") {
-                val categories = sellerCategoryRepository.getSellerCategories()
-                call.respond(categories)
-            }
-            get("/[id]") {
-                val id = call.parameters["id"]?.toInt()
-                val category = sellerCategoryRepository.getSellerCategoryById(id!!)
-                call.respond(category!!)
-            }
-            get("/[title]") {
-                val title = call.parameters["title"]
-                val category = sellerCategoryRepository.getSellerCategoryByTitle(title)
-                call.respond(category!!)
+                val title = call.request.queryParameters["sc_title"]
+
+                if (title == null) {
+                    val sellerCategories = sellerCategoryRepository.getSellersCategories()
+                    call.respond(sellerCategories)
+                } else {
+                    val sellerCategories = sellerCategoryRepository.getSellerCategoryByTitle(title)
+                    call.respond(sellerCategories)
+                }
             }
         }
     }

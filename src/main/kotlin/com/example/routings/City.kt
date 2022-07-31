@@ -7,21 +7,33 @@ import io.ktor.server.routing.*
 
 fun Application.cityRouting(cityRepository: CityRepository) {
     routing {
+
         route("/cities") {
 
+//            get("/") {
+//                val stateId = call.request.queryParameters["state_id"]?.toInt() // cities/?state=21
+//                val cities = cityRepository.getCities(stateId!!)
+//                call.respond(cities)
+//            }
+//            get("/city/") {
+//                val params = call.request.rawQueryParameters
+//                val stateId = params["state_id"]?.toInt()
+//                val cityId = params["city_id"]?.toInt()
+//                val city = cityRepository.getCityById(stateId!!, cityId!!)
+//                call.respond(city!!)
+//            }
             get("/") {
-                val cities = cityRepository.getCities()
-                call.respond(cities)
-            }
-            get("/[id]") {
-                val cityId = call.parameters["id"]?.toInt()
-                val city = cityRepository.getCityById(cityId!!)
-                call.respond(city!!)
-            }
-            get("/[title]") {
-                val cityTitle = call.parameters["title"] // check if condition for null error
-                val city = cityRepository.getCityByTitle(cityTitle!!)
-                call.respond(city!!)
+                val params = call.request.rawQueryParameters
+                val stateId = params["state_id"]?.toInt()
+                val cityTitle = params["city_title"]
+
+                if (cityTitle == null) {
+                    val cities = cityRepository.getCities(stateId!!)
+                    call.respond(cities)
+                } else {
+                    val city = cityRepository.getCityByTitle(stateId!!, cityTitle)
+                    call.respond(city!!)
+                }
             }
         }
     }

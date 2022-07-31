@@ -6,6 +6,7 @@ object ResultCategoryTable: Table() {
 
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 50)
+    val sellerCategoryId = integer("seller_category_id") references SellerCategoryTable.id
 
-    override val primaryKey = PrimaryKey(id, name = "PK_CATEGORY_ID")
+    override val primaryKey = PrimaryKey(id, name = "PK_RESULT_CATEGORY_ID")
 }

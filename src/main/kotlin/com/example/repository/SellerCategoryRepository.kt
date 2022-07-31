@@ -4,16 +4,9 @@ import com.example.models.SellerCategory
 
 interface SellerCategoryRepository {
 
-    suspend fun insertSellerCategory(sellerCategory: SellerCategory): SellerCategory?
+    suspend fun getSellersCategories(): List<SellerCategory?> // list of seller categories for home fragment
+    suspend fun getSellerCategoryByTitle(sellerCategoryTitle: String?): List<SellerCategory?> // for search result
 
-    suspend fun getSellerCategories(): List<SellerCategory?>
-    suspend fun getSellerCategoryById(id: Int): SellerCategory?
-    suspend fun getSellerCategoryByTitle(title: String?): SellerCategory?
-
-    suspend fun updateSellerCategoryById(id: Int): SellerCategory?
-    suspend fun updateSellerCategoryByTitle(title: String?): SellerCategory?
-
-    suspend fun deleteSellerCategoryById(id: Int)
-    suspend fun deleteSellerCategoryByTitle(title: String?)
+    suspend fun deleteSellerCategoryById(sellerCategoryId: Int)
     suspend fun deleteSellerCategories()
 }

@@ -12,20 +12,16 @@ fun Application.stateRoutes(stateRepository: StateRepository) {
         route("/states") {
 
             get("/") {
-                val states = stateRepository.getStates()
-                call.respond(states)
-            }
-            get("/[id]") {
-                val stateId = call.parameters["id"]?.toInt()
-                val state = stateRepository.getStateById(stateId!!)
-                call.respond(state!!)
-            }
-            get("/[title]") {
-                val stateTitle = call.parameters["title"]
-                val state = stateRepository.getStateByTitle(stateTitle!!)
-                call.respond(state!!)
-            }
+                val title = call.request.queryParameters["state_title"]
 
+                if (title == null) {
+                    val states = stateRepository.getStates()
+                    call.respond(states)
+                } else {
+                    val state = stateRepository.getStateByTitle(title)
+                    call.respond(state)
+                }
+            }
         }
     }
 }

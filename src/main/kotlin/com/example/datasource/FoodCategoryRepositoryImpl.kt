@@ -1,31 +1,31 @@
 package com.example.datasource
 
-import com.example.models.Type
-import com.example.repository.TypeRepository
+import com.example.models.FoodCategory
+import com.example.repository.FoodCategoryRepository
 
-class TypeRepositoryImpl : TypeRepository {
+class FoodCategoryRepositoryImpl : FoodCategoryRepository {
 
-    override suspend fun insertType(type: Type): Type? {
+    override suspend fun insertType(foodCategory: FoodCategory): FoodCategory? {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTypes(): List<Type> {
+    override suspend fun getTypes(): List<FoodCategory> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTypeById(typeId: Int): Type {
+    override suspend fun getTypeById(typeId: Int): FoodCategory {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTypeByTitle(typeTitle: String): Type? {
+    override suspend fun getTypeByTitle(typeTitle: String): FoodCategory? {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateTypeById(typeId: Int): Type {
+    override suspend fun updateTypeById(typeId: Int): FoodCategory {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateTypeByTitle(typeTitle: String): Type {
+    override suspend fun updateTypeByTitle(typeTitle: String): FoodCategory {
         TODO("Not yet implemented")
     }
 

@@ -17,7 +17,7 @@ fun Application.module() {
 
     val stateRepository: StateRepository = StateRepositoryImpl()
     val cityRepository: CityRepository = CityRepositoryImpl()
-    val typeRepository: TypeRepository = TypeRepositoryImpl()
+    val foodCategoryRepository: FoodCategoryRepository = FoodCategoryRepositoryImpl()
     val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
     val sellerRepository: SellerRepository = SellerRepositoryImpl()
     val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
@@ -31,7 +31,7 @@ fun Application.module() {
 
     stateRoutes(stateRepository)
     cityRouting(cityRepository)
-    typeRoutes(typeRepository)
+    typeRoutes(foodCategoryRepository)
     categoryRoutes(resultCategoryRepository)
     sellerRoutes(sellerRepository)
     resultsRoutes(resultsRepository)

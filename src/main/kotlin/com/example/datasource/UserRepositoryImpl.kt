@@ -1,6 +1,7 @@
-package com.example.repository
+package com.example.datasource
 
 import com.example.models.User
+import com.example.repository.UserRepository
 
 class UserRepositoryImpl : UserRepository {
 

@@ -7,7 +7,7 @@ object ResultsTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 100)
     val description = varchar(name = "description", length = 500)
-    val typeId = integer("typeId") references TypeTable.id
+    val typeId = integer("typeId") references FoodCategoryTable.id
     val categoryId = integer("categoryId") references ResultCategoryTable.id
     val imagePath = varchar(name = "imagePath", length = 500)
     val price = integer("price")

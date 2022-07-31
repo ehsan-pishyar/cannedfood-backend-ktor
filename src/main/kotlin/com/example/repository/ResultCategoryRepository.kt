@@ -4,16 +4,31 @@ import com.example.models.ResultCategory
 
 interface ResultCategoryRepository {
 
-    suspend fun insertCategory(resultCategory: ResultCategory): ResultCategory?
+    suspend fun insertResultCategory(
+        sellerCategoryId: Int,
+        resultCategory: ResultCategory
+    ): ResultCategory?
 
-    suspend fun getCategories(): List<ResultCategory?>
-    suspend fun getCategoryById(categoryId: Int): ResultCategory?
-    suspend fun getCategoryByTitle(categoryTitle: String): ResultCategory?
+    suspend fun getResultCategories(
+        sellerCategoryId: Int
+    ): List<ResultCategory?>
+    suspend fun getResultCategoriesByTitle(
+        sellerCategoryId: Int,
+        categoryTitle: String?
+    ): List<ResultCategory?> // for search result
+    suspend fun getResultCategoriesBySellerCategoryId(
+        sellerCategoryId: Int
+    ): List<ResultCategory?> // for search result
 
-    suspend fun updateCategoryById(categoryId: Int): ResultCategory
-    suspend fun updateCategoryByTitle(categoryTitle: String): ResultCategory
+    suspend fun updateResultCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        resultCategory: ResultCategory
+    ): ResultCategory
 
-    suspend fun deleteCategoryById(categoryId: Int)
-    suspend fun deleteCategoryByTitle(categoryTitle: String)
+    suspend fun deleteResultCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int
+    )
     suspend fun deleteCategories()
 }
