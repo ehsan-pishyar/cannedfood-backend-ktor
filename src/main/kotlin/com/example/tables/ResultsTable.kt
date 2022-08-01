@@ -7,15 +7,16 @@ object ResultsTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 100)
     val description = varchar(name = "description", length = 500)
-    val typeId = integer("typeId") references FoodCategoryTable.id
-    val categoryId = integer("categoryId") references ResultCategoryTable.id
-    val imagePath = varchar(name = "imagePath", length = 500)
+    val sellerCategoryId = integer("seller_category_id") references SellerCategoryTable.id
+    val resultCategoryId = integer("result_category_id") references ResultCategoryTable.id
+    val foodCategoryId = integer("food_category_id") references FoodCategoryTable.id
+    val imagePath = varchar(name = "image_path", length = 500)
     val price = integer("price")
     val rating = double("rating")
-    val voteCount = integer("voteCount")
+    val voteCount = integer("vote_count")
     val discount = integer("discount")
-    val dateAdded = varchar(name = "dateAdded", length = 20)
-    val prepareDuration = integer("prepareDuration")
+    val dateAdded = varchar(name = "date_added", length = 20)
+    val prepareDuration = integer("prepare_duration")
 
     override val primaryKey = PrimaryKey(id, name = "PK_RESULT_ID")
 }

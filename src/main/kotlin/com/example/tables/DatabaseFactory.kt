@@ -14,8 +14,8 @@ object DatabaseFactory {
         Database.connect(hikari())
 
         transaction {
-            SchemaUtils.create(StateTable, CityTable, FoodCategoryTable, ResultCategoryTable, SellerTable, ResultsTable,
-            UserTable, SellerCategoryTable)
+            SchemaUtils.create(StateTable, CityTable, FoodCategoryTable, ResultCategoryTable, ResultsTable,
+            UserTable, SellerCategoryTable, SellerTable)
         }
     }
 

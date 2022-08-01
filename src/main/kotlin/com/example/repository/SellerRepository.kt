@@ -8,31 +8,31 @@ interface SellerRepository {
 
     suspend fun getSellers(): List<Seller?>
     suspend fun getSellersByTitle(
-        sellerTitle: String
+        sellerTitle: String?
     ): List<Seller?> // get similar sellers by part of string passed
     suspend fun getSellersByDescription(
-        description: String
+        description: String?
     ): List<Seller?>
     suspend fun getSellersByStateId(
         stateId: Int
     ): List<Seller?>
     suspend fun getSellersByStateTitle(
-        stateTitle: String
+        stateTitle: String?
     ): List<Seller?>
     suspend fun getSellersByCityId(
         stateId: Int, cityId: Int
     ): List<Seller?>
     suspend fun getSellersByCityTitle(
-        stateId: Int, cityTitle: String
+        stateId: Int, cityTitle: String?
     ): List<Seller?>
     suspend fun getSellersByLocationTitle(
-        stateId: Int, cityId: Int, locationTitle: String
+        stateId: Int, cityId: Int, locationTitle: String?
     ): List<Seller?>
     suspend fun getSellersByResultsId(
         resultId: Int
     ): List<Seller?>
     suspend fun getSellersByResultsTitle(
-        resultTitle: String
+        resultTitle: String?
     ): List<Seller?>
     suspend fun getSellersBySellerCategoryId(
         sellerCategoryId: Int
@@ -66,18 +66,12 @@ interface SellerRepository {
         fee: Int
     ): List<Seller?>
 
-    suspend fun updateSellerById(
-        sellerId: Int
-    ): Seller
     suspend fun updateSeller(
-        seller: Seller
+        sellerId: Int, seller: Seller
     ): Seller
 
     suspend fun deleteSellerById(
         sellerId: Int
-    )
-    suspend fun deleteSellerByTitle(
-        sellerTitle: String
     )
     suspend fun deleteSellersByRating(
         rating: Double
@@ -86,13 +80,16 @@ interface SellerRepository {
         stateId: Int
     )
     suspend fun deleteSellersByStateTitle(
-        stateTitle: String
+        stateTitle: String?
     )
     suspend fun deleteSellersByCityId(
         cityId: Int
     )
     suspend fun deleteSellersByCityTitle(
-        cityTitle: String
+        cityTitle: String?
+    )
+    suspend fun deleteSellersByLocationTitle(
+        locationTitle: String?
     )
     suspend fun deleteSellers()
 }

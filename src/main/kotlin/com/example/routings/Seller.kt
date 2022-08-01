@@ -5,13 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.sellerRoutes(sellerRepository: SellerRepository) {
+fun Application.sellerDetailsRoutes(sellerRepository: SellerRepository) {
     routing {
-        route("/sellers") {
+        route("/seller-details") {
 
             get("/") {
-                val sellers = sellerRepository.getSellers()
-                call.respond(sellers)
             }
         }
     }
