@@ -12,13 +12,14 @@ fun Application.stateRoutes(stateRepository: StateRepository) {
         route("/states") {
 
             get("/") {
-                val title = call.request.queryParameters["state_title"]
+                val params = call.request.rawQueryParameters
+                val stateTitle = params["state_title"]
 
-                if (title == null) {
+                if (stateTitle == null) {
                     val states = stateRepository.getStates()
                     call.respond(states)
                 } else {
-                    val state = stateRepository.getStateByTitle(title)
+                    val state = stateRepository.getStateByTitle(stateTitle)
                     call.respond(state)
                 }
             }

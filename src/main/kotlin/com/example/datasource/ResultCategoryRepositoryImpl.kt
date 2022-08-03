@@ -4,7 +4,6 @@ import com.example.models.ResultCategory
 import com.example.repository.ResultCategoryRepository
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.ResultCategoryTable
-import com.example.tables.SellerCategoryTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 

@@ -22,15 +22,17 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
             // sc = seller category & rc = result category
             get("/") {
                 val params = call.request.rawQueryParameters
-                val sellerCategoryId = params["sc_id"]?.toInt()
+                val sellerCategoryId = params["sc_id"]!!.toInt()
                 val resultCategoryTitle = params["rc_title"]
 
                 if (resultCategoryTitle == null) {
-                    val resultCategories = resultCategoryRepository.getResultCategories(sellerCategoryId!!)
+                    val resultCategories = resultCategoryRepository.getResultCategories(sellerCategoryId)
                     call.respond(resultCategories)
                 } else {
                     val resultCategories =
-                        resultCategoryRepository.getResultCategoriesByTitle(sellerCategoryId!!, resultCategoryTitle)
+                        resultCategoryRepository.getResultCategoriesByTitle(
+                            sellerCategoryId, resultCategoryTitle
+                        )
                     call.respond(resultCategories)
                 }
             }

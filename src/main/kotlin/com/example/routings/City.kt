@@ -24,14 +24,14 @@ fun Application.cityRouting(cityRepository: CityRepository) {
 //            }
             get("/") {
                 val params = call.request.rawQueryParameters
-                val stateId = params["state_id"]?.toInt()
+                val stateId = params["state_id"]!!.toInt()
                 val cityTitle = params["city_title"]
 
                 if (cityTitle == null) {
-                    val cities = cityRepository.getCities(stateId!!)
+                    val cities = cityRepository.getCities(stateId)
                     call.respond(cities)
                 } else {
-                    val city = cityRepository.getCityByTitle(stateId!!, cityTitle)
+                    val city = cityRepository.getCityByTitle(stateId, cityTitle)
                     call.respond(city!!)
                 }
             }
