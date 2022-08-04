@@ -10,6 +10,20 @@ fun Application.userRoutes(userRepository: UserRepository) {
         route("/users") {
 
             get("/") {
+                val params = call.request.rawQueryParameters
+                val id = params["user_id"]!!.toInt()
+                val username = params["username"]
+
+                if (id == null && username == null) {
+                    val users = userRepository.getUsers()
+                    call.respond(users)
+                } else if (id != null && username == null) {
+                    val user = userRepository.getUserById(id)
+                    call.respond(user)
+                } else {
+                    val users = userRepository.getUserByUsername(username)
+                    call.respond(users)
+                }
             }
         }
     }

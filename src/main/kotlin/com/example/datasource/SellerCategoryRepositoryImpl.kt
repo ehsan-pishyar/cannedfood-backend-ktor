@@ -15,21 +15,19 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
                 rowToSellerCategory(it)
             }
         }
-
         return sellerCategories
     }
 
-    override suspend fun getSellerCategoryByTitle(sellerCategoryTitle: String?): List<SellerCategory?> {
-        val sellerCategory = dbQuery {
+    override suspend fun getSellerCategoriesByTitle(sellerCategoryTitle: String?): List<SellerCategory?> {
+        val sellerCategories = dbQuery {
             SellerCategoryTable.select(SellerCategoryTable.title.eq(sellerCategoryTitle!!)).map {
                 rowToSellerCategory(it)
             }
         }
-
-        return sellerCategory
+        return sellerCategories
     }
 
-    override suspend fun deleteSellerCategoryById(sellerCategoryId: Int) {
+    override suspend fun deleteSellerCategory(sellerCategoryId: Int) {
         dbQuery {
             SellerCategoryTable.deleteWhere {
                 SellerCategoryTable.id.eq(sellerCategoryId)

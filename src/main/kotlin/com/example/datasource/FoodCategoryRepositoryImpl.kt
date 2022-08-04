@@ -9,7 +9,11 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class FoodCategoryRepositoryImpl : FoodCategoryRepository {
 
-    override suspend fun insertFoodCategories(foodCategory: FoodCategory): FoodCategory? {
+    override suspend fun insertFoodCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        foodCategory: FoodCategory
+    ): FoodCategory? {
         TODO("Not yet implemented")
     }
 
@@ -28,13 +32,13 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun getFoodCategoriesByTitle(
         sellerCategoryId: Int,
         resultCategoryId: Int,
-        foodCategoryTitle: String
+        foodCategoryTitle: String?
     ): List<FoodCategory?> {
         val foodCategories = dbQuery {
             FoodCategoryTable.select(
                 FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
                         FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
-                        FoodCategoryTable.title.eq(foodCategoryTitle)
+                        FoodCategoryTable.title.eq(foodCategoryTitle!!)
             ).map {
                 rowToFoodCategory(it)
             }
@@ -57,7 +61,11 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         return foodCategories
     }
 
-    override suspend fun updateFoodCategory(sellerCategoryId: Int, resultCategoryId: Int, foodCategoryId: Int): FoodCategory {
+    override suspend fun updateFoodCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        foodCategoryId: Int
+    ): FoodCategory {
         TODO("Not yet implemented")
     }
 

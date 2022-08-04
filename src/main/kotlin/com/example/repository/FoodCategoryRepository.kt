@@ -4,7 +4,11 @@ import com.example.models.FoodCategory
 
 interface FoodCategoryRepository {
 
-    suspend fun insertFoodCategories(foodCategory: FoodCategory): FoodCategory?
+    suspend fun insertFoodCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int,
+        foodCategory: FoodCategory
+    ): FoodCategory?
 
     suspend fun getFoodCategories(
         sellerCategoryId: Int,
@@ -13,7 +17,7 @@ interface FoodCategoryRepository {
     suspend fun getFoodCategoriesByTitle(
         sellerCategoryId: Int,
         resultCategoryId: Int,
-        foodCategoryTitle: String
+        foodCategoryTitle: String?
     ): List<FoodCategory?>
     suspend fun getFoodCategoriesByResultCategoryId(
         sellerCategoryId: Int,

@@ -20,40 +20,26 @@ class CityRepositoryImpl : CityRepository {
                 rowToCity(it)
             }
         }
-
         return cities
     }
 
-    override suspend fun getCityByTitle(stateId: Int, cityTitle: String): City? {
-        val city = dbQuery {
-            CityTable.select(CityTable.stateId.eq(stateId) and CityTable.title.eq(cityTitle)).map {
+    override suspend fun getCitiesByTitle(stateId: Int, cityTitle: String?): List<City?> {
+        val cities = dbQuery {
+            CityTable.select(CityTable.stateId.eq(stateId) and CityTable.title.eq(cityTitle!!)).map {
                 rowToCity(it)
-            }.singleOrNull()
+            }
         }
-
-        return city
+        return cities
     }
 
-    override suspend fun updateCityById(stateId: Int, cityId: Int, city: City): City {
+    override suspend fun updateCity(stateId: Int, cityId: Int, city: City): City {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateCityByTitle(stateId: Int, cityTitle: String, city: City): City {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deleteCityById(stateId: Int, cityId: Int) {
+    override suspend fun deleteCity(stateId: Int, cityId: Int) {
         dbQuery {
             CityTable.deleteWhere{
                 CityTable.stateId.eq(stateId) and CityTable.id.eq(cityId)
-            }
-        }
-    }
-
-    override suspend fun deleteCityByTitle(stateId: Int, cityTitle: String) {
-        dbQuery {
-            CityTable.deleteWhere {
-                CityTable.stateId.eq(stateId) and CityTable.title.eq(cityTitle)
             }
         }
     }

@@ -17,17 +17,15 @@ class StateRepositoryImpl : StateRepository {
                 rowToState(it)
             }
         }
-
         return states
     }
 
-    override suspend fun getStateByTitle(stateTitle: String): List<State?> {
+    override suspend fun getStatesByTitle(stateTitle: String): List<State?> {
         val state = dbQuery {
             StateTable.select(StateTable.title.eq(stateTitle)).map {
                 rowToState(it)
             }
         }
-
         return state
     }
 
