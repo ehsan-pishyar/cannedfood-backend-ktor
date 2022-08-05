@@ -19,7 +19,7 @@ fun Application.stateRoutes(stateRepository: StateRepository) {
                     val states = stateRepository.getStates()
                     call.respond(states)
                 } else {
-                    val state = stateRepository.getStateByTitle(stateTitle)
+                    val state = stateRepository.getStatesByTitle(stateTitle)
                     call.respond(state)
                 }
             }

@@ -10,8 +10,13 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class CityRepositoryImpl : CityRepository {
 
-    override suspend fun insertCity(stateId: Int, city: City): City? {
-        TODO("Not yet implemented")
+    override suspend fun insertCity(city: City) {
+        dbQuery {
+            CityTable.insert{
+                it[title] = city.title
+                it[stateId] = city.state_id
+            }
+        }
     }
 
     override suspend fun getCities(stateId: Int): List<City?> {
@@ -32,14 +37,28 @@ class CityRepositoryImpl : CityRepository {
         return cities
     }
 
-    override suspend fun updateCity(stateId: Int, cityId: Int, city: City): City {
-        TODO("Not yet implemented")
+    override suspend fun updateCity(stateId: Int, cityId: Int, city: City) {
+        dbQuery {
+            CityTable.update({CityTable.stateId.eq(stateId)}) {
+                it[id] = city.id
+                it[title] = city.title
+                it[CityTable.stateId] = city.state_id
+            }
+        }
     }
 
     override suspend fun deleteCity(stateId: Int, cityId: Int) {
         dbQuery {
             CityTable.deleteWhere{
                 CityTable.stateId.eq(stateId) and CityTable.id.eq(cityId)
+            }
+        }
+    }
+
+    override suspend fun deleteCitiesOfState(stateId: Int) {
+        dbQuery {
+            CityTable.deleteWhere {
+                CityTable.stateId.eq(stateId)
             }
         }
     }

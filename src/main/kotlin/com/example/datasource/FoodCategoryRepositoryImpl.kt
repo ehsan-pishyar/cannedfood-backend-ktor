@@ -10,11 +10,15 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 class FoodCategoryRepositoryImpl : FoodCategoryRepository {
 
     override suspend fun insertFoodCategory(
-        sellerCategoryId: Int,
-        resultCategoryId: Int,
         foodCategory: FoodCategory
-    ): FoodCategory? {
-        TODO("Not yet implemented")
+    ) {
+        dbQuery {
+            FoodCategoryTable.insert {
+                it[title] = foodCategory.title
+                it[sellerCategoryId] = foodCategory.seller_category_id
+                it[resultCategoryId] = foodCategory.result_category_id
+            }
+        }
     }
 
     override suspend fun getFoodCategories(sellerCategoryId: Int, resultCategoryId: Int): List<FoodCategory?> {
@@ -64,9 +68,21 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun updateFoodCategory(
         sellerCategoryId: Int,
         resultCategoryId: Int,
-        foodCategoryId: Int
-    ): FoodCategory {
-        TODO("Not yet implemented")
+        foodCategoryId: Int,
+        foodCategory: FoodCategory
+    ) {
+        dbQuery {
+            FoodCategoryTable.update({
+                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
+                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
+                        FoodCategoryTable.id.eq(foodCategoryId)
+            }) {
+                it[id] = foodCategory.id
+                it[title] = foodCategory.title
+                it[FoodCategoryTable.sellerCategoryId] = foodCategory.seller_category_id
+                it[FoodCategoryTable.resultCategoryId] = foodCategory.result_category_id
+            }
+        }
     }
 
     override suspend fun deleteFoodCategory(sellerCategoryId: Int, resultCategoryId: Int, foodCategoryId: Int) {
@@ -76,6 +92,16 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
                         FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
                         FoodCategoryTable.id.eq(foodCategoryId)
             }
+        }
+    }
+
+    override suspend fun deleteFoodCategoriesOfResultCategory(
+        sellerCategoryId: Int,
+        resultCategoryId: Int
+    ) {
+        FoodCategoryTable.deleteWhere {
+            FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
+                    FoodCategoryTable.resultCategoryId.eq(resultCategoryId)
         }
     }
 

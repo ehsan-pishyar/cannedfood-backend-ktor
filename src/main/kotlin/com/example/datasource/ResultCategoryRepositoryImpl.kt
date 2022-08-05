@@ -9,8 +9,13 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class ResultCategoryRepositoryImpl : ResultCategoryRepository {
 
-    override suspend fun insertResultCategory(sellerCategoryId: Int, resultCategory: ResultCategory): ResultCategory? {
-        TODO("Not yet implemented")
+    override suspend fun insertResultCategory(resultCategory: ResultCategory) {
+        dbQuery {
+            ResultCategoryTable.insert {
+                it[title] = resultCategory.title
+                it[sellerCategoryId] = resultCategory.seller_category_id
+            }
+        }
     }
 
     override suspend fun getResultCategories(sellerCategoryId: Int): List<ResultCategory?> {
@@ -49,8 +54,17 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         sellerCategoryId: Int,
         resultCategoryId: Int,
         resultCategory: ResultCategory
-    ): ResultCategory {
-        TODO("Not yet implemented")
+    ) {
+        dbQuery {
+            ResultCategoryTable.update({
+                ResultCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
+                        ResultCategoryTable.id.eq(resultCategoryId)
+            }) {
+                it[id] = resultCategory.id
+                it[title] = resultCategory.title
+                it[ResultCategoryTable.sellerCategoryId] = resultCategory.seller_category_id
+            }
+        }
     }
 
     override suspend fun deleteResultCategory(sellerCategoryId: Int, resultCategoryId: Int) {
@@ -61,7 +75,15 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         }
     }
 
-    override suspend fun deleteCategories() {
+    override suspend fun deleteResultCategoriesOfSellerCategory(sellerCategoryId: Int) {
+        dbQuery {
+            ResultCategoryTable.deleteWhere {
+                ResultCategoryTable.sellerCategoryId.eq(sellerCategoryId)
+            }
+        }
+    }
+
+    override suspend fun deleteResultCategories() {
         dbQuery {
             ResultCategoryTable.deleteAll()
         }

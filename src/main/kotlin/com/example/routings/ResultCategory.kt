@@ -11,13 +11,10 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
     routing {
         route("/result-categories") {
 
-//            post("/category") {
-//                val requestBody = call.receive<ResultCategory>()
-//                val categorySize = resultCategoryRepository.getCategories().size
-//                val category = requestBody.copy(id = categorySize.plus(1))
-//                val result = resultCategoryRepository.insertCategory(category)
-//                call.respond(result!!)
-//            }
+            post("/result-category") {
+                val rc = call.receive<ResultCategory>()
+                resultCategoryRepository.insertResultCategory(rc)
+            }
 
             // sc = seller category & rc = result category
             get("/") {
@@ -34,6 +31,29 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
                             sellerCategoryId, resultCategoryTitle
                         )
                     call.respond(resultCategories)
+                }
+            }
+
+            put("/result-category") {
+                val rc = call.receive<ResultCategory>()
+                resultCategoryRepository.updateResultCategory(
+                    rc.seller_category_id,
+                    rc.id,
+                    rc
+                )
+            }
+
+            delete("/result-category") {
+                val params = call.request.rawQueryParameters
+                val scId = params["sc_id"]!!.toInt()
+                val rcId = params["rc_id"]!!.toInt()
+
+                if (scId != null && rcId != null) {
+                    resultCategoryRepository.deleteResultCategory(scId, rcId)
+                } else if (scId != null && rcId == null) {
+                    resultCategoryRepository.deleteResultCategoriesOfSellerCategory(scId)
+                } else if (scId == null && rcId == null) {
+                    resultCategoryRepository.deleteResultCategories()
                 }
             }
         }

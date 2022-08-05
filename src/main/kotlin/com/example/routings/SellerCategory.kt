@@ -16,8 +16,18 @@ fun Application.sellerCategoryRoutes(sellerCategoryRepository: SellerCategoryRep
                     val sellerCategories = sellerCategoryRepository.getSellersCategories()
                     call.respond(sellerCategories)
                 } else {
-                    val sellerCategories = sellerCategoryRepository.getSellerCategoryByTitle(title)
+                    val sellerCategories = sellerCategoryRepository.getSellerCategoriesByTitle(title)
                     call.respond(sellerCategories)
+                }
+            }
+
+            delete("/seller-category") {
+                val scId = call.request.queryParameters["sc_id"]!!.toInt()
+
+                if (scId != null) {
+                    sellerCategoryRepository.deleteSellerCategory(scId)
+                } else {
+                    sellerCategoryRepository.deleteSellerCategories()
                 }
             }
         }

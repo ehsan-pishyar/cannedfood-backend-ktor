@@ -5,9 +5,8 @@ import com.example.models.ResultCategory
 interface ResultCategoryRepository {
 
     suspend fun insertResultCategory(
-        sellerCategoryId: Int,
         resultCategory: ResultCategory
-    ): ResultCategory?
+    )
 
     suspend fun getResultCategories(
         sellerCategoryId: Int
@@ -24,11 +23,14 @@ interface ResultCategoryRepository {
         sellerCategoryId: Int,
         resultCategoryId: Int,
         resultCategory: ResultCategory
-    ): ResultCategory
+    )
 
     suspend fun deleteResultCategory(
         sellerCategoryId: Int,
         resultCategoryId: Int
     )
-    suspend fun deleteCategories()
+    suspend fun deleteResultCategoriesOfSellerCategory(
+        sellerCategoryId: Int
+    )
+    suspend fun deleteResultCategories()
 }
