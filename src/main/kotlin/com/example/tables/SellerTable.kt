@@ -21,6 +21,7 @@ object SellerTable: Table() {
     val voteCount = integer("vote_count")
     val deliveryFee = integer("delivery_fee")
     val deliveryDuration = integer("delivery_duration")
+    val userId = integer("user_id") references UserTable.id
 
     override val primaryKey = PrimaryKey(id, name = "PK_SELLER_ID")
 }

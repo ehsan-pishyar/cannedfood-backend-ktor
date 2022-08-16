@@ -15,93 +15,67 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         dbQuery {
             FoodCategoryTable.insert {
                 it[title] = foodCategory.title
-                it[sellerCategoryId] = foodCategory.seller_category_id
+                it[imagePath] = foodCategory.image_path
                 it[resultCategoryId] = foodCategory.result_category_id
             }
         }
     }
 
-    override suspend fun getFoodCategories(sellerCategoryId: Int, resultCategoryId: Int): List<FoodCategory?> {
+    override suspend fun getFoodCategories(resultCategoryId: Int): List<FoodCategory?> {
         val foodCategories = dbQuery {
             FoodCategoryTable.select(
-                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId)
-            ).map {
-                rowToFoodCategory(it)
+                FoodCategoryTable.resultCategoryId.eq(resultCategoryId))
+                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .map {
+                    rowToFoodCategory(it)
             }
         }
         return foodCategories
     }
 
     override suspend fun getFoodCategoriesByTitle(
-        sellerCategoryId: Int,
-        resultCategoryId: Int,
         foodCategoryTitle: String?
     ): List<FoodCategory?> {
         val foodCategories = dbQuery {
             FoodCategoryTable.select(
-                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
-                        FoodCategoryTable.title.eq(foodCategoryTitle!!)
-            ).map {
-                rowToFoodCategory(it)
-            }
-        }
-        return foodCategories
-    }
-
-    override suspend fun getFoodCategoriesByResultCategoryId(
-        sellerCategoryId: Int,
-        resultCategoryId: Int
-    ): List<FoodCategory?> {
-        val foodCategories = dbQuery {
-            FoodCategoryTable.select(
-                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId)
-            ).map {
-                rowToFoodCategory(it)
+                FoodCategoryTable.title.eq(foodCategoryTitle!!))
+                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .map {
+                    rowToFoodCategory(it)
             }
         }
         return foodCategories
     }
 
     override suspend fun updateFoodCategory(
-        sellerCategoryId: Int,
-        resultCategoryId: Int,
         foodCategoryId: Int,
         foodCategory: FoodCategory
     ) {
         dbQuery {
             FoodCategoryTable.update({
-                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
-                        FoodCategoryTable.id.eq(foodCategoryId)
+                FoodCategoryTable.id.eq(foodCategoryId)
             }) {
                 it[id] = foodCategory.id
                 it[title] = foodCategory.title
-                it[FoodCategoryTable.sellerCategoryId] = foodCategory.seller_category_id
-                it[FoodCategoryTable.resultCategoryId] = foodCategory.result_category_id
+                it[imagePath] = foodCategory.image_path
+                it[resultCategoryId] = foodCategory.result_category_id
             }
         }
     }
 
-    override suspend fun deleteFoodCategory(sellerCategoryId: Int, resultCategoryId: Int, foodCategoryId: Int) {
+    override suspend fun deleteFoodCategory(foodCategoryId: Int) {
         dbQuery {
             FoodCategoryTable.deleteWhere {
-                FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                        FoodCategoryTable.resultCategoryId.eq(resultCategoryId) and
-                        FoodCategoryTable.id.eq(foodCategoryId)
+                FoodCategoryTable.id.eq(foodCategoryId)
             }
         }
     }
 
-    override suspend fun deleteFoodCategoriesOfResultCategory(
-        sellerCategoryId: Int,
-        resultCategoryId: Int
-    ) {
-        FoodCategoryTable.deleteWhere {
-            FoodCategoryTable.sellerCategoryId.eq(sellerCategoryId) and
-                    FoodCategoryTable.resultCategoryId.eq(resultCategoryId)
+    override suspend fun deleteFoodCategoriesOfResultCategory(resultCategoryId: Int) {
+        dbQuery {
+            FoodCategoryTable.deleteWhere {
+                FoodCategoryTable.resultCategoryId.eq(resultCategoryId)
+            }
         }
     }
 
@@ -117,7 +91,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         return FoodCategory(
             id = row[FoodCategoryTable.id],
             title = row[FoodCategoryTable.title],
-            seller_category_id = row[FoodCategoryTable.sellerCategoryId],
+            image_path = row[FoodCategoryTable.imagePath],
             result_category_id = row[FoodCategoryTable.resultCategoryId],
         )
     }

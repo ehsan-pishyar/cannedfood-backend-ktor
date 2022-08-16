@@ -19,16 +19,16 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
             // sc = seller category & rc = result category
             get("/") {
                 val params = call.request.rawQueryParameters
-                val sellerCategoryId = params["sc_id"]!!.toInt()
+                val sellerCategoryId = params["sc_id"]?.toInt()
                 val resultCategoryTitle = params["rc_title"]
 
                 if (resultCategoryTitle == null) {
-                    val resultCategories = resultCategoryRepository.getResultCategories(sellerCategoryId)
+                    val resultCategories = resultCategoryRepository.getResultCategories(sellerCategoryId!!)
                     call.respond(resultCategories)
                 } else {
                     val resultCategories =
                         resultCategoryRepository.getResultCategoriesByTitle(
-                            sellerCategoryId, resultCategoryTitle
+                            resultCategoryTitle
                         )
                     call.respond(resultCategories)
                 }
@@ -37,7 +37,6 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
             put("/result-category") {
                 val rc = call.receive<ResultCategory>()
                 resultCategoryRepository.updateResultCategory(
-                    rc.seller_category_id,
                     rc.id,
                     rc
                 )
@@ -45,11 +44,11 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
 
             delete("/result-category") {
                 val params = call.request.rawQueryParameters
-                val scId = params["sc_id"]!!.toInt()
-                val rcId = params["rc_id"]!!.toInt()
+                val scId = params["sc_id"]?.toInt()
+                val rcId = params["rc_id"]?.toInt()
 
                 if (scId != null && rcId != null) {
-                    resultCategoryRepository.deleteResultCategory(scId, rcId)
+                    resultCategoryRepository.deleteResultCategory(scId)
                 } else if (scId != null && rcId == null) {
                     resultCategoryRepository.deleteResultCategoriesOfSellerCategory(scId)
                 } else if (scId == null && rcId == null) {

@@ -18,16 +18,15 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
 
             get("/") {
                 val params = call.request.rawQueryParameters
-                val sellerCategoryId = params["sc_id"]!!.toInt()
                 val resultCategoryId = params["rc_id"]!!.toInt()
                 val foodCategoryTitle = params["fc_title"]
 
                 if (foodCategoryTitle == null) {
-                    val foodCategories = foodCategoryRepository.getFoodCategories(sellerCategoryId, resultCategoryId)
+                    val foodCategories = foodCategoryRepository.getFoodCategories(resultCategoryId)
                     call.respond(foodCategories)
                 } else {
                     val foodCategories = foodCategoryRepository.getFoodCategoriesByTitle(
-                        sellerCategoryId, resultCategoryId, foodCategoryTitle
+                        foodCategoryTitle
                     )
                     call.respond(foodCategories)
                 }
@@ -36,8 +35,6 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
             put("/food-category") {
                 val fc = call.receive<FoodCategory>()
                 foodCategoryRepository.updateFoodCategory(
-                    fc.seller_category_id,
-                    fc.result_category_id,
                     fc.id,
                     fc
                 )
@@ -45,15 +42,14 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
 
             delete("/food-category") {
                 val params = call.request.rawQueryParameters
-                val scId = params["sc_id"]!!.toInt()
                 val rcId = params["rc_id"]!!.toInt()
                 val fcId = params["fc_id"]!!.toInt()
 
-                if (scId != null && rcId != null && fcId != null) {
-                    foodCategoryRepository.deleteFoodCategory(scId, rcId, fcId)
-                } else if (scId != null && rcId != null && fcId == null) {
-                    foodCategoryRepository.deleteFoodCategoriesOfResultCategory(scId, rcId)
-                } else if (scId == null && rcId == null && fcId == null) {
+                if (rcId != null && fcId != null) {
+                    foodCategoryRepository.deleteFoodCategory(rcId)
+                }else if (rcId != null && fcId == null) {
+                    foodCategoryRepository.deleteFoodCategoriesOfResultCategory(rcId)
+                }else if (rcId == null && fcId == null) {
                     foodCategoryRepository.deleteFoodCategories()
                 }
             }

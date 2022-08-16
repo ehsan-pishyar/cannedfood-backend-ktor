@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SellerCategory(
     val id: Int,
-    val title: String
+    val title: String,
+    val image_path: String
 )

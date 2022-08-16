@@ -5,6 +5,7 @@ import com.example.plugins.*
 import com.example.repository.*
 import com.example.routings.*
 import com.example.tables.DatabaseFactory.init
+import com.example.usecases.InsertUserUseCase
 import io.ktor.server.application.*
 
 fun main(args: Array<String>): Unit =
@@ -23,6 +24,7 @@ fun Application.module() {
     val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
     val userRepository: UserRepository = UserRepositoryImpl()
     val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
+    val locationRepository: LocationRepository = LocationRepositoryImpl()
 
     configureSerialization()
     configureMonitoring()
@@ -37,4 +39,7 @@ fun Application.module() {
     resultsRoutes(resultsRepository)
     userRoutes(userRepository)
     sellerCategoryRoutes(sellerCategoryRepository)
+    locationRoutes(locationRepository)
+
+    InsertUserUseCase(userRepository)
 }

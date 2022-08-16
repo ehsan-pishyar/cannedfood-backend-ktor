@@ -1,6 +1,6 @@
 package com.example.routings
 
-import com.example.models.User
+import com.example.models.responses.User
 import com.example.repository.UserRepository
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -18,19 +18,22 @@ fun Application.userRoutes(userRepository: UserRepository) {
 
             get("/") {
                 val params = call.request.rawQueryParameters
-                val id = params["user_id"]!!.toInt()
+                val id = params["user_id"]?.toInt()
                 val username = params["username"]
+                val isAdmin = params["is_admin"]?.toBoolean()
+                val isSeller = params["is_seller"]?.toBoolean()
+                val isCustomer = params["is_customer"]?.toBoolean()
 
-                if (id == null && username == null) {
-                    val users = userRepository.getUsers()
-                    call.respond(users)
-                } else if (id != null && username == null) {
+                if (id != null && username == null) {
                     val user = userRepository.getUserById(id)
                     call.respond(user)
-                } else {
+                }
+
+                if (id == null && username != null) {
                     val users = userRepository.getUserByUsername(username)
                     call.respond(users)
                 }
+
             }
 
             put("/user") {
@@ -39,8 +42,8 @@ fun Application.userRoutes(userRepository: UserRepository) {
             }
 
             delete("/user") {
-                val userId = call.request.queryParameters["user_id"]!!.toInt()
-                if (userId == null) {
+                val userId = call.request.queryParameters["user_id"]?.toInt()
+                if (userId != null) {
                     userRepository.deleteUser(userId)
                 } else {
                     userRepository.deleteUsers()

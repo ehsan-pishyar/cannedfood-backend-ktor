@@ -32,14 +32,14 @@ fun Application.cityRouting(cityRepository: CityRepository) {
 
             get("/") {
                 val params = call.request.rawQueryParameters
-                val stateId = params["state_id"]!!.toInt()
+                val stateId = params["state_id"]?.toInt()
                 val cityTitle = params["city_title"]
 
                 if (cityTitle == null) {
-                    val cities = cityRepository.getCities(stateId)
+                    val cities = cityRepository.getCities(stateId!!)
                     call.respond(cities)
                 } else {
-                    val city = cityRepository.getCitiesByTitle(stateId, cityTitle)
+                    val city = cityRepository.getCitiesByTitle(stateId!!, cityTitle)
                     call.respond(city)
                 }
             }
@@ -51,8 +51,8 @@ fun Application.cityRouting(cityRepository: CityRepository) {
 
             delete("/city") {
                 val params = call.request.rawQueryParameters
-                val stateId = params["state_id"]!!.toInt()
-                val cityId = params["city_id"]!!.toInt()
+                val stateId = params["state_id"]?.toInt()
+                val cityId = params["city_id"]?.toInt()
 
                 if (stateId != null && cityId != null) {
                     cityRepository.deleteCity(stateId, cityId)

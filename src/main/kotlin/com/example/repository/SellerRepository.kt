@@ -4,7 +4,7 @@ import com.example.models.Seller
 
 interface SellerRepository {
 
-    suspend fun insertSeller(seller: Seller): Seller?
+    suspend fun insertSeller(seller: Seller)
 
     suspend fun getSellers(): List<Seller?>
     suspend fun getSellersByTitle(
@@ -16,17 +16,11 @@ interface SellerRepository {
     suspend fun getSellersByStateId(
         stateId: Int
     ): List<Seller?>
-    suspend fun getSellersByStateTitle(
-        stateTitle: String?
-    ): List<Seller?>
     suspend fun getSellersByCityId(
-        stateId: Int, cityId: Int
-    ): List<Seller?>
-    suspend fun getSellersByCityTitle(
-        stateId: Int, cityTitle: String?
+        cityId: Int
     ): List<Seller?>
     suspend fun getSellersByLocationTitle(
-        stateId: Int, cityId: Int, locationTitle: String?
+        locationTitle: String?
     ): List<Seller?>
     suspend fun getSellersByResultsId(
         resultId: Int
@@ -37,24 +31,11 @@ interface SellerRepository {
     suspend fun getSellersBySellerCategoryId(
         sellerCategoryId: Int
     ): List<Seller?>
-    suspend fun getSellersBySellerCategoryTitle(
-        sellerCategoryTitle: String?
-    ): List<Seller?>
     suspend fun getSellersByResultCategoryId(
-        sellerCategoryId: Int, resultCategoryId: Int
-    ): List<Seller?>
-    suspend fun getSellersByResultCategoryTitle(
-        sellerCategoryId: Int, resultCategoryTitle: String?
+        resultCategoryId: Int
     ): List<Seller?>
     suspend fun getSellersByFoodCategoryId(
-        sellerCategoryId: Int,
-        resultCategoryId: Int,
         foodCategoryId: Int
-    ): List<Seller?>
-    suspend fun getSellersByFoodCategoryTitle(
-        sellerCategoryId: Int,
-        resultCategoryId: Int,
-        foodTypeCategoryTitle: String?
     ): List<Seller?>
     suspend fun getSellersByOpenStatus(
         isOpen: Boolean
@@ -68,7 +49,7 @@ interface SellerRepository {
 
     suspend fun updateSeller(
         sellerId: Int, seller: Seller
-    ): Seller
+    )
 
     suspend fun deleteSellerById(
         sellerId: Int
@@ -79,17 +60,11 @@ interface SellerRepository {
     suspend fun deleteSellersByStateId(
         stateId: Int
     )
-    suspend fun deleteSellersByStateTitle(
-        stateTitle: String?
-    )
     suspend fun deleteSellersByCityId(
         cityId: Int
     )
-    suspend fun deleteSellersByCityTitle(
-        cityTitle: String?
-    )
-    suspend fun deleteSellersByLocationTitle(
-        locationTitle: String?
+    suspend fun deleteSellerByLocation(
+        location: String?
     )
     suspend fun deleteSellers()
 }
