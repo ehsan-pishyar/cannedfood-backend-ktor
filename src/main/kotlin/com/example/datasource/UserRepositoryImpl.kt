@@ -11,8 +11,16 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
+/**
+ * پیاده سازی dao کاربر
+ * با استفاده از متد کوئری که ساختیم، میاد عملیات CRUD رو توی پس زمینه برامون انجام میده.
+ */
 class UserRepositoryImpl : UserRepository {
 
+    /**
+     * ثبت کاربر در دیتابیس. با استفاده از اطلاعات کاربری که بهش پاس میدیم میاد این اطلاعات رو توی سلول های جدول قرار میده
+     * و در آخر هم کاربری که با موفقیت ثبت کردیم توی دیتابیس رو برامون برمیگردونه تا نشون بدیم
+     */
     override suspend fun insertUser(user: User): ServiceResult<User?> {
         return try {
             dbQuery {
@@ -34,11 +42,14 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
+    /**
+     * دریافت همه کاربران از دیتابیس. و مرتب سازی کاربران برگردونده شده بر اساس id اونها.
+     */
     override suspend fun getUsers(): ServiceResult<List<User?>> {
         return try {
             val users = dbQuery {
                 UserTable.selectAll()
-                    .orderBy(UserTable.id to SortOrder.ASC)
+                    .orderBy(UserTable.userId to SortOrder.ASC)
                     .map(::rowToUser)
             }
             ServiceResult.Success(users)
@@ -57,7 +68,7 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun getUserById(userId: Int): ServiceResult<User?> {
         return try {
             val user = dbQuery {
-                UserTable.select(UserTable.id eq userId)
+                UserTable.select(UserTable.userId eq userId)
                     .map { rowToUser(it) }
                     .singleOrNull()
             }
@@ -78,7 +89,7 @@ class UserRepositoryImpl : UserRepository {
         return try {
             val users = dbQuery {
                 UserTable.select { UserTable.email like "$userName%" }
-                    .orderBy(UserTable.id to SortOrder.ASC)
+                    .orderBy(UserTable.userId to SortOrder.ASC)
                     .map(::rowToUser)
             }
             ServiceResult.Success(users)
@@ -95,11 +106,14 @@ class UserRepositoryImpl : UserRepository {
 
     }
 
-    override suspend fun updateUser(userId: Int, user: User) {
+    /**
+     * آپدیت اطلاعات کاربر با استفاده از کاربری که بهش پاس میدیم
+     */
+    override suspend fun updateUser(user: User) {
         dbQuery {
             UserTable.update {
-                (id eq userId)
-                it[id] = user.id
+                (userId eq user.user_id)
+                it[userId] = user.user_id
                 it[email] = user.email
                 it[password] = user.password
                 it[userType] = user.user_type
@@ -108,10 +122,13 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
+    /**
+     * عملیات حذف کاربر بر اساس id اونها
+     */
     override suspend fun deleteUser(userId: Int) {
         dbQuery {
             UserTable.deleteWhere {
-                UserTable.id eq userId
+                UserTable.userId eq userId
             }
         }
     }
@@ -122,11 +139,16 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
+    /**
+     * چون به صورت پیش فرض موقعی که میخوایم یه کاربری رو به عنوان مثال از دیتابیس برگردونیم، خوب این کاربر به صورت یه آبجکت user برامون بر نمیگردونه
+     * در عوض یه سطر یا یه row برامون برمیگردونه. برای اینکه این سطر رو تبدیل به آبجکت user کنیم تا بتونیم به کاربر نمایشش بدیم، باید با استفاده از این تابع،
+     * اون سطر رو تبدیل به آبجکت user کنیم.
+     */
     private fun rowToUser(row: ResultRow?): User? {
         if (row == null) return null
 
         return User(
-            id = row[UserTable.id],
+            user_id = row[UserTable.userId],
             email = row[UserTable.email],
             password = row[UserTable.password],
             user_type = row[UserTable.userType],

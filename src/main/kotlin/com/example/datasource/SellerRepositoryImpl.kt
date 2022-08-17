@@ -3,7 +3,7 @@ package com.example.datasource
 import com.example.models.Seller
 import com.example.repository.SellerRepository
 import com.example.tables.DatabaseFactory.dbQuery
-import com.example.tables.SellerTable
+import com.example.tables.CustomerTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
@@ -12,21 +12,16 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun insertSeller(seller: Seller) {
         dbQuery {
-            SellerTable.insert {
+            CustomerTable.insert {
                 it[title] = seller.title
                 it[description] = seller.description!!
                 it[logo] = seller.logo!!
                 it[banner] = seller.banner!!
                 it[sellerCategoryId] = seller.seller_category_id
                 it[resultCategoryId] = seller.result_category_id
-                it[foodCategoryId] = seller.food_category_id!!
                 it[stateId] = seller.state_id
                 it[cityId] = seller.city_id
                 it[location] = seller.location
-                it[resultsId] = seller.results_id
-                it[isOpen] = seller.is_open!!
-                it[rating] = seller.rating!!
-                it[voteCount] = seller.vote_count!!
                 it[deliveryFee] = seller.delivery_fee
                 it[deliveryDuration] = seller.delivery_duration
                 it[userId] = seller.user_id
@@ -36,7 +31,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellers(): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.selectAll().map {
+            CustomerTable.selectAll().map {
                 rowToSeller(it)
             }
         }
@@ -45,7 +40,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByTitle(sellerTitle: String?): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.title.eq(sellerTitle!!)).map {
+            CustomerTable.select(CustomerTable.title.eq(sellerTitle!!)).map {
                 rowToSeller(it)
             }
         }
@@ -54,7 +49,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByDescription(description: String?): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.description.like(description!!)).map {
+            CustomerTable.select(CustomerTable.description.like(description!!)).map {
                 rowToSeller(it)
             }
         }
@@ -63,7 +58,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByStateId(stateId: Int): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.stateId.eq(stateId)).map {
+            CustomerTable.select(CustomerTable.stateId.eq(stateId)).map {
                 rowToSeller(it)
             }
         }
@@ -80,7 +75,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByResultsId(resultId: Int): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.resultsId.eq(resultId)).map {
+            CustomerTable.select(CustomerTable.resultsId.eq(resultId)).map {
                 rowToSeller(it)
             }
         }
@@ -93,7 +88,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.sellerCategoryId.eq(sellerCategoryId)).map {
+            CustomerTable.select(CustomerTable.sellerCategoryId.eq(sellerCategoryId)).map {
                 rowToSeller(it)
             }
         }
@@ -110,7 +105,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByOpenStatus(isOpen: Boolean): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.isOpen.eq(isOpen)).map {
+            CustomerTable.select(CustomerTable.isOpen.eq(isOpen)).map {
                 rowToSeller(it)
             }
         }
@@ -119,7 +114,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByDeliveryDuration(minutes: Int): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.deliveryDuration.eq(minutes)).map {
+            CustomerTable.select(CustomerTable.deliveryDuration.eq(minutes)).map {
                 rowToSeller(it)
             }
         }
@@ -128,7 +123,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun getSellersByDeliveryFee(fee: Int): List<Seller?> {
         val sellers = dbQuery {
-            SellerTable.select(SellerTable.deliveryFee.eq(fee)).map {
+            CustomerTable.select(CustomerTable.deliveryFee.eq(fee)).map {
                 rowToSeller(it)
             }
         }
@@ -141,32 +136,32 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun deleteSellerById(sellerId: Int) {
         dbQuery {
-            SellerTable.deleteWhere {
-                SellerTable.id.eq(sellerId)
+            CustomerTable.deleteWhere {
+                CustomerTable.id.eq(sellerId)
             }
         }
     }
 
     override suspend fun deleteSellersByRating(rating: Double) {
         dbQuery {
-            SellerTable.deleteWhere {
-                SellerTable.rating.lessEq(rating)
+            CustomerTable.deleteWhere {
+                CustomerTable.rating.lessEq(rating)
             }
         }
     }
 
     override suspend fun deleteSellersByStateId(stateId: Int) {
         dbQuery {
-            SellerTable.deleteWhere {
-                SellerTable.stateId.eq(stateId)
+            CustomerTable.deleteWhere {
+                CustomerTable.stateId.eq(stateId)
             }
         }
     }
 
     override suspend fun deleteSellersByCityId(cityId: Int) {
         dbQuery {
-            SellerTable.deleteWhere {
-                SellerTable.cityId.eq(cityId)
+            CustomerTable.deleteWhere {
+                CustomerTable.cityId.eq(cityId)
             }
         }
     }
@@ -177,7 +172,7 @@ class SellerRepositoryImpl : SellerRepository {
 
     override suspend fun deleteSellers() {
         dbQuery {
-            SellerTable.deleteAll()
+            CustomerTable.deleteAll()
         }
     }
 
@@ -185,24 +180,19 @@ class SellerRepositoryImpl : SellerRepository {
         if (row == null) return null
 
         return Seller(
-            id = row[SellerTable.id],
-            title = row[SellerTable.title],
-            description = row[SellerTable.description],
-            logo = row[SellerTable.logo],
-            banner = row[SellerTable.banner],
-            seller_category_id = row[SellerTable.sellerCategoryId],
-            result_category_id = row[SellerTable.resultCategoryId],
-            food_category_id = row[SellerTable.foodCategoryId],
-            state_id = row[SellerTable.stateId],
-            city_id = row[SellerTable.cityId],
-            location = row[SellerTable.location],
-            results_id = row[SellerTable.resultsId],
-            is_open = row[SellerTable.isOpen],
-            rating = row[SellerTable.rating],
-            vote_count = row[SellerTable.voteCount],
-            delivery_fee = row[SellerTable.deliveryFee],
-            delivery_duration = row[SellerTable.deliveryDuration],
-            user_id = row[SellerTable.userId]
+            seller_id = row[CustomerTable.id],
+            title = row[CustomerTable.title],
+            description = row[CustomerTable.description],
+            logo = row[CustomerTable.logo],
+            banner = row[CustomerTable.banner],
+            seller_category_id = row[CustomerTable.sellerCategoryId],
+            result_category_id = row[CustomerTable.resultCategoryId],
+            state_id = row[CustomerTable.stateId],
+            city_id = row[CustomerTable.cityId],
+            location = row[CustomerTable.location],
+            delivery_fee = row[CustomerTable.deliveryFee],
+            delivery_duration = row[CustomerTable.deliveryDuration],
+            user_id = row[CustomerTable.userId]
         )
     }
 }

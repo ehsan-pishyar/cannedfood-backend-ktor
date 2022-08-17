@@ -3,6 +3,9 @@ package com.example.repository
 import com.example.models.User
 import com.example.utils.ServiceResult
 
+/**
+ * توابع dao برای اضافه کردن کاربر به دیتابیس، دریافت کاربر از دیتابیس، آپدیت اون یا حذفشون
+ */
 interface UserRepository {
 
     suspend fun insertUser(user: User): ServiceResult<User?>
@@ -11,7 +14,7 @@ interface UserRepository {
     suspend fun getUserById(userId: Int): ServiceResult<User?>
     suspend fun getUserByUsername(userName: String): ServiceResult<List<User?>>
 
-    suspend fun updateUser(userId: Int, user: User)
+    suspend fun updateUser(user: User)
 
     suspend fun deleteUser(userId: Int)
     suspend fun deleteUsers()

@@ -4,7 +4,6 @@ import com.example.models.City
 import com.example.repository.CityRepository
 import com.example.tables.CityTable
 import com.example.tables.DatabaseFactory.dbQuery
-import com.example.tables.StateTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 

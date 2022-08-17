@@ -6,7 +6,6 @@ import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.FoodCategoryTable
 import com.example.tables.LocationTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 class LocationRepositoryImpl: LocationRepository {
 
@@ -24,7 +23,7 @@ class LocationRepositoryImpl: LocationRepository {
             LocationTable.select {
                 LocationTable.cityId.eq(cityId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                 rowToLocation(it)
             }
@@ -48,7 +47,7 @@ class LocationRepositoryImpl: LocationRepository {
             LocationTable.select {
                 LocationTable.title.like(title!!)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                 rowToLocation(it)
             }
