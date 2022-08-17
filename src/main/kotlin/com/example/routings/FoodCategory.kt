@@ -35,7 +35,7 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
             put("/food-category") {
                 val fc = call.receive<FoodCategory>()
                 foodCategoryRepository.updateFoodCategory(
-                    fc.id,
+                    fc.fc_id,
                     fc
                 )
             }

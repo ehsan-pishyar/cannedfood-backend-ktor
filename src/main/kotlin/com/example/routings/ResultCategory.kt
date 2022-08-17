@@ -37,7 +37,7 @@ fun Application.categoryRoutes(resultCategoryRepository: ResultCategoryRepositor
             put("/result-category") {
                 val rc = call.receive<ResultCategory>()
                 resultCategoryRepository.updateResultCategory(
-                    rc.id,
+                    rc.rc_id,
                     rc
                 )
             }

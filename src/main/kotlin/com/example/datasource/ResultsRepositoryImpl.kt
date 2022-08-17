@@ -32,7 +32,7 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResults(): List<Results?> {
         val results = dbQuery {
             ResultsTable.selectAll()
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -46,7 +46,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.id.eq(resultId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                     rowToResults(it)
                 }
@@ -60,7 +60,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.title.eq(resultTitle)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                     rowToResults(it)
                 }
@@ -73,7 +73,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.title.like(description!!)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -87,7 +87,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.sellerId.eq(sellerId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -101,7 +101,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.sellerCategoryId.eq(sellerCategoryId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -115,7 +115,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.resultCategoryId.eq(resultCategoryId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -129,7 +129,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.foodCategoryId.eq(foodCategoryId)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -143,7 +143,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.price.eq(price)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -157,7 +157,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.rating.eq(rating)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -171,7 +171,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.voteCount.eq(voteCount)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -185,7 +185,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.discount.eq(discount)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -199,7 +199,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.dateAdded.eq(dateAdded)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)
@@ -213,7 +213,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             ResultsTable.select {
                 ResultsTable.prepareDuration.eq(minutes)
             }
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .limit(20, offset = 1)
                 .map {
                     rowToResults(it)

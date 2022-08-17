@@ -13,7 +13,7 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
     override suspend fun getSellersCategories(): List<SellerCategory?> {
         val sellerCategories = dbQuery {
             SellerCategoryTable.selectAll()
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                 rowToSellerCategory(it)
             }
@@ -24,7 +24,7 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
     override suspend fun getSellerCategoriesByTitle(sellerCategoryTitle: String?): List<SellerCategory?> {
         val sellerCategories = dbQuery {
             SellerCategoryTable.select(SellerCategoryTable.title.eq(sellerCategoryTitle!!))
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                 rowToSellerCategory(it)
             }
@@ -35,7 +35,7 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
     override suspend fun deleteSellerCategory(sellerCategoryId: Int) {
         dbQuery {
             SellerCategoryTable.deleteWhere {
-                SellerCategoryTable.id.eq(sellerCategoryId)
+                SellerCategoryTable.scId.eq(sellerCategoryId)
             }
         }
     }
@@ -50,7 +50,7 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
         if (row == null) return null
 
         return SellerCategory(
-            id = row[SellerCategoryTable.id],
+            sc_id = row[SellerCategoryTable.scId],
             title = row[SellerCategoryTable.title],
             image_path = row[SellerCategoryTable.imagePath]
         )

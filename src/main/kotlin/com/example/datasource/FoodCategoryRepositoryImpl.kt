@@ -25,7 +25,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         val foodCategories = dbQuery {
             FoodCategoryTable.select(
                 FoodCategoryTable.resultCategoryId.eq(resultCategoryId))
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                     rowToFoodCategory(it)
             }
@@ -39,7 +39,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         val foodCategories = dbQuery {
             FoodCategoryTable.select(
                 FoodCategoryTable.title.eq(foodCategoryTitle!!))
-                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
                 .map {
                     rowToFoodCategory(it)
             }
@@ -53,9 +53,9 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     ) {
         dbQuery {
             FoodCategoryTable.update({
-                FoodCategoryTable.id.eq(foodCategoryId)
+                FoodCategoryTable.fcId.eq(foodCategoryId)
             }) {
-                it[id] = foodCategory.id
+                it[fcId] = foodCategory.fc_id
                 it[title] = foodCategory.title
                 it[imagePath] = foodCategory.image_path
                 it[resultCategoryId] = foodCategory.result_category_id
@@ -66,7 +66,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun deleteFoodCategory(foodCategoryId: Int) {
         dbQuery {
             FoodCategoryTable.deleteWhere {
-                FoodCategoryTable.id.eq(foodCategoryId)
+                FoodCategoryTable.fcId.eq(foodCategoryId)
             }
         }
     }
@@ -89,7 +89,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         if (row == null) return null
 
         return FoodCategory(
-            id = row[FoodCategoryTable.id],
+            fc_id = row[FoodCategoryTable.fcId],
             title = row[FoodCategoryTable.title],
             image_path = row[FoodCategoryTable.imagePath],
             result_category_id = row[FoodCategoryTable.resultCategoryId],
