@@ -1,17 +1,18 @@
-package com.example.models.responses
+package com.example.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class User(
-    val id: Int,
-    val email: String,
-    val password: String,
+    val id: Int = 0,
+    val email: String = "",
+    val password: String = "",
     val user_type: UserType = UserType.DEFAULT,
-    val date_created: String,
+    val date_created: String = "",
 )
 
+@Serializable
 enum class UserType(val value: Int) {
     DEFAULT(0),
 

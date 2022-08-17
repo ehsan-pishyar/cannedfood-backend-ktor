@@ -1,7 +1,7 @@
 package com.example.usecases
 
 import com.example.models.ResponseErrors
-import com.example.models.responses.User
+import com.example.models.User
 import com.example.models.responses.UserResponse
 import com.example.repository.UserRepository
 import com.example.utils.ServiceResult

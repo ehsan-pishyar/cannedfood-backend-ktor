@@ -1,6 +1,6 @@
 package com.example.routings.user
 
-import com.example.models.responses.User
+import com.example.models.User
 import com.example.usecases.InsertUserUseCase
 import com.example.utils.ServiceResult
 import io.ktor.http.*
@@ -9,7 +9,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.InsertNewUser(
+fun Route.insertNewUser(
     insertUserUseCase: InsertUserUseCase
 ) {
     route("/users") {

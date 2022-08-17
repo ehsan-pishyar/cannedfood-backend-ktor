@@ -1,7 +1,6 @@
 package com.example.repository
 
-import com.example.models.responses.User
-import com.example.models.responses.UserResponse
+import com.example.models.User
 import com.example.utils.ServiceResult
 
 interface UserRepository {

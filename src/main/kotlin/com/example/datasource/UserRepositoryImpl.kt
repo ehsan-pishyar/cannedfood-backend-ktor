@@ -1,8 +1,7 @@
 package com.example.datasource
 
 import com.example.authentication.hash
-import com.example.models.responses.User
-import com.example.models.responses.UserResponse
+import com.example.models.User
 import com.example.repository.UserRepository
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.UserTable

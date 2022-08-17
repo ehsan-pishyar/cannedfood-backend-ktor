@@ -1,6 +1,6 @@
-package com.example.routings
+package com.example.routings.user
 
-import com.example.models.responses.User
+import com.example.models.User
 import com.example.repository.UserRepository
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -8,6 +8,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.userRoutes(userRepository: UserRepository) {
+
     routing {
         route("/users") {
 
@@ -20,9 +21,7 @@ fun Application.userRoutes(userRepository: UserRepository) {
                 val params = call.request.rawQueryParameters
                 val id = params["user_id"]?.toInt()
                 val username = params["username"]
-                val isAdmin = params["is_admin"]?.toBoolean()
-                val isSeller = params["is_seller"]?.toBoolean()
-                val isCustomer = params["is_customer"]?.toBoolean()
+
 
                 if (id != null && username == null) {
                     val user = userRepository.getUserById(id)

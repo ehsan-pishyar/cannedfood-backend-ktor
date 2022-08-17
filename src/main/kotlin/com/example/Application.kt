@@ -4,6 +4,7 @@ import com.example.datasource.*
 import com.example.plugins.*
 import com.example.repository.*
 import com.example.routings.*
+import com.example.routings.user.userRoutes
 import com.example.tables.DatabaseFactory.init
 import com.example.usecases.InsertUserUseCase
 import io.ktor.server.application.*
@@ -40,6 +41,4 @@ fun Application.module() {
     userRoutes(userRepository)
     sellerCategoryRoutes(sellerCategoryRepository)
     locationRoutes(locationRepository)
-
-    InsertUserUseCase(userRepository)
 }

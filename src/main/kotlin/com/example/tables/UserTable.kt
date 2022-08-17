@@ -1,7 +1,9 @@
 package com.example.tables
 
-import com.example.models.responses.UserType
+import com.example.models.UserType
+import com.example.utils.toDatabaseString
 import org.jetbrains.exposed.sql.Table
+import java.time.LocalDateTime
 
 object UserTable: Table() {
 
@@ -9,7 +11,7 @@ object UserTable: Table() {
     val email = varchar(name = "email", length = 50).uniqueIndex()
     val password = varchar(name = "password", length = 500)
     val userType = enumeration<UserType>(name = "user_type")
-    val dateCreated = varchar(name = "date_created", length = 50)
+    val dateCreated = varchar(name = "date_created", length = 50).default(LocalDateTime.now().toDatabaseString())
 
     override val primaryKey = PrimaryKey(id, name = "PK_USER_ID")
 }
