@@ -68,7 +68,7 @@ fun Application.resultsRoutes(resultsRepository: ResultsRepository) {
 
             put("/result") {
                 val result = call.receive<Results>()
-                resultsRepository.updateResult(result.id, result)
+                resultsRepository.updateResult(result.result_id, result)
             }
 
             delete("/result") {

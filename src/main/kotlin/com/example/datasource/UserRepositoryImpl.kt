@@ -49,7 +49,7 @@ class UserRepositoryImpl : UserRepository {
         return try {
             val users = dbQuery {
                 UserTable.selectAll()
-                    .orderBy(UserTable.userId to SortOrder.ASC)
+                    .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
             }
             ServiceResult.Success(users)
@@ -68,7 +68,7 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun getUserById(userId: Int): ServiceResult<User?> {
         return try {
             val user = dbQuery {
-                UserTable.select(UserTable.userId eq userId)
+                UserTable.select(UserTable.id eq userId)
                     .map { rowToUser(it) }
                     .singleOrNull()
             }
@@ -89,7 +89,7 @@ class UserRepositoryImpl : UserRepository {
         return try {
             val users = dbQuery {
                 UserTable.select { UserTable.email like "$userName%" }
-                    .orderBy(UserTable.userId to SortOrder.ASC)
+                    .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
             }
             ServiceResult.Success(users)
@@ -112,8 +112,8 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun updateUser(user: User) {
         dbQuery {
             UserTable.update {
-                (userId eq user.user_id)
-                it[userId] = user.user_id
+                (id eq user.id)
+                it[id] = user.id
                 it[email] = user.email
                 it[password] = user.password
                 it[userType] = user.user_type
@@ -128,7 +128,7 @@ class UserRepositoryImpl : UserRepository {
     override suspend fun deleteUser(userId: Int) {
         dbQuery {
             UserTable.deleteWhere {
-                UserTable.userId eq userId
+                UserTable.id eq userId
             }
         }
     }
@@ -148,7 +148,7 @@ class UserRepositoryImpl : UserRepository {
         if (row == null) return null
 
         return User(
-            user_id = row[UserTable.userId],
+            id = row[UserTable.id],
             email = row[UserTable.email],
             password = row[UserTable.password],
             user_type = row[UserTable.userType],

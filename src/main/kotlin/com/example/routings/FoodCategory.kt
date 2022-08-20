@@ -18,11 +18,11 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
 
             get("/") {
                 val params = call.request.rawQueryParameters
-                val resultCategoryId = params["rc_id"]!!.toInt()
+                val resultCategoryId = params["rc_id"]?.toInt()
                 val foodCategoryTitle = params["fc_title"]
 
                 if (foodCategoryTitle == null) {
-                    val foodCategories = foodCategoryRepository.getFoodCategories(resultCategoryId)
+                    val foodCategories = foodCategoryRepository.getFoodCategories(resultCategoryId!!)
                     call.respond(foodCategories)
                 } else {
                     val foodCategories = foodCategoryRepository.getFoodCategoriesByTitle(
@@ -42,8 +42,8 @@ fun Application.typeRoutes(foodCategoryRepository: FoodCategoryRepository) {
 
             delete("/food-category") {
                 val params = call.request.rawQueryParameters
-                val rcId = params["rc_id"]!!.toInt()
-                val fcId = params["fc_id"]!!.toInt()
+                val rcId = params["rc_id"]?.toInt()
+                val fcId = params["fc_id"]?.toInt()
 
                 if (rcId != null && fcId != null) {
                     foodCategoryRepository.deleteFoodCategory(rcId)

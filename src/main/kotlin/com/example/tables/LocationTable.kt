@@ -23,6 +23,8 @@ object LocationTable: Table() {
 
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 50)
+    val lat = double("lat").default(0.0)
+    val lon = double("lon").default(0.0)
     val cityId = integer("city_id") references CityTable.id
 
     override val primaryKey = PrimaryKey(id, name = "PK_LOCATION_ID")

@@ -4,6 +4,9 @@ import com.example.datasource.*
 import com.example.plugins.*
 import com.example.repository.*
 import com.example.routings.*
+import com.example.routings.location.cityRouting
+import com.example.routings.location.locationRoutes
+import com.example.routings.location.stateRoutes
 import com.example.routings.user.userRoutes
 import com.example.tables.DatabaseFactory.init
 import com.example.usecases.InsertUserUseCase

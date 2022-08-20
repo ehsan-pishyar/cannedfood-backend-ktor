@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Results(
-    val id: Int,
+    val result_id: Int,
+    val seller_id: Int,
     val title: String,
     val description: String,
-    val seller_id: Int,
     val seller_category_id: Int,
     val result_category_id: Int,
     val food_category_id: Int?,

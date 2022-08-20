@@ -22,7 +22,7 @@ fun Application.sellerCategoryRoutes(sellerCategoryRepository: SellerCategoryRep
             }
 
             delete("/seller-category") {
-                val scId = call.request.queryParameters["sc_id"]!!.toInt()
+                val scId = call.request.queryParameters["sc_id"]?.toInt()
 
                 if (scId != null) {
                     sellerCategoryRepository.deleteSellerCategory(scId)

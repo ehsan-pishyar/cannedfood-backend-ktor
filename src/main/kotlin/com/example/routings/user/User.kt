@@ -37,7 +37,7 @@ fun Application.userRoutes(userRepository: UserRepository) {
 
             put("/user") {
                 val user = call.receive<User>()
-                userRepository.updateUser(user.id, user)
+                userRepository.updateUser(user)
             }
 
             delete("/user") {

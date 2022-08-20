@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class User(
-    val user_id: Int = 0,
+    val id: Int = 0,
     val email: String = "",
     val password: String = "",
     val user_type: UserType = UserType.TEST,
@@ -18,33 +18,33 @@ data class User(
 
 @Serializable
 data class Seller(
-    val seller_id: Int = 0,
+    val id: Int = 0,
     val user_id: Int = 0,
     val title: String = "",
     val description: String = "",
     val logo: String = "",
     val banner: String = "",
-    val seller_category_id: SellerCategory, // رستوران، کافه
-    val result_category_id: ResultCategory, // فست فود، ایرانی، بین المللی
-    // val food_category_id: List<FoodCategory>,
-    val state_id: Int = 0,
-    val city_id: Int = 0,
-    val location: String = "",
-    // val is_open: Boolean = false,
-    // val rating: Double = 0.0,
-    // val vote_count: Int = 0,
+    val seller_category_id: SellerCategory? = null, // رستوران، کافه
+    val result_category_id: ResultCategory? = null, // فست فود، ایرانی، بین المللی
+    val food_category_id: List<FoodCategory> = emptyList(),
+    val state_id: State? = null,
+    val city_id: City? = null,
+    val location: Location? = null,
+    val is_open: Boolean = false,
+    val rating: Double = 0.0,
+    val vote_count: Int = 0,
     val delivery_fee: Int = 0,
     val delivery_duration: Int = 0
 )
 
 @Serializable
 data class Customer(
-    val customer_id: Int = 0,
+    val id: Int = 0,
     val user_id: Int = 0,
     val first_name: String = "",
     val last_name: String = "",
     val avatar: String = "",
-    val phone_number: String = "",
+    val phone_number: Long = 0L,
     val email: String = "",
     val address: String = "",
     val sex: UserSex = UserSex.UNKNOWN,

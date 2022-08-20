@@ -1,84 +1,66 @@
 package com.example.datasource
 
+import com.example.models.City
 import com.example.models.Location
+import com.example.models.State
+import com.example.models.responses.LocationResponse
 import com.example.repository.LocationRepository
+import com.example.tables.CityTable
 import com.example.tables.DatabaseFactory.dbQuery
-import com.example.tables.FoodCategoryTable
 import com.example.tables.LocationTable
+import com.example.tables.StateTable
+import com.example.utils.ErrorCode
+import com.example.utils.ServiceResult
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 
 class LocationRepositoryImpl: LocationRepository {
 
-    override suspend fun insertLocation(location: Location) {
-        dbQuery {
-            LocationTable.insert {
-                it[title] = location.title
-                it[cityId] = location.city_id
+    override suspend fun insertLocation(location: Location): ServiceResult<Location> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getLocations(cityId: Int): ServiceResult<List<LocationResponse?>> {
+        return try {
+            val locations = dbQuery {
+                (LocationTable innerJoin CityTable innerJoin StateTable)
+                    .select {
+                        LocationTable.cityId eq cityId
+                    }
+                    .orderBy(LocationTable.id to SortOrder.ASC)
+                    .map { rowToLocationResponse(it) }
+            }
+            ServiceResult.Success(locations)
+        } catch (e: Exception) {
+            println(e)
+            when (e) {
+                is ExposedSQLException -> {
+                    println("An Error occurred due to response user by username")
+                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                }
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun getLocations(cityId: Int): List<Location?> {
-        val locations = dbQuery {
-            LocationTable.select {
-                LocationTable.cityId.eq(cityId)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .map {
-                rowToLocation(it)
-            }
-        }
-        return locations
+    override suspend fun getLocation(locationId: Int): ServiceResult<LocationResponse?> {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getLocation(locationId: Int): Location {
-        val location = dbQuery {
-            LocationTable.select {
-                LocationTable.id.eq(locationId)
-            }.map {
-                rowToLocation(it)
-            }.singleOrNull()
-        }
-        return location!!
+    override suspend fun getLocationsByTitle(title: String?): ServiceResult<List<LocationResponse?>> {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getLocationsByTitle(title: String?): List<Location?> {
-        val locations = dbQuery {
-            LocationTable.select {
-                LocationTable.title.like(title!!)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .map {
-                rowToLocation(it)
-            }
-        }
-        return locations
-    }
-
-    override suspend fun updateLocation(locationId: Int, location: Location) {
-        dbQuery {
-            LocationTable.update({
-                LocationTable.id.eq(locationId)
-            }) {
-                it[id] = location.id
-                it[title] = location.title
-                it[cityId] = location.city_id
-            }
-        }
+    override suspend fun updateLocation(location: Location) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteLocation(locationId: Int) {
-        dbQuery {
-            LocationTable.deleteWhere {
-                LocationTable.id.eq(locationId)
-            }
-        }
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteLocations() {
-        dbQuery {
-            LocationTable.deleteAll()
-        }
+        TODO("Not yet implemented")
     }
 
     private fun rowToLocation(row: ResultRow?): Location? {
@@ -87,7 +69,42 @@ class LocationRepositoryImpl: LocationRepository {
         return Location(
             id = row[LocationTable.id],
             title = row[LocationTable.title],
+            lat = row[LocationTable.lat],
+            lon = row[LocationTable.lon],
             city_id = row[LocationTable.cityId]
+        )
+    }
+
+    private fun rowToCity(row: ResultRow?): City? {
+        if (row == null) return null
+
+        return City(
+            id = row[CityTable.id],
+            title = row[CityTable.title],
+            state_id = row[CityTable.stateId]
+        )
+    }
+
+    private fun rowToState(row: ResultRow?): State? {
+        if (row == null) return null
+
+        return State(
+            id = row[StateTable.id],
+            title = row[StateTable.title]
+        )
+    }
+
+    private fun rowToLocationResponse(row: ResultRow?): LocationResponse? {
+        if (row == null) return null
+
+        return LocationResponse(
+            location_title = row[LocationTable.title],
+            lat = row[LocationTable.lat],
+            lon = row[LocationTable.lon],
+            city_id = row[CityTable.id],
+            city_title = row[CityTable.title],
+            state_id = row[StateTable.id],
+            state_title = row[StateTable.title]
         )
     }
 }

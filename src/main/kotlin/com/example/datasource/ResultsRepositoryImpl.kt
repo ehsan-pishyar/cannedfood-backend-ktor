@@ -225,7 +225,7 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun updateResult(resultId: Int, results: Results) {
         dbQuery {
             ResultsTable.update({ResultsTable.id.eq(resultId)}) {
-                it[id] = results.id
+                it[id] = results.result_id
                 it[title] = results.title
                 it[description] = results.description
                 it[sellerId] = results.seller_id
@@ -261,7 +261,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         if (row == null) return null
 
         return Results(
-            id = row[ResultsTable.id],
+            result_id = row[ResultsTable.id],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
             seller_id = row[ResultsTable.sellerId],

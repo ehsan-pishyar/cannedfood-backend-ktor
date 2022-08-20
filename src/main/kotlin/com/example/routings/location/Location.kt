@@ -1,4 +1,4 @@
-package com.example.routings
+package com.example.routings.location
 
 import com.example.models.Location
 import com.example.repository.LocationRepository
@@ -11,15 +11,10 @@ fun Application.locationRoutes(locationRepository: LocationRepository) {
     routing {
         route("/locations") {
 
-            post("/location") {
-                val location = call.receive<Location>()
-                locationRepository.insertLocation(location)
-            }
-
             get("/") {
                 val params = call.request.rawQueryParameters
-                val cityId = params["city_id"]!!.toInt()
-                val locationId = params["location_id"]!!.toInt()
+                val cityId = params["city_id"]?.toInt()
+                val locationId = params["location_id"]?.toInt()
                 val locationTitle = params["title"]
 
                 if (locationId != null && locationTitle == null) {
@@ -36,7 +31,7 @@ fun Application.locationRoutes(locationRepository: LocationRepository) {
 
             put("/location") {
                 val location = call.receive<Location>()
-                locationRepository.updateLocation(location.id, location)
+                locationRepository.updateLocation(location)
             }
 
             delete("/location") {
