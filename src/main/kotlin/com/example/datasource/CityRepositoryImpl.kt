@@ -161,14 +161,13 @@ class CityRepositoryImpl : CityRepository {
     }
 
     private fun getState(stateId: Int): State? {
-        val state = transaction {
+        return transaction {
             StateTable.select {
                 StateTable.id eq stateId
             }.map {
                 rowToState(it)
             }.singleOrNull()
         }
-        return state
     }
 
 }

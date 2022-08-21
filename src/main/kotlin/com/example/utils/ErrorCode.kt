@@ -12,6 +12,8 @@ enum class ErrorCode(val message: String) {
     DATABASE_ERROR("Unknown database error. Try again, and check your parameters."),
     INVALID_JSON("Your JSON must match the format in this sample response."),
     INVALID_CITY_QUERY("You must pass a city name or zip prefix."),
-    USER_EXISTS("This user is already exists.")
+    USER_EXISTS("This user is already exists."),
+    SELLER_EXISTS("Seller already exists"),
+    SELLER_404("Seller not found")
 //    INVALID_API_KEY("Bad API key. Use x-api-key in the header.")
 }

@@ -1,280 +1,182 @@
 package com.example.datasource
 
 import com.example.models.Results
+import com.example.models.Seller
+import com.example.models.responses.ResultResponse
 import com.example.repository.ResultsRepository
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.FoodCategoryTable
+import com.example.tables.ResultRatingTable
 import com.example.tables.ResultsTable
+import com.example.tables.SellerTable
+import com.example.utils.ErrorCode
+import com.example.utils.ServiceResult
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class ResultsRepositoryImpl : ResultsRepository {
 
-    override suspend fun insertResult(result: Results) {
-        dbQuery {
-            ResultsTable.insert {
-                it[title] = result.title
-                it[description] = result.description
-                it[sellerId] = result.seller_id
-                it[sellerCategoryId] = result.seller_category_id
-                it[resultCategoryId] = result.result_category_id
-                it[foodCategoryId] = result.food_category_id!!
-                it[imagePath] = result.image_path
-                it[price] = result.price
-                it[rating] = result.rating
-                it[voteCount] = result.vote_count
-                it[discount] = result.discount
-                it[dateAdded] = result.date_added
-                it[prepareDuration] = result.prepare_duration
-            }
-        }
-    }
-
-    override suspend fun getResults(): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.selectAll()
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
+    override suspend fun insertResult(result: Results): ServiceResult<Results> {
+        return try {
+            dbQuery {
+                ResultsTable.insert {
+                    it[sellerId] = result.seller_id
+                    it[title] = result.title
+                    it[description] = result.description
+                    it[foodCategoryId] = result.food_category_id
+                    it[imagePath] = result.image_path
+                    it[price] = result.price
+                    it[discount] = result.discount
+                    it[dateAdded] = result.date_added
+                    it[prepareDuration] = result.prepare_duration
                 }
-        }
-        return results
-    }
-
-    override suspend fun getResultById(resultId: Int): Results {
-        val result = dbQuery {
-            ResultsTable.select {
-                ResultsTable.id.eq(resultId)
+                    .resultedValues?.singleOrNull()?.let {
+                        ServiceResult.Success(rowToResults(it)!!)
+                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .map {
-                    rowToResults(it)
-                }
-                .singleOrNull()
-        }
-        return result!!
-    }
-
-    override suspend fun getResultsByTitle(resultTitle: String): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.title.eq(resultTitle)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByDescription(description: String?): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.title.like(description!!)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsBySellerId(sellerId: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.sellerId.eq(sellerId)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsBySellerCategoryId(sellerCategoryId: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.sellerCategoryId.eq(sellerCategoryId)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByResultCategoryId(resultCategoryId: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.resultCategoryId.eq(resultCategoryId)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByFoodCategoryId(foodCategoryId: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.foodCategoryId.eq(foodCategoryId)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByPrice(price: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.price.eq(price)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByRating(rating: Double): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.rating.eq(rating)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByVoteCount(voteCount: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.voteCount.eq(voteCount)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByDiscount(discount: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.discount.eq(discount)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByDateAdded(dateAdded: String): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.dateAdded.eq(dateAdded)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun getResultsByPrepareDuration(minutes: Int): List<Results?> {
-        val results = dbQuery {
-            ResultsTable.select {
-                ResultsTable.prepareDuration.eq(minutes)
-            }
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
-                .limit(20, offset = 1)
-                .map {
-                    rowToResults(it)
-                }
-        }
-        return results
-    }
-
-    override suspend fun updateResult(resultId: Int, results: Results) {
-        dbQuery {
-            ResultsTable.update({ResultsTable.id.eq(resultId)}) {
-                it[id] = results.result_id
-                it[title] = results.title
-                it[description] = results.description
-                it[sellerId] = results.seller_id
-                it[sellerCategoryId] = results.seller_category_id
-                it[resultCategoryId] = results.result_category_id
-                it[foodCategoryId] = results.food_category_id!!
-                it[imagePath] = results.image_path
-                it[price] = results.price
-                it[rating] = results.rating
-                it[voteCount] = results.vote_count
-                it[discount] = results.discount
-                it[dateAdded] = results.date_added
-                it[prepareDuration] = results.prepare_duration
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
+    }
+
+    override suspend fun getResults(): ServiceResult<List<ResultResponse?>> {
+        return try {
+            dbQuery {
+                ResultsTable.innerJoin(SellerTable).innerJoin(FoodCategoryTable).innerJoin(ResultRatingTable)
+                    .selectAll()
+                    .orderBy(ResultsTable.id to SortOrder.ASC)
+                    .limit(20)
+                    .map {
+                        rowToResultResponse(it)
+                    }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
+    }
+
+    override suspend fun getResultById(resultId: Int): ServiceResult<ResultResponse?> {
+        return try {
+            dbQuery {
+                ResultsTable.innerJoin(SellerTable).innerJoin(FoodCategoryTable).innerJoin(ResultRatingTable)
+                    .select {
+                        ResultsTable.id eq resultId
+                    }.map {
+                        rowToResultResponse(it)
+                    }.singleOrNull()
+            }?.let {
+                ServiceResult.Success(it)
+            } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
+    }
+
+    override suspend fun getResultsByTitle(resultTitle: String): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByDescription(description: String?): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsBySellerId(sellerId: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByResultCategoryId(resultCategoryId: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByFoodCategoryId(foodCategoryId: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByPrice(price: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByRating(rating: Double): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByVoteCount(voteCount: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByDiscount(discount: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByDateAdded(dateAdded: String): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getResultsByPrepareDuration(minutes: Int): ServiceResult<List<ResultResponse?>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateResult(results: Results): ServiceResult<ResultResponse> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteResultById(resultId: Int) {
-        dbQuery {
-            ResultsTable.deleteWhere {
-                ResultsTable.id.eq(resultId)
-            }
-        }
+        TODO("Not yet implemented")
     }
 
     override suspend fun deleteResults() {
-        dbQuery {
-            ResultsTable.deleteAll()
-        }
+        TODO("Not yet implemented")
     }
 
     private fun rowToResults(row: ResultRow?): Results? {
         if (row == null) return null
 
         return Results(
-            result_id = row[ResultsTable.id],
+            id = row[ResultsTable.id],
+            seller_id = row[ResultsTable.sellerId],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
-            seller_id = row[ResultsTable.sellerId],
-            seller_category_id = row[ResultsTable.sellerCategoryId],
-            result_category_id = row[ResultsTable.resultCategoryId],
             food_category_id = row[ResultsTable.foodCategoryId],
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
-            rating = row[ResultsTable.rating],
-            vote_count = row[ResultsTable.voteCount],
-            discount = row[ResultsTable.discount],
+            discount = row[ResultsTable.discount]!!,
             date_added = row[ResultsTable.dateAdded],
-            prepare_duration = row[ResultsTable.prepareDuration],
+            prepare_duration = row[ResultsTable.prepareDuration]!!,
+        )
+    }
+
+    private fun rowToResultResponse(row: ResultRow?): ResultResponse? {
+        if (row == null) return null
+
+        return ResultResponse(
+            id = row[ResultsTable.id],
+            seller_title = row[SellerTable.title],
+            title = row[ResultsTable.title],
+            description = row[ResultsTable.description]!!,
+            food_category = row[FoodCategoryTable.title],
+            image_path = row[ResultsTable.imagePath],
+            price = row[ResultsTable.price],
+            discount = row[ResultsTable.discount]!!,
+            rating = row[ResultRatingTable.rating],
+            vote_count = row[ResultRatingTable.fromCustomerId.count()],
+            date_added = row[ResultsTable.dateAdded],
+            prepare_duration = row[ResultsTable.prepareDuration]!!,
         )
     }
 }

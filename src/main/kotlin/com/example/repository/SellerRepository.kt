@@ -1,70 +1,60 @@
 package com.example.repository
 
 import com.example.models.Seller
+import com.example.models.responses.SellerResponse
+import com.example.utils.ServiceResult
 
 interface SellerRepository {
 
-    suspend fun insertSeller(seller: Seller)
+    suspend fun insertSeller(seller: Seller): ServiceResult<Seller>
 
-    suspend fun getSellers(): List<Seller?>
+    suspend fun getSellers(): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByTitle(
         sellerTitle: String?
-    ): List<Seller?> // get similar sellers by part of string passed
+    ): ServiceResult<List<SellerResponse?>> // get similar sellers by part of string passed
     suspend fun getSellersByDescription(
         description: String?
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByStateId(
         stateId: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByCityId(
         cityId: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByLocationTitle(
         locationTitle: String?
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByResultsId(
         resultId: Int
-    ): List<Seller?>
+    ): ServiceResult<SellerResponse?>
     suspend fun getSellersByResultsTitle(
         resultTitle: String?
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersBySellerCategoryId(
         sellerCategoryId: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByResultCategoryId(
         resultCategoryId: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByFoodCategoryId(
         foodCategoryId: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByOpenStatus(
         isOpen: Boolean
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByDeliveryDuration(
         minutes: Int
-    ): List<Seller?>
+    ): ServiceResult<List<SellerResponse?>>
     suspend fun getSellersByDeliveryFee(
-        fee: Int
-    ): List<Seller?>
+        fee: Long
+    ): ServiceResult<List<SellerResponse?>>
 
     suspend fun updateSeller(
-        sellerId: Int, seller: Seller
-    )
+        seller: Seller
+    ): ServiceResult<SellerResponse>
 
-    suspend fun deleteSellerById(
+    suspend fun deleteSeller(
         sellerId: Int
-    )
-    suspend fun deleteSellersByRating(
-        rating: Double
-    )
-    suspend fun deleteSellersByStateId(
-        stateId: Int
-    )
-    suspend fun deleteSellersByCityId(
-        cityId: Int
-    )
-    suspend fun deleteSellerByLocation(
-        location: String?
     )
     suspend fun deleteSellers()
 }

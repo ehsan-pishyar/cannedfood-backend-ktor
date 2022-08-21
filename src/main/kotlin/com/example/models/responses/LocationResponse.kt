@@ -10,10 +10,7 @@ data class LocationResponse(
     val location_title: String = "",
     val lat: Double = 0.0,
     val lon: Double = 0.0,
-    val city_id: Int = 0,
-    val city_title: String = "",
-    val state_id: Int = 0,
-    val state_title: String = ""
+    val city: CityResponse? = null
 )
 
 @Serializable

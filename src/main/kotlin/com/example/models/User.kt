@@ -24,17 +24,11 @@ data class Seller(
     val description: String = "",
     val logo: String = "",
     val banner: String = "",
-    val seller_category_id: SellerCategory? = null, // رستوران، کافه
-    val result_category_id: ResultCategory? = null, // فست فود، ایرانی، بین المللی
-    val food_category_id: List<FoodCategory> = emptyList(),
-    val state_id: State? = null,
-    val city_id: City? = null,
-    val location: Location? = null,
-    val is_open: Boolean = false,
-    val rating: Double = 0.0,
-    val vote_count: Int = 0,
-    val delivery_fee: Int = 0,
-    val delivery_duration: Int = 0
+    val state_id: Int = 0,
+    val city_id: Int = 0,
+    val delivery_fee: Long = 0L,
+    val delivery_duration: Int = 0,
+    val phone_number: String = ""
 )
 
 @Serializable

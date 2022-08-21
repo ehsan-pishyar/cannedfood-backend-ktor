@@ -24,14 +24,14 @@ object SellerTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
     val userId = integer("user_id") references UserTable.id
     val title = varchar(name = "title", length = 50).uniqueIndex()
-    val description = varchar(name = "description", length = 500)
-    val logo = varchar(name = "logo", length = 500)
-    val banner = varchar(name = "banner", length = 500)
-    val isOpen = bool("is_open").default(false)
-    val rating = double("rating").default(0.0)
-    val voteCount = integer("vote_count").default(0)
-    val deliveryFee = integer("delivery_fee").default(0)
-    val deliveryDuration = integer("delivery_duration").default(0)
+    val description = varchar(name = "description", length = 500).nullable()
+    val logo = varchar(name = "logo", length = 500).nullable()
+    val banner = varchar(name = "banner", length = 500).nullable()
+    val stateId = integer("state_id") references StateTable.id
+    val cityId = integer("city_id") references CityTable.id
+    val deliveryFee = long("delivery_fee").nullable()
+    val deliveryDuration = integer("delivery_duration").nullable()
+    val phoneNumber = varchar(name = "phone_number", length = 15).nullable()
 
     override val primaryKey = PrimaryKey(id, name = "PK_SELLER_ID")
 }
