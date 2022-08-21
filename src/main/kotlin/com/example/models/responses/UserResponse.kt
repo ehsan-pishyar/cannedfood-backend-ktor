@@ -13,17 +13,18 @@ data class UserResponse(
 
 @Serializable
 data class SellerResponse(
-    val title: String = "",
-    val description: String = "",
-    val logo: String = "",
-    val banner: String = "",
-    val state: String = "",
-    val city: String = "",
-    val location: String = "",
-    val results: List<Results> = emptyList(),
-    val seller_rating: Double = 0.0,
-    val vote_count: Long = 0L,
-    val delivery_fee: Long = 0L,
-    val delivery_duration: Int = 0,
-    val phone_number: String = ""
+    val id: Int?,
+    val title: String?,
+    val description: String?,
+    val logo: String?,
+    val banner: String?,
+    val state: String?,
+    val city: String?,
+    val location: String?,
+    val results: List<Results?>,
+    val seller_rating: String?,
+    val vote_count: Long?,
+    val delivery_fee: Long?,
+    val delivery_duration: Int?,
+    val phone_number: String?
 )

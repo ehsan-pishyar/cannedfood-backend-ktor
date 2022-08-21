@@ -12,7 +12,7 @@ data class Results(
     val image_path: String = "",
     val price: Long = 0L,
     val discount: Int = 0,
-    val date_added: String = "",
+    val date_created: String = "",
     val prepare_duration: Int = 0
 )
 

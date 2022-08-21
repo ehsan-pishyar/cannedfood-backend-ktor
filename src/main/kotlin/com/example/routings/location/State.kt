@@ -1,13 +1,11 @@
 package com.example.routings.location
 
-import com.example.models.responses.StateResponse
 import com.example.repository.StateRepository
 import com.example.utils.ServiceResult
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import java.security.Provider.Service
 
 fun Application.stateRoutes(stateRepository: StateRepository) {
     routing {
@@ -36,7 +34,7 @@ fun Application.stateRoutes(stateRepository: StateRepository) {
                 } else {
                     val states = stateRepository.getStates()
                     if (states is ServiceResult.Success) {
-                        call.respond(states.data!!)
+                        call.respond(states.data)
                     } else {
 
                     }

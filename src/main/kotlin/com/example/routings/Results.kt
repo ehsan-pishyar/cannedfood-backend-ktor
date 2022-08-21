@@ -2,18 +2,32 @@ package com.example.routings
 
 import com.example.models.Results
 import com.example.repository.ResultsRepository
+import com.example.usecases.InsertResultUseCase
+import com.example.utils.ServiceResult
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.resultsRoutes(resultsRepository: ResultsRepository) {
+fun Application.resultsRoutes(
+    resultsRepository: ResultsRepository,
+    insertResultUseCase: InsertResultUseCase
+) {
     routing {
         route("/results") {
 
             post("/result") {
-                val result = call.receive<Results>()
-                resultsRepository.insertResult(result)
+                call.receiveOrNull<Results>()?.let {
+                    val result = insertResultUseCase(ServiceResult.Success(it))
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = result!!
+                    )
+                } ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
             }
 
             get("/") {
@@ -32,7 +46,7 @@ fun Application.resultsRoutes(resultsRepository: ResultsRepository) {
 
                 if (id != null) {
                     val result = resultsRepository.getResultById(id)
-                    call.respond(result!!)
+                    call.respond(result)
                 } else if (title != null) {
                     val results = resultsRepository.getResultsByTitle(title)
                     call.respond(results)
@@ -68,7 +82,7 @@ fun Application.resultsRoutes(resultsRepository: ResultsRepository) {
 
             put("/result") {
                 val result = call.receive<Results>()
-                resultsRepository.updateResult(result.result_id, result)
+                resultsRepository.updateResult(result)
             }
 
             delete("/result") {

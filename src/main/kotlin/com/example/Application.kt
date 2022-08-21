@@ -9,6 +9,7 @@ import com.example.routings.location.locationRoutes
 import com.example.routings.location.stateRoutes
 import com.example.routings.user.userRoutes
 import com.example.tables.DatabaseFactory.init
+import com.example.usecases.InsertResultUseCase
 import com.example.usecases.InsertUserUseCase
 import io.ktor.server.application.*
 
@@ -26,6 +27,7 @@ fun Application.module() {
     val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
     val sellerRepository: SellerRepository = SellerRepositoryImpl()
     val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
+    val insertResultUseCase = InsertResultUseCase(resultsRepository)
     val userRepository: UserRepository = UserRepositoryImpl()
     val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
     val locationRepository: LocationRepository = LocationRepositoryImpl()
@@ -40,7 +42,7 @@ fun Application.module() {
     typeRoutes(foodCategoryRepository)
     categoryRoutes(resultCategoryRepository)
     sellerRoutes(sellerRepository)
-    resultsRoutes(resultsRepository)
+    resultsRoutes(resultsRepository, insertResultUseCase)
     userRoutes(userRepository)
     sellerCategoryRoutes(sellerCategoryRepository)
     locationRoutes(locationRepository)

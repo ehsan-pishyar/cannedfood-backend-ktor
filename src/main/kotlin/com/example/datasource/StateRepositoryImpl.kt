@@ -45,7 +45,7 @@ class StateRepositoryImpl : StateRepository {
     override suspend fun getStatesByTitle(stateTitle: String): ServiceResult<List<StateResponse?>> {
         val state = dbQuery {
             StateTable.select(StateTable.title.eq(stateTitle))
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                 .map {
                 rowToState(it)
             }

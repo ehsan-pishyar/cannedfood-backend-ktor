@@ -11,8 +11,6 @@ import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 class SellerRepositoryImpl : SellerRepository {
     override suspend fun insertSeller(seller: Seller): ServiceResult<Seller> {
@@ -139,7 +137,7 @@ class SellerRepositoryImpl : SellerRepository {
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
-            date_added = row[ResultsTable.dateAdded],
+            date_created = row[ResultsTable.dateCreated],
             prepare_duration = row[ResultsTable.prepareDuration]!!
         )
     }

@@ -1,7 +1,6 @@
 package com.example.datasource
 
 import com.example.models.Results
-import com.example.models.Seller
 import com.example.models.responses.ResultResponse
 import com.example.repository.ResultsRepository
 import com.example.tables.DatabaseFactory.dbQuery
@@ -13,7 +12,6 @@ import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class ResultsRepositoryImpl : ResultsRepository {
 
@@ -28,7 +26,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     it[imagePath] = result.image_path
                     it[price] = result.price
                     it[discount] = result.discount
-                    it[dateAdded] = result.date_added
+                    it[dateCreated] = result.date_created
                     it[prepareDuration] = result.prepare_duration
                 }
                     .resultedValues?.singleOrNull()?.let {
@@ -156,7 +154,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
-            date_added = row[ResultsTable.dateAdded],
+            date_created = row[ResultsTable.dateCreated],
             prepare_duration = row[ResultsTable.prepareDuration]!!,
         )
     }
@@ -175,7 +173,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             discount = row[ResultsTable.discount]!!,
             rating = row[ResultRatingTable.rating],
             vote_count = row[ResultRatingTable.fromCustomerId.count()],
-            date_added = row[ResultsTable.dateAdded],
+            date_created = row[ResultsTable.dateCreated],
             prepare_duration = row[ResultsTable.prepareDuration]!!,
         )
     }

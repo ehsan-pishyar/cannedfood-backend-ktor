@@ -95,7 +95,7 @@ class CityRepositoryImpl : CityRepository {
             }.singleOrNull()
         }
         return if (city != null && state != null) {
-            ServiceResult.Success(CityResponse(city.id!!, city.title, state))
+            ServiceResult.Success(CityResponse(city.id, city.title, state))
         } else {
             ServiceResult.Error(ErrorCode.DATABASE_ERROR)
         }

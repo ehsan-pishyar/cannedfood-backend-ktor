@@ -23,7 +23,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
     override suspend fun getResultCategories(sellerCategoryId: Int): List<ResultCategory?> {
         val resultCategories = dbQuery {
             ResultCategoryTable.select(ResultCategoryTable.sellerCategoryId.eq(sellerCategoryId))
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                 .map {
                 rowToResultCategory(it)
             }
@@ -37,7 +37,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
             ResultCategoryTable.select(
                 ResultCategoryTable.title.eq(categoryTitle!!)
             )
-                .orderBy(FoodCategoryTable.fcId to SortOrder.ASC)
+                .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                 .map {
                 rowToResultCategory(it)
             }
@@ -51,9 +51,9 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
     ) {
         dbQuery {
             ResultCategoryTable.update({
-                ResultCategoryTable.rcId.eq(resultCategoryId)
+                ResultCategoryTable.id.eq(resultCategoryId)
             }) {
-                it[rcId] = resultCategory.rc_id
+                it[id] = resultCategory.id
                 it[title] = resultCategory.title
                 it[imagePath] = resultCategory.image_path
                 it[sellerCategoryId] = resultCategory.seller_category_id
@@ -64,7 +64,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
     override suspend fun deleteResultCategory(resultCategoryId: Int) {
         dbQuery {
             ResultCategoryTable.deleteWhere {
-                ResultCategoryTable.rcId.eq(resultCategoryId)
+                ResultCategoryTable.id.eq(resultCategoryId)
             }
         }
     }
@@ -87,7 +87,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         if (row == null) return null
 
         return ResultCategory(
-            rc_id = row[ResultCategoryTable.rcId],
+            id = row[ResultCategoryTable.id],
             title = row[ResultCategoryTable.title],
             image_path = row[ResultCategoryTable.imagePath],
             seller_category_id = row[ResultCategoryTable.sellerCategoryId]

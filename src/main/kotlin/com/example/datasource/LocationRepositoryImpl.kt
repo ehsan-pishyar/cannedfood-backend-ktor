@@ -100,11 +100,7 @@ class LocationRepositoryImpl: LocationRepository {
         return LocationResponse(
             location_title = row[LocationTable.title],
             lat = row[LocationTable.lat],
-            lon = row[LocationTable.lon],
-            city_id = row[CityTable.id],
-            city_title = row[CityTable.title],
-            state_id = row[StateTable.id],
-            state_title = row[StateTable.title]
+            lon = row[LocationTable.lon]
         )
     }
 }

@@ -49,6 +49,7 @@ data class SellerOpenStatus(
     val is_open: Boolean = false
 )
 
+@Serializable
 enum class RatingStars(val value: Int) {
     NOT_RATED(0),
 

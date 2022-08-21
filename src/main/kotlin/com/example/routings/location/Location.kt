@@ -38,11 +38,7 @@ fun Application.locationRoutes(locationRepository: LocationRepository) {
                 val params = call.request.rawQueryParameters
                 val locationId = params["location_id"]!!.toInt()
 
-                if (locationId != null) {
-                    locationRepository.deleteLocation(locationId)
-                } else {
-                    locationRepository.deleteLocations()
-                }
+                locationRepository.deleteLocation(locationId)
             }
         }
     }
