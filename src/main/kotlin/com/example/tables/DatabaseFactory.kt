@@ -17,7 +17,7 @@ object DatabaseFactory {
 //        flyway.migrate()
 
         transaction {
-            SchemaUtils.create(UserTable, SellerTable, SellerCategoryTable)
+            SchemaUtils.create(UserTable, SellerTable, SellerCategoryTable, StateTable, CityTable, LocationTable)
         }
     }
 
