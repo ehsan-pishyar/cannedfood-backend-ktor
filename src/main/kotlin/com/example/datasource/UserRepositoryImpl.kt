@@ -109,15 +109,30 @@ class UserRepositoryImpl : UserRepository {
     /**
      * آپدیت اطلاعات کاربر با استفاده از کاربری که بهش پاس میدیم
      */
-    override suspend fun updateUser(user: User) {
-        dbQuery {
-            UserTable.update {
-                (id eq user.id)
-                it[id] = user.id
-                it[email] = user.email
-                it[password] = user.password
-                it[userType] = user.user_type
-                it[dateCreated] = user.date_created
+    override suspend fun updateUser(userId: Int, user: User): ServiceResult<User> {
+        return try {
+            dbQuery {
+                UserTable.update({ UserTable.id eq userId }) {
+                    (id eq user.id)
+                    it[id] = userId
+                    it[email] = user.email
+                    it[password] = hash(user.password)
+                    it[userType] = user.user_type
+                }
+            }
+
+            val response = dbQuery {
+                UserTable.select {
+                    UserTable.id eq userId
+                }
+                    .map { rowToUser(it) }
+                    .single()
+            }
+            ServiceResult.Success(response!!)
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }

@@ -26,6 +26,7 @@ data class Seller(
     val banner: String = "",
     val state_id: Int = 0,
     val city_id: Int = 0,
+    val location_id: Long = 0L,
     val delivery_fee: Long = 0L,
     val delivery_duration: Int = 0,
     val phone_number: String = "",
@@ -34,7 +35,7 @@ data class Seller(
 
 @Serializable
 data class Customer(
-    val id: Int = 0,
+    val id: Long = 0L,
     val user_id: Int = 0,
     val first_name: String = "",
     val last_name: String = "",

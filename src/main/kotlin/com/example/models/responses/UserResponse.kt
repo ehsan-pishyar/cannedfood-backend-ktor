@@ -22,9 +22,14 @@ data class SellerResponse(
     val city: String?,
     val location: String?,
     val results: List<Results?>,
-    val seller_rating: String?,
+    val rating: Double?,
     val vote_count: Long?,
     val delivery_fee: Long?,
     val delivery_duration: Int?,
     val phone_number: String?
+)
+
+@Serializable
+data class CustomerResponse(
+    val id: Long?
 )

@@ -3,7 +3,6 @@ package com.example.tables
 import org.jetbrains.exposed.sql.Table
 
 object StateTable: Table() {
-
     val id = integer("id").uniqueIndex()
     val title = varchar(name = "title", length = 50)
 
@@ -11,7 +10,6 @@ object StateTable: Table() {
 }
 
 object CityTable: Table() {
-
     val id = integer("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 50)
     val stateId = integer("state_id") references StateTable.id
@@ -20,8 +18,7 @@ object CityTable: Table() {
 }
 
 object LocationTable: Table() {
-
-    val id = integer("id").uniqueIndex().autoIncrement()
+    val id = long("id").uniqueIndex().autoIncrement()
     val title = varchar(name = "title", length = 50)
     val lat = double("lat").default(0.0)
     val lon = double("lon").default(0.0)

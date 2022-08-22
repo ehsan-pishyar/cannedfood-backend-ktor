@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 
 object SellerRatingTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
-    val fromCustomerId = integer("from_customer_id") references CustomerTable.id
+    val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val rating = double("rating_stars")
     val toSellerId = integer("to_seller_id") references SellerTable.id
 
@@ -14,7 +14,7 @@ object SellerRatingTable: Table() {
 
 object ResultRatingTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
-    val fromCustomerId = integer("from_customer_id") references CustomerTable.id
+    val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val rating = double("rating_stars")
     val toResultId = integer("to_result_id") references ResultsTable.id
 
@@ -23,7 +23,7 @@ object ResultRatingTable: Table() {
 
 object SellerCommentTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
-    val fromCustomerId = integer("from_customer_id") references CustomerTable.id
+    val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toSellerId = integer("to_seller_id") references SellerTable.id
 
@@ -32,7 +32,7 @@ object SellerCommentTable: Table() {
 
 object ResultCommentTable: Table() {
     val id = integer("id").uniqueIndex().autoIncrement()
-    val fromCustomerId = integer("from_customer_id") references CustomerTable.id
+    val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toResultId = integer("to_result_id") references ResultsTable.id
 

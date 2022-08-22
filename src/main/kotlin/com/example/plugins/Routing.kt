@@ -2,8 +2,10 @@ package com.example.plugins
 
 import com.example.datasource.UserRepositoryImpl
 import com.example.repository.UserRepository
+import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
 import com.example.routings.user.insertNewUser
+import com.example.routings.user.updateUser
 import com.example.usecases.InsertUserUseCase
 import com.example.utils.ValidateUserEmail
 import io.ktor.server.routing.*
@@ -24,6 +26,8 @@ fun Application.configureRouting() {
             val insertUserUseCase = InsertUserUseCase(emailValidation, userRepository)
             insertNewUser(insertUserUseCase)
             getUsers(userRepository)
+            updateUser(userRepository)
+            deleteUsers(userRepository)
 
 
         }

@@ -14,7 +14,7 @@ interface UserRepository {
     suspend fun getUserById(userId: Int): ServiceResult<User?>
     suspend fun getUsersByEmail(email: String): ServiceResult<List<User?>>
 
-    suspend fun updateUser(user: User)
+    suspend fun updateUser(userId: Int, user: User): ServiceResult<User>
 
     suspend fun deleteUser(userId: Int)
     suspend fun deleteUsers()

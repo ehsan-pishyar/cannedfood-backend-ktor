@@ -29,6 +29,7 @@ object SellerTable: Table() {
     val banner = varchar(name = "banner", length = 500).nullable()
     val stateId = integer("state_id") references StateTable.id
     val cityId = integer("city_id") references CityTable.id
+    val locationId = long("location_id") references LocationTable.id
     val deliveryFee = long("delivery_fee").nullable()
     val deliveryDuration = integer("delivery_duration").nullable()
     val phoneNumber = varchar(name = "phone_number", length = 15).nullable()
@@ -38,8 +39,7 @@ object SellerTable: Table() {
 }
 
 object CustomerTable: Table() {
-
-    val id = integer("id").uniqueIndex().autoIncrement()
+    val id = long("id").uniqueIndex().autoIncrement()
     val userId = integer("user_id") references UserTable.id
     val firstName = varchar(name = "first_name", length = 50)
     val lastName = varchar(name = "last_name", length = 50)
