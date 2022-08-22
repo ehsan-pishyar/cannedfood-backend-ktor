@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.datasource.UserRepositoryImpl
 import com.example.repository.UserRepository
+import com.example.routings.user.getUsers
 import com.example.routings.user.insertNewUser
 import com.example.usecases.InsertUserUseCase
 import com.example.utils.ValidateUserEmail
@@ -17,10 +18,14 @@ fun Application.configureRouting() {
                 call.respondText("Hello")
             }
 
+            // User Section
             val userRepository: UserRepository = UserRepositoryImpl()
             val emailValidation = ValidateUserEmail()
             val insertUserUseCase = InsertUserUseCase(emailValidation, userRepository)
             insertNewUser(insertUserUseCase)
+            getUsers(userRepository)
+
+
         }
         // Static plugin. Try to access `/static/index.html`
         static("/static") {

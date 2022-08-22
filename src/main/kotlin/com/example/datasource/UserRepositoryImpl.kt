@@ -85,10 +85,10 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun getUserByUsername(userName: String): ServiceResult<List<User?>> {
+    override suspend fun getUsersByEmail(email: String): ServiceResult<List<User?>> {
         return try {
             val users = dbQuery {
-                UserTable.select { UserTable.email like "$userName%" }
+                UserTable.select { UserTable.email like "$email%" }
                     .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
             }
@@ -97,7 +97,7 @@ class UserRepositoryImpl : UserRepository {
             println(e)
             when (e) {
                 is ExposedSQLException -> {
-                    println("An Error occurred due to response user by username")
+                    println("An Error occurred due to response user by email")
                     ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 }
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)

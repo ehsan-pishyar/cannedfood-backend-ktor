@@ -2,7 +2,7 @@ package com.example.routings.user
 
 import com.example.models.User
 import com.example.usecases.InsertUserUseCase
-import com.example.utils.ServiceResult
+import com.example.utils.Routes
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -19,7 +19,7 @@ import io.ktor.server.routing.*
 fun Route.insertNewUser(
     insertUserUseCase: InsertUserUseCase
 ) {
-    route("/users") {
+    route(Routes.USERS_ROUTE) {
         post("/create") {
 
             val request = call.receiveOrNull<User>() ?: kotlin.run {

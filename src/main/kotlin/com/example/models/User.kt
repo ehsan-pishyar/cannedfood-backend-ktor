@@ -28,7 +28,8 @@ data class Seller(
     val city_id: Int = 0,
     val delivery_fee: Long = 0L,
     val delivery_duration: Int = 0,
-    val phone_number: String = ""
+    val phone_number: String = "",
+    val date_created: String = ""
 )
 
 @Serializable
@@ -42,7 +43,8 @@ data class Customer(
     val email: String = "",
     val address: String = "",
     val sex: UserSex = UserSex.UNKNOWN,
-    val birth_date: String = ""
+    val birth_date: String = "",
+    val date_created: String = ""
 )
 
 /**

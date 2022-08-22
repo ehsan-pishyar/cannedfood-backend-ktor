@@ -27,6 +27,7 @@ class SellerRepositoryImpl : SellerRepository {
                     it[deliveryFee] = seller.delivery_fee
                     it[deliveryDuration] = seller.delivery_duration
                     it[phoneNumber] = seller.phone_number
+                    it[dateCreated] = seller.date_created
                 }
                     .resultedValues?.singleOrNull()?.let {
                         ServiceResult.Success(rowToSeller(it)!!)
@@ -121,7 +122,8 @@ class SellerRepositoryImpl : SellerRepository {
             city_id = row[SellerTable.cityId],
             delivery_fee = row[SellerTable.deliveryFee]!!,
             delivery_duration = row[SellerTable.deliveryDuration]!!,
-            phone_number = row[SellerTable.phoneNumber]!!
+            phone_number = row[SellerTable.phoneNumber]!!,
+            date_created = row[SellerTable.dateCreated]
         )
     }
 

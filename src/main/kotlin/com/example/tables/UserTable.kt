@@ -32,6 +32,7 @@ object SellerTable: Table() {
     val deliveryFee = long("delivery_fee").nullable()
     val deliveryDuration = integer("delivery_duration").nullable()
     val phoneNumber = varchar(name = "phone_number", length = 15).nullable()
+    val dateCreated = varchar(name = "date_created", length = 50).default(LocalDateTime.now().toDatabaseString())
 
     override val primaryKey = PrimaryKey(id, name = "PK_SELLER_ID")
 }

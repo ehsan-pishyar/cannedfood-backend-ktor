@@ -12,7 +12,7 @@ interface UserRepository {
 
     suspend fun getUsers(): ServiceResult<List<User?>>
     suspend fun getUserById(userId: Int): ServiceResult<User?>
-    suspend fun getUserByUsername(userName: String): ServiceResult<List<User?>>
+    suspend fun getUsersByEmail(email: String): ServiceResult<List<User?>>
 
     suspend fun updateUser(user: User)
 

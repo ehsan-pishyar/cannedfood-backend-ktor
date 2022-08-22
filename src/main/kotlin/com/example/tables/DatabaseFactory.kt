@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -14,12 +13,12 @@ object DatabaseFactory {
     fun init(){
         Database.connect(hikari())
 
+//        val flyway: Flyway = Flyway.configure().dataSource(hikari()).load()
+//        flyway.migrate()
+
         transaction {
             SchemaUtils.create(UserTable, SellerTable, SellerCategoryTable)
         }
-
-//        val flyway: Flyway = Flyway.configure().dataSource().load()
-//        flyway.migrate()
     }
 
     fun hikari(): HikariDataSource {
