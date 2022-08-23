@@ -1,6 +1,6 @@
-package com.example.routings.city
+package com.example.routings.location
 
-import com.example.repository.CityRepository
+import com.example.repository.LocationRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
 import io.ktor.http.*
@@ -8,71 +8,71 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getCities(
-    cityRepository: CityRepository
+fun Route.getLocations(
+    locationRepository: LocationRepository
 ) {
-    route(Routes.CITY_ROUTE) {
+    route(Routes.LOCATION_ROUTE) {
         get("/") {
 
             val params = call.request.rawQueryParameters
-            val stateId = params["state_id"]?.toInt()
-            val id = params["id"]?.toInt()
+            val cityId = params["city_id"]?.toInt()
+            val id = params["id"]?.toLong()
             val title = params["title"]
 
-            if (stateId != null && id == null && title == null) {
-                cityRepository.getCities(stateId).let { citiesResponse ->
-                    when(citiesResponse) {
+            if (cityId != null && id == null && title == null) {
+                locationRepository.getLocations(cityId).let { locationResponse ->
+                    when(locationResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = citiesResponse.data
+                                message = locationResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
                             println("Error! City not found or state id you entered is invalid")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = locationResponse.errorCode
                             )
                         }
                     }
                 }
             }
 
-            if (stateId != null && id != null) {
-                cityRepository.getCityById(id).let { cityResponse ->
-                    when(cityResponse) {
+            if (cityId != null && id != null) {
+                locationRepository.getLocationById(id).let { locationResponse ->
+                    when(locationResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = cityResponse.data!!
+                                message = locationResponse.data!!
                             )
                         }
                         is ServiceResult.Error -> {
                             println("Error! City not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = cityResponse.errorCode
+                                message = locationResponse.errorCode
                             )
                         }
                     }
                 }
             }
 
-            if (stateId != null && title != null) {
-                cityRepository.getCitiesByTitle(title).let { citiesResponse ->
-                    when(citiesResponse) {
+            if (cityId == null && title != null) {
+                locationRepository.getLocationsByTitle(title).let { locationsResponse ->
+                    when(locationsResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = citiesResponse.data
+                                message = locationsResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
                             println("Error! City not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = locationsResponse.errorCode
                             )
                         }
                     }

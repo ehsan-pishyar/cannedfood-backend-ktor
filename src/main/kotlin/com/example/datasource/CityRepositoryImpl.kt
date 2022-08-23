@@ -1,6 +1,7 @@
 package com.example.datasource
 
 import com.example.models.City
+import com.example.models.responses.CityResponse
 import com.example.repository.CityRepository
 import com.example.tables.CityTable
 import com.example.tables.DatabaseFactory.dbQuery
@@ -9,6 +10,7 @@ import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class CityRepositoryImpl : CityRepository {
 
@@ -32,14 +34,14 @@ class CityRepositoryImpl : CityRepository {
         }
     }
 
-    override suspend fun getCities(stateId: Int): ServiceResult<List<City?>> {
+    override suspend fun getCities(stateId: Int): ServiceResult<List<CityResponse?>> {
         return try {
             dbQuery {
                 (CityTable innerJoin StateTable).select {
                     CityTable.stateId eq stateId
                 }
                     .orderBy(CityTable.id to SortOrder.ASC)
-                    .map { rowToCity(it)!! }
+                    .map { rowToCityResponse(it)!! }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -91,12 +93,12 @@ class CityRepositoryImpl : CityRepository {
 //        }
     }
 
-    override suspend fun getCityById(stateId: Int, cityId: Int): ServiceResult<City?> {
+    override suspend fun getCityById(cityId: Int): ServiceResult<CityResponse?> {
         return try {
             dbQuery {
-                CityTable.select {
-                    (CityTable.stateId eq stateId) and (CityTable.id eq cityId)
-                }.map { rowToCity(it) }
+                (CityTable innerJoin StateTable).select {
+                    (CityTable.id eq cityId)
+                }.map { rowToCityResponse(it) }
                     .singleOrNull()
             }.let {
                 ServiceResult.Success(it)
@@ -130,14 +132,14 @@ class CityRepositoryImpl : CityRepository {
 
     }
 
-    override suspend fun getCitiesByTitle(stateId: Int, cityTitle: String?): ServiceResult<List<City?>> {
+    override suspend fun getCitiesByTitle(cityTitle: String?): ServiceResult<List<CityResponse?>> {
         return try {
             dbQuery {
-                CityTable.select {
-                    (CityTable.stateId eq stateId) and (CityTable.title like "$cityTitle%")
+                (CityTable innerJoin StateTable).select {
+                    CityTable.title like "$cityTitle%"
                 }
                     .orderBy(CityTable.id to SortOrder.ASC)
-                    .map { rowToCity(it) }
+                    .map { rowToCityResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -150,24 +152,28 @@ class CityRepositoryImpl : CityRepository {
     }
 
 
-    override suspend fun updateCity(cityId: Int, city: City): ServiceResult<City> {
+    override suspend fun updateCity(cityId: Int, city: City): ServiceResult<City?> {
         return try {
-            val id = dbQuery {
+             dbQuery {
                 CityTable.update({
                     CityTable.id eq cityId
                 }) {
-                    it[id] = city.id
+                    it[id] = cityId
                     it[title] = city.title
                     it[stateId] = city.state_id
                 }
-            }
-            dbQuery {
-                CityTable.select {
-                    CityTable.id eq id
-                }.map { rowToCity(it) }
-                    .singleOrNull()
-            }.let {
-                ServiceResult.Success(it!!)
+
+                 transaction {
+                     CityTable.select {
+                         CityTable.id eq cityId
+                     }
+                         .map {
+                             rowToCity(it)
+                         }
+                         .singleOrNull()
+                 }.let {
+                     ServiceResult.Success(it)
+                 }
             }
         } catch (e: Exception) {
             when (e) {
@@ -177,25 +183,71 @@ class CityRepositoryImpl : CityRepository {
         }
     }
 
-    override suspend fun deleteCity(cityId: Int) {
-        dbQuery {
-            CityTable.deleteWhere {
-                CityTable.id eq cityId
+    override suspend fun deleteCityById(cityId: Int): ServiceResult<List<CityResponse?>> {
+        return try {
+            dbQuery {
+                CityTable.deleteWhere {
+                    CityTable.id eq cityId
+                }
+
+                transaction {
+                    (CityTable innerJoin StateTable).selectAll()
+                        .orderBy(CityTable.id to SortOrder.ASC)
+                        .limit(20)
+                        .map { rowToCityResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun deleteCitiesOfState(stateId: Int) {
-        dbQuery {
-            CityTable.deleteWhere {
-                CityTable.stateId eq stateId
+    override suspend fun deleteCitiesOfState(stateId: Int): ServiceResult<List<CityResponse?>> {
+        return try {
+            dbQuery {
+                CityTable.deleteWhere {
+                    CityTable.stateId eq stateId
+                }
+                transaction {
+                    (CityTable innerJoin StateTable).selectAll()
+                        .orderBy(CityTable.id to SortOrder.ASC)
+                        .limit(20)
+                        .map { rowToCityResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun deleteCities() {
-        dbQuery {
-            CityTable.deleteAll()
+    override suspend fun deleteCities(): ServiceResult<List<CityResponse?>> {
+        return try {
+            dbQuery {
+                CityTable.deleteAll()
+                transaction {
+                    (CityTable innerJoin StateTable).selectAll()
+                        .orderBy(CityTable.id to SortOrder.ASC)
+                        .limit(20)
+                        .map { rowToCityResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
         }
     }
 
@@ -206,6 +258,16 @@ class CityRepositoryImpl : CityRepository {
             id = row[CityTable.id],
             title = row[CityTable.title],
             state_id = row[CityTable.stateId]
+        )
+    }
+
+    private fun rowToCityResponse(row: ResultRow?): CityResponse? {
+        if (row == null) return null
+
+        return CityResponse(
+            id = row[CityTable.id],
+            title = row[CityTable.title],
+            state = row[StateTable.title]
         )
     }
 

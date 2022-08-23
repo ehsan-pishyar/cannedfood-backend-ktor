@@ -1,6 +1,6 @@
-package com.example.routings.city
+package com.example.routings.location
 
-import com.example.repository.CityRepository
+import com.example.repository.LocationRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
 import io.ktor.http.*
@@ -8,27 +8,27 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteCities(
-    cityRepository: CityRepository
+fun Route.deleteLocations(
+    locationRepository: LocationRepository
 ) {
-    route(Routes.CITY_ROUTE) {
+    route(Routes.LOCATION_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
-            val id = call.parameters["id"]!!.toInt()
+            val id = call.parameters["id"]!!.toLong()
             id.let {
-                cityRepository.deleteCityById(id).let { citiesResponse ->
-                    when(citiesResponse) {
+                locationRepository.deleteLocationById(id).let { locationsResponse ->
+                    when(locationsResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = citiesResponse.data
+                                message = locationsResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
                             println("Error! No Cities received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = locationsResponse.errorCode
                             )
                         }
                     }
@@ -36,23 +36,23 @@ fun Route.deleteCities(
             }
         }
 
-        delete("/{state_id}/delete") {
+        delete("/{city_id}/delete") {
 
-            val stateId = call.parameters["state_id"]!!.toInt()
-            stateId.let {
-                cityRepository.deleteCitiesOfState(stateId).let { citiesResponse ->
-                    when(citiesResponse) {
+            val cityId = call.parameters["city_id"]!!.toInt()
+            cityId.let {
+                locationRepository.deleteLocationsOfCity(cityId).let { locationsResponse ->
+                    when(locationsResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = citiesResponse.data
+                                message = locationsResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
                             println("Error! No Cities received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = locationsResponse.errorCode
                             )
                         }
                     }
@@ -61,19 +61,19 @@ fun Route.deleteCities(
         }
 
         delete("/") {
-            cityRepository.deleteCities().let { citiesResponse ->
-                when(citiesResponse) {
+            locationRepository.deleteLocations().let { locationsResponse ->
+                when(locationsResponse) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = citiesResponse.data
+                            message = locationsResponse.data
                         )
                     }
                     is ServiceResult.Error -> {
                         println("Error! No Cities received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = citiesResponse.errorCode
+                            message = locationsResponse.errorCode
                         )
                     }
                 }

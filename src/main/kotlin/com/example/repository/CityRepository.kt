@@ -8,13 +8,13 @@ interface CityRepository {
 
     suspend fun insertCity(city: City): ServiceResult<City?>
 
-    suspend fun getCities(stateId: Int): ServiceResult<List<City?>>
-    suspend fun getCityById(stateId:Int, cityId: Int): ServiceResult<City?>
-    suspend fun getCitiesByTitle(stateId: Int, cityTitle: String?): ServiceResult<List<City?>>
+    suspend fun getCities(stateId: Int): ServiceResult<List<CityResponse?>>
+    suspend fun getCityById(cityId: Int): ServiceResult<CityResponse?>
+    suspend fun getCitiesByTitle(cityTitle: String?): ServiceResult<List<CityResponse?>>
 
-    suspend fun updateCity(cityId: Int, city: City): ServiceResult<City>
+    suspend fun updateCity(cityId: Int, city: City): ServiceResult<City?>
 
-    suspend fun deleteCity(cityId: Int)
-    suspend fun deleteCitiesOfState(stateId: Int)
-    suspend fun deleteCities()
+    suspend fun deleteCityById(cityId: Int): ServiceResult<List<CityResponse?>>
+    suspend fun deleteCitiesOfState(stateId: Int): ServiceResult<List<CityResponse?>>
+    suspend fun deleteCities(): ServiceResult<List<CityResponse?>>
 }

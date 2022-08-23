@@ -15,7 +15,7 @@ data class StateResponse(
 data class CityResponse(
     val id: Int?,
     val title: String?,
-    val state: State?
+    val state: String?
 )
 
 @Serializable

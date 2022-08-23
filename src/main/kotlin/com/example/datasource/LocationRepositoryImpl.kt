@@ -11,10 +11,11 @@ import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class LocationRepositoryImpl: LocationRepository {
 
-    override suspend fun insertLocation(location: Location): ServiceResult<Location> {
+    override suspend fun insertLocation(location: Location): ServiceResult<Location?> {
         return try {
             dbQuery {
                 LocationTable.insert {
@@ -102,46 +103,109 @@ class LocationRepositoryImpl: LocationRepository {
         }
     }
 
-    override suspend fun updateLocation(locationId: Long, location: Location): ServiceResult<Location> {
+    override suspend fun updateLocation(locationId: Long, location: Location): ServiceResult<Location?> {
         return try {
-            val id = dbQuery {
+            dbQuery {
                 LocationTable.update({
                     LocationTable.id eq locationId
                 }) {
-                    it[id] = location.id
+                    it[id] = locationId
                     it[title] = location.title
                     it[lat] = location.lat
                     it[lon] = location.lon
                     it[cityId] = location.city_id
                 }
-            }
-            dbQuery {
-                LocationTable.select {
-                    LocationTable.id eq id.toLong()
-                }.map { rowToLocation(it) }
-                    .singleOrNull()
-            }.let {
-                ServiceResult.Success(it!!)
+
+                transaction {
+                    LocationTable.select {
+                        LocationTable.id eq locationId
+                    }
+                        .map { rowToLocation(it) }
+                        .singleOrNull()
+                }.let {
+                    ServiceResult.Success(it)
+                }
             }
         } catch (e: Exception) {
+            println(e)
             when (e) {
+                is ExposedSQLException -> {
+                    println("An Error occurred due to response user by username")
+                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                }
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
+    }
+
+    override suspend fun deleteLocationById(locationId: Long): ServiceResult<List<LocationResponse?>> {
+        return try {
+            dbQuery {
+                LocationTable.deleteWhere {
+                    LocationTable.id eq locationId
+                }
+
+                transaction {
+                    (LocationTable innerJoin CityTable innerJoin StateTable).selectAll()
+                        .orderBy(LocationTable.id to SortOrder.ASC)
+                        .limit(20)
+                        .map { rowToLocationResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun deleteLocation(locationId: Long) {
-        dbQuery {
-            LocationTable.deleteWhere {
-                LocationTable.id eq locationId
+    override suspend fun deleteLocationsOfCity(cityId: Int): ServiceResult<List<LocationResponse?>> {
+        return try {
+            dbQuery {
+                LocationTable.deleteWhere {
+                    LocationTable.cityId eq cityId
+                }
+
+                transaction {
+                    (LocationTable innerJoin CityTable innerJoin StateTable).select {
+                        LocationTable.cityId eq cityId
+                    }
+                        .orderBy(LocationTable.id to SortOrder.ASC)
+                        .limit(20)
+                        .map { rowToLocationResponse(it)!! }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun deleteLocations() {
-        dbQuery {
-            LocationTable.deleteAll()
+    override suspend fun deleteLocations(): ServiceResult<List<LocationResponse?>> {
+        return try {
+            dbQuery {
+                LocationTable.deleteAll()
+
+                transaction {
+                    (LocationTable innerJoin CityTable innerJoin StateTable).selectAll()
+                        .orderBy(LocationTable.id to SortOrder.ASC)
+                        .map { rowToLocationResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
         }
     }
 

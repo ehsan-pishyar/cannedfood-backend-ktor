@@ -12,8 +12,9 @@ interface LocationRepository {
     suspend fun getLocationById(locationId: Long): ServiceResult<LocationResponse?>
     suspend fun getLocationsByTitle(locationTitle: String?): ServiceResult<List<LocationResponse?>>
 
-    suspend fun updateLocation(locationId: Long, location: Location): ServiceResult<Location>
+    suspend fun updateLocation(locationId: Long, location: Location): ServiceResult<Location?>
 
-    suspend fun deleteLocation(locationId: Long)
-    suspend fun deleteLocations()
+    suspend fun deleteLocationById(locationId: Long): ServiceResult<List<LocationResponse?>>
+    suspend fun deleteLocationsOfCity(cityId: Int): ServiceResult<List<LocationResponse?>>
+    suspend fun deleteLocations(): ServiceResult<List<LocationResponse?>>
 }

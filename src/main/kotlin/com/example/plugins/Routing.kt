@@ -1,15 +1,21 @@
 package com.example.plugins
 
 import com.example.datasource.CityRepositoryImpl
+import com.example.datasource.LocationRepositoryImpl
 import com.example.datasource.StateRepositoryImpl
 import com.example.datasource.UserRepositoryImpl
 import com.example.repository.CityRepository
+import com.example.repository.LocationRepository
 import com.example.repository.StateRepository
 import com.example.repository.UserRepository
 import com.example.routings.city.deleteCities
 import com.example.routings.city.getCities
-import com.example.routings.city.insertCity
+import com.example.routings.city.insertNewCity
 import com.example.routings.city.updateCity
+import com.example.routings.location.deleteLocations
+import com.example.routings.location.getLocations
+import com.example.routings.location.insertNewLocation
+import com.example.routings.location.updateLocation
 import com.example.routings.state.getStates
 import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
@@ -44,10 +50,17 @@ fun Application.configureRouting() {
 
             // City Section
             val cityRepository: CityRepository = CityRepositoryImpl()
-            insertCity(cityRepository)
+            insertNewCity(cityRepository)
             getCities(cityRepository)
             updateCity(cityRepository)
             deleteCities(cityRepository)
+
+            // Location Section
+            val locationRepository: LocationRepository = LocationRepositoryImpl()
+            insertNewLocation(locationRepository)
+            getLocations(locationRepository)
+            updateLocation(locationRepository)
+            deleteLocations(locationRepository)
 
         }
         // Static plugin. Try to access `/static/index.html`
