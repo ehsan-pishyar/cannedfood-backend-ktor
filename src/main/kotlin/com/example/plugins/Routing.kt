@@ -1,21 +1,25 @@
 package com.example.plugins
 
-import com.example.datasource.CityRepositoryImpl
-import com.example.datasource.LocationRepositoryImpl
-import com.example.datasource.StateRepositoryImpl
-import com.example.datasource.UserRepositoryImpl
-import com.example.repository.CityRepository
-import com.example.repository.LocationRepository
-import com.example.repository.StateRepository
-import com.example.repository.UserRepository
+import com.example.datasource.*
+import com.example.repository.*
 import com.example.routings.city.deleteCities
 import com.example.routings.city.getCities
 import com.example.routings.city.insertNewCity
 import com.example.routings.city.updateCity
+import com.example.routings.food_category.deleteFoodCategories
+import com.example.routings.food_category.getFoodCategories
+import com.example.routings.food_category.insertNewFoodCategory
+import com.example.routings.food_category.updateFoodCategory
 import com.example.routings.location.deleteLocations
 import com.example.routings.location.getLocations
 import com.example.routings.location.insertNewLocation
 import com.example.routings.location.updateLocation
+import com.example.routings.result_category.deleteResultCategories
+import com.example.routings.result_category.getResultCategories
+import com.example.routings.result_category.insertNewResultCategory
+import com.example.routings.result_category.updateResultCategory
+import com.example.routings.seller_category.deleteSellerCategories
+import com.example.routings.seller_category.getSellerCategories
 import com.example.routings.state.getStates
 import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
@@ -61,6 +65,25 @@ fun Application.configureRouting() {
             getLocations(locationRepository)
             updateLocation(locationRepository)
             deleteLocations(locationRepository)
+
+            // Seller Category Section
+            val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
+            getSellerCategories(sellerCategoryRepository)
+            deleteSellerCategories(sellerCategoryRepository)
+
+            // Results Category Section
+            val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
+            insertNewResultCategory(resultCategoryRepository)
+            getResultCategories(resultCategoryRepository)
+            updateResultCategory(resultCategoryRepository)
+            deleteResultCategories(resultCategoryRepository)
+
+            // Food Category Section
+            val foodCategoryRepository: FoodCategoryRepository = FoodCategoryRepositoryImpl()
+            insertNewFoodCategory(foodCategoryRepository)
+            getFoodCategories(foodCategoryRepository)
+            updateFoodCategory(foodCategoryRepository)
+            deleteFoodCategories(foodCategoryRepository)
 
         }
         // Static plugin. Try to access `/static/index.html`

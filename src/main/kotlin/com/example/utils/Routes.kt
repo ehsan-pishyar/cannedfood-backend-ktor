@@ -22,6 +22,7 @@ object Routes {
     const val RESULT_RATING_ROUTE = "/result-ratings"
     const val RESULT_COMMENT_ROUTE = "/result-comments"
 
+    const val CREATE_ROUTE = "/create"
     const val UPDATE_ROUTE = "/{id}/update"
     const val DELETE_ROUTE = "/{id}/delete"
 }
