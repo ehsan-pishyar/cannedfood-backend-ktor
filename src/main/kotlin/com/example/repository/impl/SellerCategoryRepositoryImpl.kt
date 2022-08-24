@@ -1,17 +1,13 @@
-package com.example.datasource
+package com.example.repository.impl
 
 import com.example.models.SellerCategory
 import com.example.repository.SellerCategoryRepository
-import com.example.tables.CityTable
 import com.example.tables.DatabaseFactory.dbQuery
-import com.example.tables.FoodCategoryTable
 import com.example.tables.SellerCategoryTable
-import com.example.tables.StateTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class SellerCategoryRepositoryImpl : SellerCategoryRepository {

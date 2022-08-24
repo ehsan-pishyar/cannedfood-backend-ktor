@@ -25,7 +25,7 @@ fun Route.deleteLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No Cities received from database")
+                            println("Error! No Locations received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationsResponse.errorCode
@@ -49,7 +49,7 @@ fun Route.deleteLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No Cities received from database")
+                            println("Error! No Locations received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationsResponse.errorCode
@@ -70,7 +70,7 @@ fun Route.deleteLocations(
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Cities received from database")
+                        println("Error! No Locations received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = locationsResponse.errorCode

@@ -48,7 +48,7 @@ fun Route.getSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
+                            println("Error! Seller Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = scResponse.errorCode
@@ -68,7 +68,7 @@ fun Route.getSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
+                            println("Error! Seller Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = scResponse.errorCode

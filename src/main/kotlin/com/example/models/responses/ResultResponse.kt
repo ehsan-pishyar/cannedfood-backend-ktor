@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResultResponse(
-    val id: Int?,
+    val id: Long?,
     val seller_title: String?,
     val title: String?,
     val description: String?,

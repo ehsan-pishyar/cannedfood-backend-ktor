@@ -25,4 +25,11 @@ object Routes {
     const val CREATE_ROUTE = "/create"
     const val UPDATE_ROUTE = "/{id}/update"
     const val DELETE_ROUTE = "/{id}/delete"
+
+    const val RATING_ROUTE = "/ratings"
+    const val SELLER_RATE_ROUTE = "/{seller_id}/rate"
+    const val RESULT_RATE_ROUTE = "/{result_id}/rate"
+
+    const val COMMENT_ROUTE = "/comments"
+    const val COMMENT_ADD_ROUTE = "/add"
 }

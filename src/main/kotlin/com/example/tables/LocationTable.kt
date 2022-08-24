@@ -1,5 +1,6 @@
 package com.example.tables
 
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.sql.Table
 
 object StateTable: Table() {
@@ -18,7 +19,7 @@ object CityTable: Table() {
 }
 
 object LocationTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement()
+    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
     val title = varchar(name = "title", length = 50)
     val lat = double("lat").default(0.0)
     val lon = double("lon").default(0.0)

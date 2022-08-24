@@ -1,7 +1,7 @@
 package com.example.plugins
 
-import com.example.datasource.*
 import com.example.repository.*
+import com.example.repository.impl.*
 import com.example.routings.city.deleteCities
 import com.example.routings.city.getCities
 import com.example.routings.city.insertNewCity
@@ -14,6 +14,8 @@ import com.example.routings.location.deleteLocations
 import com.example.routings.location.getLocations
 import com.example.routings.location.insertNewLocation
 import com.example.routings.location.updateLocation
+import com.example.routings.rating.insertNewResultRating
+import com.example.routings.rating.insertNewSellerRating
 import com.example.routings.result_category.deleteResultCategories
 import com.example.routings.result_category.getResultCategories
 import com.example.routings.result_category.insertNewResultCategory
@@ -84,6 +86,11 @@ fun Application.configureRouting() {
             getFoodCategories(foodCategoryRepository)
             updateFoodCategory(foodCategoryRepository)
             deleteFoodCategories(foodCategoryRepository)
+
+            // Rating Section
+            val ratingRepository: RatingRepository = RatingRepositoryImpl()
+            insertNewSellerRating(ratingRepository)
+            insertNewResultRating(ratingRepository)
 
         }
         // Static plugin. Try to access `/static/index.html`

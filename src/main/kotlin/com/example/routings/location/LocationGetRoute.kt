@@ -29,7 +29,7 @@ fun Route.getLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found or state id you entered is invalid")
+                            println("Error! Location not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationResponse.errorCode
@@ -49,7 +49,7 @@ fun Route.getLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
+                            println("Error! Location not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationResponse.errorCode
@@ -69,7 +69,7 @@ fun Route.getLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
+                            println("Error! Location not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationsResponse.errorCode

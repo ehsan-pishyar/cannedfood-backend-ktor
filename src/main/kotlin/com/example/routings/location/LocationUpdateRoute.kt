@@ -35,7 +35,7 @@ fun Route.updateLocation(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No City received from database")
+                            println("Error! No Location received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationResponse.errorCode

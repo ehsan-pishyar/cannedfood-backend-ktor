@@ -18,7 +18,7 @@ object DatabaseFactory {
 
         transaction {
             SchemaUtils.create(StateTable, CityTable, LocationTable, SellerCategoryTable, ResultCategoryTable,
-            FoodCategoryTable)
+            FoodCategoryTable, SellerRatingTable, ResultRatingTable)
         }
     }
 

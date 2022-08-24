@@ -20,6 +20,7 @@ data class CityResponse(
 
 @Serializable
 data class LocationResponse(
+    val id: Long?,
     val title: String?,
     val lat: Double?,
     val lon: Double?,

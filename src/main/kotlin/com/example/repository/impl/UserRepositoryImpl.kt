@@ -1,4 +1,4 @@
-package com.example.datasource
+package com.example.repository.impl
 
 import com.example.authentication.hash
 import com.example.models.User
@@ -65,7 +65,7 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun getUserById(userId: Int): ServiceResult<User?> {
+    override suspend fun getUserById(userId: Long): ServiceResult<User?> {
         return try {
             val user = dbQuery {
                 UserTable.select(UserTable.id eq userId)
@@ -109,7 +109,7 @@ class UserRepositoryImpl : UserRepository {
     /**
      * آپدیت اطلاعات کاربر با استفاده از کاربری که بهش پاس میدیم
      */
-    override suspend fun updateUser(userId: Int, user: User): ServiceResult<User> {
+    override suspend fun updateUser(userId: Long, user: User): ServiceResult<User> {
         return try {
             dbQuery {
                 UserTable.update({ UserTable.id eq userId }) {
@@ -140,7 +140,7 @@ class UserRepositoryImpl : UserRepository {
     /**
      * عملیات حذف کاربر بر اساس id اونها
      */
-    override suspend fun deleteUser(userId: Int) {
+    override suspend fun deleteUser(userId: Long) {
         dbQuery {
             UserTable.deleteWhere {
                 UserTable.id eq userId

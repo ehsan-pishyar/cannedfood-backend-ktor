@@ -1,4 +1,4 @@
-package com.example.datasource
+package com.example.repository.impl
 
 import com.example.models.Location
 import com.example.models.responses.LocationResponse
@@ -98,6 +98,25 @@ class LocationRepositoryImpl: LocationRepository {
                     println("An Error occurred due to response user by username")
                     ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 }
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
+    }
+
+    override suspend fun getLocationByLatLon(lat: Double, lon: Double): ServiceResult<LocationResponse> {
+        return try {
+            dbQuery {
+                LocationTable.select {
+                    (LocationTable.lat eq lat) and (LocationTable.lon eq lon)
+                }
+                    .map { rowToLocationResponse(it) }
+                    .single()
+            }.let {
+                ServiceResult.Success(it!!)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -225,6 +244,7 @@ class LocationRepositoryImpl: LocationRepository {
         if (row == null) return null
 
         return LocationResponse(
+            id = row[LocationTable.id],
             title = row[LocationTable.title],
             lat = row[LocationTable.lat],
             lon = row[LocationTable.lon],

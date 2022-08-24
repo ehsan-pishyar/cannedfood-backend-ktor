@@ -1,4 +1,4 @@
-package com.example.datasource
+package com.example.repository.impl
 
 import com.example.models.Results
 import com.example.models.responses.ResultResponse
@@ -62,7 +62,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
-    override suspend fun getResultById(resultId: Int): ServiceResult<ResultResponse?> {
+    override suspend fun getResultById(resultId: Long): ServiceResult<ResultResponse?> {
         return try {
             dbQuery {
                 ResultsTable.innerJoin(SellerTable).innerJoin(FoodCategoryTable).innerJoin(ResultRatingTable)
@@ -90,7 +90,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getResultsBySellerId(sellerId: Int): ServiceResult<List<ResultResponse?>> {
+    override suspend fun getResultsBySellerId(sellerId: Long): ServiceResult<List<ResultResponse?>> {
         TODO("Not yet implemented")
     }
 
@@ -106,7 +106,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getResultsByPrice(price: Int): ServiceResult<List<ResultResponse?>> {
+    override suspend fun getResultsByPrice(price: Long): ServiceResult<List<ResultResponse?>> {
         TODO("Not yet implemented")
     }
 
@@ -114,7 +114,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getResultsByVoteCount(voteCount: Int): ServiceResult<List<ResultResponse?>> {
+    override suspend fun getResultsByVoteCount(voteCount: Long): ServiceResult<List<ResultResponse?>> {
         TODO("Not yet implemented")
     }
 
@@ -134,7 +134,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteResultById(resultId: Int) {
+    override suspend fun deleteResultById(resultId: Long) {
         TODO("Not yet implemented")
     }
 
@@ -171,7 +171,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
-            rating = row[ResultRatingTable.rating],
+            rating = row[ResultRatingTable.rating].toDouble(),
             vote_count = row[ResultRatingTable.fromCustomerId.count()],
             date_created = row[ResultsTable.dateCreated],
             prepare_duration = row[ResultsTable.prepareDuration]!!,

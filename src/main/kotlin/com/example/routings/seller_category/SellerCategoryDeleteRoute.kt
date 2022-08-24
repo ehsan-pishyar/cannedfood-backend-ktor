@@ -25,7 +25,7 @@ fun Route.deleteSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No Cities received from database")
+                            println("Error! No Seller Categories received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = scResponse.errorCode
@@ -46,7 +46,7 @@ fun Route.deleteSellerCategories(
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Cities received from database")
+                        println("Error! No Seller Categories received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = scResponse.errorCode

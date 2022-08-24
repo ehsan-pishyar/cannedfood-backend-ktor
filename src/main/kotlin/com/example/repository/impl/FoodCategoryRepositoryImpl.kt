@@ -1,4 +1,4 @@
-package com.example.datasource
+package com.example.repository.impl
 
 import com.example.models.FoodCategory
 import com.example.models.responses.FoodCategoryResponse
@@ -11,7 +11,6 @@ import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class FoodCategoryRepositoryImpl : FoodCategoryRepository {

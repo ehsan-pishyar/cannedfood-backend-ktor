@@ -1,5 +1,6 @@
 package com.example.models
 
+import com.example.utils.randomIdGenerator
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,7 +10,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class User(
-    val id: Int = 0,
+    val id: Long = randomIdGenerator(),
     val email: String = "",
     val password: String = "",
     val user_type: UserType = UserType.TEST,
@@ -18,8 +19,8 @@ data class User(
 
 @Serializable
 data class Seller(
-    val id: Int = 0,
-    val user_id: Int = 0,
+    val id: Long = randomIdGenerator(),
+    val user_id: Long = 0,
     val title: String = "",
     val description: String = "",
     val logo: String = "",
@@ -35,8 +36,8 @@ data class Seller(
 
 @Serializable
 data class Customer(
-    val id: Long = 0L,
-    val user_id: Int = 0,
+    val id: Long = randomIdGenerator(),
+    val user_id: Long = 0,
     val first_name: String = "",
     val last_name: String = "",
     val avatar: String = "",
@@ -47,6 +48,7 @@ data class Customer(
     val birth_date: String = "",
     val date_created: String = ""
 )
+
 
 /**
  * برای تعیین نوع کاربری که قراره ثبت نام کنه
@@ -75,5 +77,3 @@ enum class UserSex(val value: Int) {
     @SerialName("Woman")
     WOMAN(2)
 }
-
-
