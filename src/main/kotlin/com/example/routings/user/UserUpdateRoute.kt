@@ -15,7 +15,7 @@ fun Route.updateUser(
 ) {
     route(Routes.USERS_ROUTE) {
         put("/{id}/update") {
-            val id = call.parameters["id"]!!.toInt()
+            val id = call.parameters["id"]!!.toLong()
             call.receiveOrNull<User>()?.let { user ->
                 userRepository.updateUser(id, user).let {
                     when(it) {

@@ -20,7 +20,7 @@ fun Route.insertNewUser(
     insertUserUseCase: InsertUserUseCase
 ) {
     route(Routes.USERS_ROUTE) {
-        post("/create") {
+        post(Routes.CREATE_ROUTE) {
 
             val request = call.receiveOrNull<User>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)

@@ -12,8 +12,9 @@ fun Route.deleteUsers(
     userRepository: UserRepository
 ) {
     route(Routes.USERS_ROUTE) {
-        delete("/{id}/delete") {
-            val id = call.parameters["id"]!!.toInt()
+        delete(Routes.DELETE_ROUTE) {
+
+            val id = call.parameters["id"]!!.toLong()
             userRepository.deleteUser(id)
             userRepository.getUsers().let {
                 when(it) {

@@ -8,6 +8,7 @@ import com.example.tables.ResultRatingTable
 import com.example.tables.SellerRatingTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 
@@ -17,6 +18,7 @@ class RatingRepositoryImpl : RatingRepository {
         return try {
             dbQuery {
                 SellerRatingTable.insert {
+                    it[id] = randomIdGenerator()
                     it[fromCustomerId] = sellerRating.from_customer_id
                     it[rating] = sellerRating.rating
                     it[toSellerId] = sellerId

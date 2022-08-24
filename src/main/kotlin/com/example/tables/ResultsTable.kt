@@ -1,10 +1,9 @@
 package com.example.tables
 
-import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.sql.Table
 
 object ResultsTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val sellerId = long("seller_id") references SellerTable.id
     val title = varchar(name = "title", length = 100)
     val description = varchar(name = "description", length = 500).nullable()

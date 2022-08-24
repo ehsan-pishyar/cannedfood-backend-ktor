@@ -9,6 +9,7 @@ import com.example.tables.*
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 
@@ -17,6 +18,7 @@ class SellerRepositoryImpl : SellerRepository {
         return try {
             dbQuery {
                 SellerTable.insert {
+                    it[id] = randomIdGenerator()
                     it[userId] = seller.user_id
                     it[title] = seller.title
                     it[description] = seller.description

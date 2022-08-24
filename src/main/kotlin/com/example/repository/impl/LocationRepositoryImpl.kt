@@ -9,6 +9,7 @@ import com.example.tables.LocationTable
 import com.example.tables.StateTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -19,6 +20,7 @@ class LocationRepositoryImpl: LocationRepository {
         return try {
             dbQuery {
                 LocationTable.insert {
+                    it[id] = randomIdGenerator()
                     it[title] = location.title
                     it[lat] = location.lat
                     it[lon] = location.lon

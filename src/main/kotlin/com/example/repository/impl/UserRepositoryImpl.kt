@@ -7,6 +7,7 @@ import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.UserTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -25,6 +26,7 @@ class UserRepositoryImpl : UserRepository {
         return try {
             dbQuery {
                 UserTable.insert { ut ->
+                    ut[id] = randomIdGenerator()
                     ut[email] = user.email
                     ut[password] = hash(user.password)
                     ut[userType] = user.user_type

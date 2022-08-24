@@ -13,7 +13,7 @@ fun Route.getUsers(
     route(Routes.USERS_ROUTE) {
         get("/") {
             val params = call.request.rawQueryParameters
-            val id = params["id"]?.toInt()
+            val id = params["id"]?.toLong()
             val email = params["email"]
 
             id?.let { userId ->

@@ -1,11 +1,9 @@
 package com.example.tables
 
-import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.sql.Table
-import java.util.*
 
 object SellerRatingTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex().autoIncrement()
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val rating = integer("rating_stars")
     val toSellerId = long("to_seller_id") references SellerTable.id
@@ -14,7 +12,7 @@ object SellerRatingTable: Table() {
 }
 
 object ResultRatingTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex().autoIncrement()
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val rating = integer("rating_stars")
     val toResultId = long("to_result_id") references ResultsTable.id
@@ -23,7 +21,7 @@ object ResultRatingTable: Table() {
 }
 
 object SellerCommentTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toSellerId = long("to_seller_id") references SellerTable.id
@@ -32,7 +30,7 @@ object SellerCommentTable: Table() {
 }
 
 object ResultCommentTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toResultId = long("to_result_id") references ResultsTable.id

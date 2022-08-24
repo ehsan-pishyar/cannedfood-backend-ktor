@@ -10,6 +10,7 @@ import com.example.tables.ResultsTable
 import com.example.tables.SellerTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 
@@ -19,6 +20,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         return try {
             dbQuery {
                 ResultsTable.insert {
+                    it[id] = randomIdGenerator()
                     it[sellerId] = result.seller_id
                     it[title] = result.title
                     it[description] = result.description

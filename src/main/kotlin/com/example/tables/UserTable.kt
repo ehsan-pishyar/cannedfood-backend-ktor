@@ -2,7 +2,6 @@ package com.example.tables
 
 import com.example.models.UserSex
 import com.example.models.UserType
-import com.example.utils.randomIdGenerator
 import com.example.utils.toDatabaseString
 import org.jetbrains.exposed.sql.Table
 import java.time.LocalDateTime
@@ -12,7 +11,7 @@ import java.time.LocalDateTime
  * که خب مشخصه دیگه
  */
 object UserTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val email = varchar(name = "email", length = 50).uniqueIndex()
     val password = varchar(name = "password", length = 500)
     val userType = enumeration<UserType>(name = "user_type")
@@ -22,7 +21,7 @@ object UserTable: Table() {
 }
 
 object SellerTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val userId = long("user_id") references UserTable.id
     val title = varchar(name = "title", length = 50).uniqueIndex()
     val description = varchar(name = "description", length = 500).nullable()
@@ -40,7 +39,7 @@ object SellerTable: Table() {
 }
 
 object CustomerTable: Table() {
-    val id = long("id").uniqueIndex().autoIncrement().default(randomIdGenerator())
+    val id = long("id").uniqueIndex()
     val userId = long("user_id") references UserTable.id
     val firstName = varchar(name = "first_name", length = 50)
     val lastName = varchar(name = "last_name", length = 50)
