@@ -1,7 +1,7 @@
-package com.example.routings.rating
+package com.example.routings.comment
 
-import com.example.models.SellerRating
-import com.example.repository.RatingRepository
+import com.example.models.ResultComment
+import com.example.repository.CommentRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
 import io.ktor.http.*
@@ -10,14 +10,14 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.rateToSeller(
-    ratingRepository: RatingRepository
+fun Route.addNewResultComment(
+    commentRepository: CommentRepository
 ) {
-    route(Routes.SELLERS_ROUTE) {
-        post(Routes.SELLER_RATE_ROUTE) {
+    route(Routes.RESULT_ROUTE) {
+        post(Routes.COMMENT_RESULT_ADD_ROUTE) {
 
-            val sellerId = call.parameters["seller_id"]!!.toLong()
-            val request = call.receiveOrNull<SellerRating>() ?: kotlin.run {
+            val resultId = call.parameters["result_id"]!!.toLong()
+            val request = call.receiveOrNull<ResultComment>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = "Error! Check your json file"
@@ -25,19 +25,18 @@ fun Route.rateToSeller(
                 return@post
             }
 
-            ratingRepository.addRateToSeller(sellerId, request).let { sellerRating ->
-                when(sellerRating) {
+            commentRepository.addCommentForResult(resultId, request).let { resultComments ->
+                when(resultComments) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = sellerRating.data!!
+                            message = resultComments.data!!
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = sellerRating.errorCode.message
+                            message = resultComments.errorCode.message
                         )
                     }
                 }

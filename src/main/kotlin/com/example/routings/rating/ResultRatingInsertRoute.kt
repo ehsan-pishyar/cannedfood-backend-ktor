@@ -1,7 +1,6 @@
 package com.example.routings.rating
 
 import com.example.models.ResultRating
-import com.example.models.SellerRating
 import com.example.repository.RatingRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
@@ -11,10 +10,10 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.insertNewResultRating(
+fun Route.rateToResult(
     ratingRepository: RatingRepository
 ) {
-    route(Routes.RATING_ROUTE) {
+    route(Routes.RESULT_ROUTE) {
         post(Routes.RESULT_RATE_ROUTE) {
 
             val resultId = call.parameters["result_id"]!!.toLong()

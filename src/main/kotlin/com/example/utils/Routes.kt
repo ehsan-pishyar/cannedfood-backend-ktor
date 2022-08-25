@@ -26,10 +26,11 @@ object Routes {
     const val UPDATE_ROUTE = "/{id}/update"
     const val DELETE_ROUTE = "/{id}/delete"
 
-    const val RATING_ROUTE = "/ratings"
-    const val SELLER_RATE_ROUTE = "/{seller_id}/rate"
-    const val RESULT_RATE_ROUTE = "/{result_id}/rate"
+    const val SELLER_RATE_ROUTE = "/{seller_id}/ratings/rate"
+    const val RESULT_RATE_ROUTE = "/{result_id}/ratings/rate"
 
-    const val COMMENT_ROUTE = "/comments"
-    const val COMMENT_ADD_ROUTE = "/add"
+    const val COMMENT_SELLER_ADD_ROUTE = "/{seller_id}/comments/add"
+    const val COMMENT_RESULT_ADD_ROUTE = "/{result_id}/comments/add"
+    const val COMMENT_SELLER_GET_ROUTE = "/{seller_id}/comments/"
+    const val COMMENT_RESULT_GET_ROUTE = "/{result_id}/comments/"
 }

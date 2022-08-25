@@ -6,6 +6,10 @@ import com.example.routings.city.deleteCities
 import com.example.routings.city.getCities
 import com.example.routings.city.insertNewCity
 import com.example.routings.city.updateCity
+import com.example.routings.comment.addNewResultComment
+import com.example.routings.comment.addNewSellerComment
+import com.example.routings.comment.getResultComments
+import com.example.routings.comment.getSellerComments
 import com.example.routings.food_category.deleteFoodCategories
 import com.example.routings.food_category.getFoodCategories
 import com.example.routings.food_category.insertNewFoodCategory
@@ -14,8 +18,8 @@ import com.example.routings.location.deleteLocations
 import com.example.routings.location.getLocations
 import com.example.routings.location.insertNewLocation
 import com.example.routings.location.updateLocation
-import com.example.routings.rating.insertNewResultRating
-import com.example.routings.rating.insertNewSellerRating
+import com.example.routings.rating.rateToResult
+import com.example.routings.rating.rateToSeller
 import com.example.routings.result_category.deleteResultCategories
 import com.example.routings.result_category.getResultCategories
 import com.example.routings.result_category.insertNewResultCategory
@@ -45,52 +49,76 @@ fun Application.configureRouting() {
             val userRepository: UserRepository = UserRepositoryImpl()
             val emailValidation = ValidateUserEmail()
             val insertUserUseCase = InsertUserUseCase(emailValidation, userRepository)
+
             insertNewUser(insertUserUseCase)
             getUsers(userRepository)
             updateUser(userRepository)
             deleteUsers(userRepository)
 
+
             // State Section
             val stateRepository: StateRepository = StateRepositoryImpl()
+
             getStates(stateRepository)
+
 
             // City Section
             val cityRepository: CityRepository = CityRepositoryImpl()
+
             insertNewCity(cityRepository)
             getCities(cityRepository)
             updateCity(cityRepository)
             deleteCities(cityRepository)
 
+
             // Location Section
             val locationRepository: LocationRepository = LocationRepositoryImpl()
+
             insertNewLocation(locationRepository)
             getLocations(locationRepository)
             updateLocation(locationRepository)
             deleteLocations(locationRepository)
 
+
             // Seller Category Section
             val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
+
             getSellerCategories(sellerCategoryRepository)
             deleteSellerCategories(sellerCategoryRepository)
 
+
             // Results Category Section
             val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
+
             insertNewResultCategory(resultCategoryRepository)
             getResultCategories(resultCategoryRepository)
             updateResultCategory(resultCategoryRepository)
             deleteResultCategories(resultCategoryRepository)
 
+
             // Food Category Section
             val foodCategoryRepository: FoodCategoryRepository = FoodCategoryRepositoryImpl()
+
             insertNewFoodCategory(foodCategoryRepository)
             getFoodCategories(foodCategoryRepository)
             updateFoodCategory(foodCategoryRepository)
             deleteFoodCategories(foodCategoryRepository)
 
+
             // Rating Section
             val ratingRepository: RatingRepository = RatingRepositoryImpl()
-            insertNewSellerRating(ratingRepository)
-            insertNewResultRating(ratingRepository)
+
+            rateToSeller(ratingRepository)
+            rateToResult(ratingRepository)
+
+
+            // Comment Section
+            val commentRepository: CommentRepository = CommentRepositoryImpl()
+
+            addNewSellerComment(commentRepository)
+            addNewResultComment(commentRepository)
+            getSellerComments(commentRepository)
+            getResultComments(commentRepository)
 
         }
         // Static plugin. Try to access `/static/index.html`

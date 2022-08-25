@@ -25,6 +25,7 @@ object SellerCommentTable: Table() {
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toSellerId = long("to_seller_id") references SellerTable.id
+    val dateCreated = varchar(name = "date_created", length = 50)
 
     override val primaryKey = PrimaryKey(id, name = "PK_SELLER_COMMENT_ID")
 }
@@ -34,6 +35,8 @@ object ResultCommentTable: Table() {
     val fromCustomerId = long("from_customer_id") references CustomerTable.id
     val message = text(name = "message")
     val toResultId = long("to_result_id") references ResultsTable.id
+    val dateCreated = varchar(name = "date_created", length = 50)
+
 
     override val primaryKey = PrimaryKey(id, name = "PK_RESULT_COMMENT_ID")
 }

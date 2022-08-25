@@ -1,0 +1,60 @@
+// State
+localhost:8080/states/
+
+// City
+localhost:8080/cities/
+localhost:8080/cities/create
+localhost:8080/cities/{city_id}/update
+localhost:8080/cities/{city_id}/delete
+
+// Location
+localhost:8080/locations/
+localhost:8080/locations/create
+localhost:8080/locations/{location_id}/update
+localhost:8080/locations/{location_id}/delete
+
+// Seller Category
+localhost:8080/seller-categories/
+localhost:8080/seller-categories/{seller_category_id}/delete
+
+// Result Category
+localhost:8080/result-categories/
+localhost:8080/result-categories/create
+localhost:8080/result-categories/{result_categories_id}/update
+localhost:8080/result-categories/{result_categories_id}/delete
+
+// Food Category
+localhost:8080/food-categories/
+localhost:8080/food-categories/create
+localhost:8080/food-categories/{food_categories_id}/update
+localhost:8080/food-categories/{food_categories_id}/delete
+
+// User
+localhost:8080/users/
+localhost:8080/users/create
+localhost:8080/users/{user_id}/update
+localhost:8080/users/{user_id}/delete
+
+// Seller
+localhost:8080/sellers/
+localhost:8080/sellers/create
+localhost:8080/sellers/{seller_id}/update
+localhost:8080/sellers/{seller_id}/delete
+
+// Customer
+localhost:8080/customers/
+localhost:8080/customers/create
+localhost:8080/customers/{customer_id}/update
+localhost:8080/customers/{customer_id}/delete
+
+// Rating
+localhost:8080/sellers/{seller_id}/ratings/
+localhost:8080/sellers/{seller_id}/ratings/add
+localhost:8080/results/{result_id}/ratings/
+localhost:8080/results/{result_id}/ratings/add
+
+// Comment
+localhost:8080/sellers/{seller_id}/comments/
+localhost:8080/sellers/{seller_id}/comments/add
+localhost:8080/results/{result_id}/comments/
+localhost:8080/results/{result_id}/comments/add
