@@ -30,6 +30,9 @@ object SellerTable: Table() {
     val stateId = integer("state_id") references StateTable.id
     val cityId = integer("city_id") references CityTable.id
     val locationId = long("location_id") references LocationTable.id
+    val sellerCategoryId = integer("seller_category_id") references SellerCategoryTable.id
+    val resultCategoryId = integer("result_category_id") references ResultCategoryTable.id
+    val foodCategoryId = integer("result_category_id") references FoodCategoryTable.id
     val deliveryFee = long("delivery_fee").nullable()
     val deliveryDuration = integer("delivery_duration").nullable()
     val phoneNumber = varchar(name = "phone_number", length = 15).nullable()
@@ -43,7 +46,7 @@ object CustomerTable: Table() {
     val userId = long("user_id") references UserTable.id
     val firstName = varchar(name = "first_name", length = 50)
     val lastName = varchar(name = "last_name", length = 50)
-    val avatar = varchar(name = "avatar", length = 500)
+    val picture = varchar(name = "picture", length = 500)
     val phoneNumber = long("phone_number")
     val email = varchar(name = "email", length = 255)
     val address = varchar(name = "address", length = 500)

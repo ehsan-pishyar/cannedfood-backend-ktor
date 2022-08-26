@@ -1,9 +1,7 @@
 package com.example.repository.impl
 
-import com.example.models.Results
-import com.example.models.Seller
-import com.example.models.responses.LocationResponse
-import com.example.models.responses.SellerResponse
+import com.example.models.*
+import com.example.models.responses.*
 import com.example.repository.SellerRepository
 import com.example.tables.*
 import com.example.tables.DatabaseFactory.dbQuery
@@ -12,6 +10,8 @@ import com.example.utils.ServiceResult
 import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class SellerRepositoryImpl : SellerRepository {
     override suspend fun insertSeller(seller: Seller): ServiceResult<Seller> {
@@ -44,79 +44,403 @@ class SellerRepositoryImpl : SellerRepository {
     }
 
     override suspend fun getSellers(): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.selectAll()
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .limit(20)
+                    .map {
+                        rowToSellerResponse(it)
+                    }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
-    override suspend fun getSellerById(sellerId: Long): ServiceResult<SellerResponse> {
-        TODO("Not yet implemented")
+    override suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse> {
+        var sellerDetailsResponse: SellerDetailsResponse? = null
+        dbQuery {
+            val seller = transaction {
+                (SellerTable).select {
+                    (SellerTable.id eq sellerId)
+                }
+                    .map { rowToSeller(it) }
+                    .single()
+            }
+
+            val location = getLocation(seller!!.location_id)
+            val results = getResults(seller.id)
+            val comments = getComments(seller.id)
+
+            sellerDetailsResponse = SellerDetailsResponse(
+                id = seller.id,
+                title = seller.title,
+                description = seller.description,
+                logo = seller.logo,
+                banner = seller.banner,
+                location = location,
+                results = results,
+                comments = comments,
+                delivery_fee = seller.delivery_fee,
+                delivery_duration = seller.delivery_duration,
+                phone_number = seller.phone_number,
+                date_created = seller.date_created
+            )
+        }
+        return sellerDetailsResponse?.let {
+            ServiceResult.Success(it)
+        } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
     }
 
     override suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.title like "$sellerTitle%")
+                }
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByDescription(description: String?): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.description like "$description%")
+                }
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByStateId(stateId: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.stateId eq stateId)
+                }
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByCityId(cityId: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.cityId eq cityId)
+                }
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByLocationId(locationId: Long): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.locationId eq locationId)
+                }
+                    .orderBy(SellerTable.id to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByLocationTitle(locationTitle: String?): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                val location = getLocationByTitle(locationTitle)
+
+                transaction {
+                    SellerTable.select {
+                        (SellerTable.locationId eq location?.id!!)
+                    }
+                        .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                        .map { rowToSellerResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
-    override suspend fun getSellersByResultId(resultId: Long): ServiceResult<SellerResponse?> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getSellerByResultId(resultId: Long): ServiceResult<SellerResponse?> {
+        return try {
+            dbQuery {
+                val result = getResultById(resultId)
 
-    override suspend fun getSellersByResultTitle(resultTitle: String?): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+                transaction {
+                    SellerTable.select {
+                        SellerTable.id eq result.seller_id
+                    }
+                        .map { rowToSellerResponse(it) }
+                        .singleOrNull()
+                }.let {
+                    ServiceResult.Success(it!!)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.sellerCategoryId eq sellerCategoryId)
+                }
+                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByResultCategoryId(resultCategoryId: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.resultCategoryId eq resultCategoryId)
+                }
+                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByFoodCategoryId(foodCategoryId: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.foodCategoryId eq foodCategoryId)
+                }
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByOpenStatus(isOpen: Boolean): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                val status = transaction {
+                    SellerOpenStatusTable.select {
+                        (SellerOpenStatusTable.isOpen eq isOpen)
+                    }
+                        .map { rowToSellerOpenStatus(it)!! }
+                        .single()
+                }
+
+                transaction {
+                    SellerTable.select {
+                        (SellerTable.id eq status.seller_id)
+                    }
+                        .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                        .map { rowToSellerResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByDeliveryDuration(minutes: Int): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.deliveryDuration lessEq minutes)
+                }
+                    .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     override suspend fun getSellersByDeliveryFee(fee: Long): ServiceResult<List<SellerResponse?>> {
-        TODO("Not yet implemented")
+        return try {
+            dbQuery {
+                SellerTable.select {
+                    (SellerTable.deliveryFee lessEq fee)
+                }
+                    .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
+                    .map { rowToSellerResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
-    override suspend fun updateSeller(sellerId: Long, seller: Seller): ServiceResult<SellerResponse> {
-        TODO("Not yet implemented")
+    override suspend fun updateSeller(sellerId: Long, seller: Seller): ServiceResult<Seller> {
+        return try {
+            dbQuery {
+                SellerTable.update({
+                    SellerTable.id eq sellerId
+                }) {
+                    it[id] = sellerId
+                    it[title] = seller.title
+                    it[description] = seller.description
+                    it[logo] = seller.logo
+                    it[banner] = seller.banner
+                    it[stateId] = seller.state_id
+                    it[cityId] = seller.city_id
+                    it[locationId] = seller.location_id
+                    it[sellerCategoryId] = seller.seller_category_id
+                    it[resultCategoryId] = seller.result_category_id
+                    it[deliveryFee] = seller.delivery_fee
+                    it[deliveryDuration] = seller.delivery_duration
+                    it[phoneNumber] = seller.phone_number
+                }
+
+                transaction {
+                    SellerTable.select {
+                        (SellerTable.id eq sellerId)
+                    }
+                        .map { rowToSeller(it) }
+                        .single()
+                }.let {
+                    ServiceResult.Success(it!!)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
-    override suspend fun deleteSeller(sellerId: Long) {
-        TODO("Not yet implemented")
+    override suspend fun deleteSellerById(sellerId: Long): ServiceResult<List<SellerResponse?>> {
+        return try {
+            dbQuery {
+                SellerTable.deleteWhere {
+                    (SellerTable.id eq sellerId)
+                }
+
+                transaction {
+                    SellerTable.selectAll()
+                        .map { rowToSellerResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
-    override suspend fun deleteSellers() {
-        TODO("Not yet implemented")
+    override suspend fun deleteSellers(): ServiceResult<List<SellerResponse?>> {
+        return try {
+            dbQuery {
+                SellerTable.deleteAll()
+
+                transaction {
+                    SellerTable.selectAll()
+                        .map { rowToSellerResponse(it) }
+                }.let {
+                    ServiceResult.Success(it)
+                }
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
+        }
     }
 
     private fun rowToSeller(row: ResultRow?): Seller? {
@@ -130,6 +454,8 @@ class SellerRepositoryImpl : SellerRepository {
             banner = row[SellerTable.banner]!!,
             state_id = row[SellerTable.stateId],
             city_id = row[SellerTable.cityId],
+            seller_category_id = row[SellerTable.sellerCategoryId],
+            result_category_id = row[SellerTable.resultCategoryId],
             delivery_fee = row[SellerTable.deliveryFee]!!,
             delivery_duration = row[SellerTable.deliveryDuration]!!,
             phone_number = row[SellerTable.phoneNumber]!!,
@@ -146,11 +472,8 @@ class SellerRepositoryImpl : SellerRepository {
             description = row[SellerTable.description],
             logo = row[SellerTable.logo],
             banner = row[SellerTable.banner],
-            rating = row[SellerRatingTable.rating].toDouble(),
-            vote_count = row[SellerRatingTable.id.count()],
             delivery_fee = row[SellerTable.deliveryFee],
             delivery_duration = row[SellerTable.deliveryDuration],
-            phone_number = row[SellerTable.phoneNumber],
         )
     }
 
@@ -160,9 +483,19 @@ class SellerRepositoryImpl : SellerRepository {
         return Results(
             id = row[ResultsTable.id],
             seller_id = row[ResultsTable.sellerId],
+            title = row[ResultsTable.title]
+        )
+    }
+
+    private fun rowToResultResponse(row: ResultRow?): ResultResponse? {
+        if (row == null) return null
+
+        return ResultResponse(
+            id = row[ResultsTable.id],
+            seller = row[SellerTable.title],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
-            food_category_id = row[ResultsTable.foodCategoryId],
+            food_category = row[FoodCategoryTable.title],
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
@@ -171,7 +504,7 @@ class SellerRepositoryImpl : SellerRepository {
         )
     }
 
-    private fun rowToLocation(row: ResultRow?): LocationResponse? {
+    private fun rowToLocationResponse(row: ResultRow?): LocationResponse? {
         if (row == null) return null
 
         return LocationResponse(
@@ -181,6 +514,85 @@ class SellerRepositoryImpl : SellerRepository {
             lon = row[LocationTable.lon],
             city = row[CityTable.title],
             state = row[StateTable.title]
+        )
+    }
+
+    private fun rowToSellerCommentsResponse(row: ResultRow?): SellerCommentResponse? {
+        if (row == null) return null
+
+        return SellerCommentResponse(
+            from = row[CustomerTable.firstName + CustomerTable.lastName],
+            message = row[SellerCommentTable.message]
+        )
+    }
+
+    private fun getLocation(locationId: Long): LocationResponse {
+        return transaction {
+            (LocationTable innerJoin CityTable innerJoin StateTable).select {
+                (LocationTable.id eq locationId)
+            }
+                .map { rowToLocationResponse(it)!! }
+                .single()
+        }
+    }
+
+    private fun getResults(sellerId: Long): List<ResultResponse?> {
+        return transaction {
+            (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable).select {
+                (ResultsTable.sellerId eq sellerId)
+            }
+                .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                .map { rowToResultResponse(it) }
+        }
+    }
+
+    private fun getResultById(resultId: Long): Results {
+        return transaction {
+            (ResultsTable).select {
+                (ResultsTable.id eq resultId)
+            }
+                .map { rowToResults(it)!! }
+                .single()
+        }
+    }
+
+    private fun getComments(sellerId: Long): List<SellerCommentResponse?> {
+        return transaction {
+            (SellerCommentTable innerJoin CustomerTable).select {
+                (SellerCommentTable.toSellerId eq sellerId)
+            }
+                .orderBy(SellerCommentTable.dateCreated to SortOrder.DESC)
+                .map { rowToSellerCommentsResponse(it) }
+        }
+    }
+
+    private fun getLocationByTitle(locationTitle: String?): LocationResponse?{
+        return transaction {
+            (LocationTable innerJoin CityTable innerJoin StateTable).select {
+                (LocationTable.title like "$locationTitle%")
+            }
+                .map {
+                    rowToLocationResponse(it)!!
+                }
+                .singleOrNull()
+        }
+    }
+
+    private fun rowToFoodCategory(row: ResultRow?): FoodCategory? {
+        if (row == null) return null
+
+        return FoodCategory(
+            id = row[SellerCategoryTable.id]
+        )
+    }
+
+    private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
+        if (row == null) return null
+
+        return SellerOpenStatus(
+            id = row[SellerOpenStatusTable.id],
+            seller_id = row[SellerOpenStatusTable.sellerId],
+            is_open = row[SellerOpenStatusTable.isOpen]
         )
     }
 }

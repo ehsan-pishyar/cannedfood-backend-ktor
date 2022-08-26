@@ -11,6 +11,7 @@ import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
  * پیاده سازی dao کاربر
@@ -121,16 +122,17 @@ class UserRepositoryImpl : UserRepository {
                     it[password] = hash(user.password)
                     it[userType] = user.user_type
                 }
-            }
 
-            val response = dbQuery {
-                UserTable.select {
-                    UserTable.id eq userId
+                transaction {
+                    UserTable.select {
+                        UserTable.id eq userId
+                    }
+                        .map { rowToUser(it) }
+                        .single()
+                }.let {
+                    ServiceResult.Success(it!!)
                 }
-                    .map { rowToUser(it) }
-                    .single()
             }
-            ServiceResult.Success(response!!)
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)

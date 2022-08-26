@@ -166,15 +166,13 @@ class ResultsRepositoryImpl : ResultsRepository {
 
         return ResultResponse(
             id = row[ResultsTable.id],
-            seller_title = row[SellerTable.title],
+            seller = row[SellerTable.title],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
             food_category = row[FoodCategoryTable.title],
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
-            rating = row[ResultRatingTable.rating].toDouble(),
-            vote_count = row[ResultRatingTable.fromCustomerId.count()],
             date_created = row[ResultsTable.dateCreated],
             prepare_duration = row[ResultsTable.prepareDuration]!!,
         )

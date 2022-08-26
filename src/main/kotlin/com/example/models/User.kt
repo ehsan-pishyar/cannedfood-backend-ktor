@@ -1,6 +1,5 @@
 package com.example.models
 
-import com.example.utils.randomIdGenerator
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,24 +9,27 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class User(
-    val id: Long = randomIdGenerator(),
+    val id: Long = 0L,
     val email: String = "",
     val password: String = "",
-    val user_type: UserType = UserType.TEST,
+    val user_type: UserType = UserType.TEST,    // Admin, Seller, Customer
     val date_created: String = "",
 )
 
 @Serializable
 data class Seller(
-    val id: Long = randomIdGenerator(),
-    val user_id: Long = 0,
+    val id: Long = 0L,
+    val user_id: Long = 0,                  // This seller belongs to user {user_id}
     val title: String = "",
     val description: String = "",
-    val logo: String = "",
+    val logo: String = "",                  // Logo image path
     val banner: String = "",
-    val state_id: Int = 0,
-    val city_id: Int = 0,
-    val location_id: Long = 0L,
+    val state_id: Int = 0,                  // Belongs to State {state_id}
+    val city_id: Int = 0,                   // Belongs to city {city_id}
+    val location_id: Long = 0L,             // Belongs to location {location_id}
+    val seller_category_id: Int = 0,
+    val result_category_id: Int = 0,
+    val food_category_id: Int = 0,
     val delivery_fee: Long = 0L,
     val delivery_duration: Int = 0,
     val phone_number: String = "",
@@ -36,15 +38,14 @@ data class Seller(
 
 @Serializable
 data class Customer(
-    val id: Long = randomIdGenerator(),
-    val user_id: Long = 0,
+    val id: Long = 0L,
+    val user_id: Long = 0,                  // This seller belongs to user {user_id}
     val first_name: String = "",
     val last_name: String = "",
-    val avatar: String = "",
+    val picture: String = "",               // User picture image path
     val phone_number: Long = 0L,
-    val email: String = "",
     val address: String = "",
-    val sex: UserSex = UserSex.UNKNOWN,
+    val sex: UserSex = UserSex.UNKNOWN,     // Male, Female
     val birth_date: String = "",
     val date_created: String = ""
 )

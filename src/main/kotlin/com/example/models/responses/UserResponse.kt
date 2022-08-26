@@ -1,8 +1,6 @@
 package com.example.models.responses
 
 import com.example.models.ResponseErrors
-import com.example.models.Results
-import com.example.models.SellerComment
 import com.example.models.User
 import kotlinx.serialization.Serializable
 
@@ -19,14 +17,27 @@ data class SellerResponse(
     val description: String?,
     val logo: String?,
     val banner: String?,
+    val rating: Double? = null,
+    val delivery_fee: Long?,
+    val delivery_duration: Int?
+)
+
+@Serializable
+data class SellerDetailsResponse(
+    val id: Long?,
+    val title: String?,
+    val description: String?,
+    val logo: String?,
+    val banner: String?,
     val location: LocationResponse? = null,
-    val results: List<Results?> = emptyList(),
-    val rating: Double?,
-    val vote_count: Long?,
-    val comments: List<SellerComment?> = emptyList(),
+    val results: List<ResultResponse?> = emptyList(),
+//    val rating: Double?,
+//    val vote_count: Long?,
+    val comments: List<SellerCommentResponse?> = emptyList(),
     val delivery_fee: Long?,
     val delivery_duration: Int?,
-    val phone_number: String?
+    val phone_number: String?,
+    val date_created: String?
 )
 
 @Serializable
