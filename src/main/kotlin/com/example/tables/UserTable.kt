@@ -32,7 +32,7 @@ object SellerTable: Table() {
     val locationId = long("location_id") references LocationTable.id
     val sellerCategoryId = integer("seller_category_id") references SellerCategoryTable.id
     val resultCategoryId = integer("result_category_id") references ResultCategoryTable.id
-    val foodCategoryId = integer("result_category_id") references FoodCategoryTable.id
+    val foodCategoryId = integer("food_category_id") references FoodCategoryTable.id
     val deliveryFee = long("delivery_fee").nullable()
     val deliveryDuration = integer("delivery_duration").nullable()
     val phoneNumber = varchar(name = "phone_number", length = 15).nullable()

@@ -1,6 +1,7 @@
 package com.example.routings.result_category
 
 import com.example.repository.ResultCategoryRepository
+import com.example.utils.Routes
 import com.example.utils.ServiceResult
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -10,68 +11,69 @@ import io.ktor.server.routing.*
 fun Route.getResultCategories(
     resultCategoryRepository: ResultCategoryRepository
 ){
-    get("/") {
+    route(Routes.RESULT_CATEGORY_ROUTE){
+        get("/") {
 
-        val params = call.request.rawQueryParameters
-        val scId = params["sc_id"]?.toInt()
-        val id = params["id"]?.toInt()
-        val title = params["title"]
+            val params = call.request.rawQueryParameters
+            val scId = params["sc_id"]?.toInt()
+            val id = params["id"]?.toInt()
+            val title = params["title"]
 
-        if (scId != null && id == null && title == null) {
-            resultCategoryRepository.getResultCategories(scId).let { rcResponse ->
-                when(rcResponse) {
-                    is ServiceResult.Success -> {
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = rcResponse.data
-                        )
-                    }
-                    is ServiceResult.Error -> {
-                        println("Error! Result Category not found")
-                        call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = rcResponse.errorCode
-                        )
+            if (id == null && title == null) {
+                resultCategoryRepository.getResultCategories(scId!!).let { rcResponse ->
+                    when(rcResponse) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = rcResponse.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            println("Error! Result Category not found")
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = rcResponse.errorCode.message
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        if (scId != null && id != null) {
-            resultCategoryRepository.getResultCategoryById(id).let { rcResponse ->
-                when(rcResponse) {
-                    is ServiceResult.Success -> {
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = rcResponse.data
-                        )
-                    }
-                    is ServiceResult.Error -> {
-                        println("Error! Result Category not found")
-                        call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = rcResponse.errorCode
-                        )
+            id?.let { rcId ->
+                resultCategoryRepository.getResultCategoryById(rcId).let {
+                    when(it){
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = it.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        if (scId != null && title != null) {
-            resultCategoryRepository.getResultCategoriesByTitle(title).let { rcResponse ->
-                when(rcResponse) {
-                    is ServiceResult.Success -> {
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = rcResponse.data
-                        )
-                    }
-                    is ServiceResult.Error -> {
-                        println("Error! Result Category not found")
-                        call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = rcResponse.errorCode
-                        )
+            title?.let { rcTitle ->
+                resultCategoryRepository.getResultCategoriesByTitle(rcTitle).let { rcResponse ->
+                    when(rcResponse) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = rcResponse.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            println("Error! Result Category not found")
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = rcResponse.errorCode
+                            )
+                        }
                     }
                 }
             }

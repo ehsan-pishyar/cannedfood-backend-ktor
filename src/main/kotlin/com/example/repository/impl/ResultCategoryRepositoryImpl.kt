@@ -58,7 +58,6 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
                 (ResultCategoryTable innerJoin SellerCategoryTable).select {
                     (ResultCategoryTable.id eq resultsCategoryId)
                 }
-                    .orderBy(ResultCategoryTable.id to SortOrder.ASC)
                     .map { rowToResultsCategoryResponse(it)!! }
                     .single()
             }.let {
@@ -119,7 +118,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         return try {
             dbQuery {
                 ResultCategoryTable.deleteWhere {
-                    ResultCategoryTable.id eq resultsCategoryId
+                    (ResultCategoryTable.id eq resultsCategoryId)
                 }
                 ServiceResult.Success(selectResultsCategories())
             }

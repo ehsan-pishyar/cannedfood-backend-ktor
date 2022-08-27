@@ -18,30 +18,28 @@ fun Route.updateResultCategory(
 
             val id = call.parameters["id"]!!.toInt()
 
-            id.let {
-                val resultCategory = call.receiveOrNull<ResultCategory>() ?: kotlin.run {
-                    call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Error! Check your json file"
-                    )
-                    return@put
-                }
+            val resultCategory = call.receiveOrNull<ResultCategory>() ?: kotlin.run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = it
+                )
+                return@put
+            }
 
-                resultCategoryRepository.updateResultCategory(it, resultCategory).let { rcResponse ->
-                    when(rcResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = rcResponse.data
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No Result Category received from database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = rcResponse.errorCode
-                            )
-                        }
+            resultCategoryRepository.updateResultCategory(id, resultCategory).let {
+                when(it) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = it.data!!
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        println("Error! No Result Category received from database")
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = it.errorCode.message
+                        )
                     }
                 }
             }
