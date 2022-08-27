@@ -186,7 +186,6 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         return transaction {
             (ResultCategoryTable innerJoin SellerCategoryTable).selectAll()
                 .orderBy(ResultCategoryTable.id to SortOrder.ASC)
-                .limit(20)
                 .map { rowToResultsCategoryResponse(it) }
         }
     }
