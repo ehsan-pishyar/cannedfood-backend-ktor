@@ -31,9 +31,9 @@ class SellerRepositoryImpl : SellerRepository {
                     it[phoneNumber] = seller.phone_number
                     it[dateCreated] = seller.date_created
                 }
-                    .resultedValues?.singleOrNull()?.let {
+                    .resultedValues?.single().let {
                         ServiceResult.Success(rowToSeller(it)!!)
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    }
             }
         } catch (e: Exception) {
             when (e) {
@@ -47,16 +47,13 @@ class SellerRepositoryImpl : SellerRepository {
         return try {
             dbQuery {
                 SellerTable.selectAll()
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .limit(20)
-                    .map {
-                        rowToSellerResponse(it)
-                    }
+                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                    .map { rowToSellerResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
         } catch (e: Exception) {
-            when(e) {
+            when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }

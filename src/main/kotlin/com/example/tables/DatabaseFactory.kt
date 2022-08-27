@@ -1,5 +1,6 @@
 package com.example.tables
 
+import com.example.utils.Constants
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,13 +23,13 @@ object DatabaseFactory {
         }
     }
 
-    fun hikari(): HikariDataSource {
+    private fun hikari(): HikariDataSource {
         val config = HikariConfig().apply {
-            driverClassName = System.getenv("JDBC_DRIVER")
-            jdbcUrl = System.getenv("DATABASE_URL")
+            driverClassName = System.getenv(Constants.JDBC_DRIVER)
+            jdbcUrl = System.getenv(Constants.DB_URL)
             maximumPoolSize = 3
             isAutoCommit = false
-            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+            transactionIsolation = Constants.TRANSACTION_READ
             validate()
         }
 

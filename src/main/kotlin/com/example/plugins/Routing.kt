@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.models.Seller
 import com.example.repository.*
 import com.example.repository.impl.*
 import com.example.routings.city.deleteCities
@@ -24,6 +25,10 @@ import com.example.routings.result_category.deleteResultCategories
 import com.example.routings.result_category.getResultCategories
 import com.example.routings.result_category.insertNewResultCategory
 import com.example.routings.result_category.updateResultCategory
+import com.example.routings.seller.deleteSellers
+import com.example.routings.seller.getSellers
+import com.example.routings.seller.insertNewSeller
+import com.example.routings.seller.updateSeller
 import com.example.routings.seller_category.deleteSellerCategories
 import com.example.routings.seller_category.getSellerCategories
 import com.example.routings.state.getStates
@@ -31,6 +36,7 @@ import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
 import com.example.routings.user.insertNewUser
 import com.example.routings.user.updateUser
+import com.example.usecases.InsertSellerUseCase
 import com.example.usecases.InsertUserUseCase
 import com.example.utils.ValidateUserEmail
 import io.ktor.server.routing.*
@@ -54,6 +60,16 @@ fun Application.configureRouting() {
             getUsers(userRepository)
             updateUser(userRepository)
             deleteUsers(userRepository)
+
+
+            // Seller Section
+            val sellerRepository: SellerRepository = SellerRepositoryImpl()
+            val insertSellerUseCase = InsertSellerUseCase(sellerRepository)
+
+            insertNewSeller(insertSellerUseCase)
+            getSellers(sellerRepository)
+            updateSeller(sellerRepository)
+            deleteSellers(sellerRepository)
 
 
             // State Section
