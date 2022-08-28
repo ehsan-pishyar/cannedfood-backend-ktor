@@ -1,6 +1,8 @@
 package com.example.tables
 
+import com.example.utils.toDatabaseString
 import org.jetbrains.exposed.sql.Table
+import java.time.LocalDateTime
 
 object ResultsTable: Table() {
     val id = long("id").uniqueIndex()
@@ -11,8 +13,8 @@ object ResultsTable: Table() {
     val imagePath = varchar(name = "image_path", length = 500)
     val price = long("price")
     val discount = integer("discount").nullable()
-    val dateCreated = varchar(name = "date_created", length = 20)
     val prepareDuration = integer("prepare_duration").nullable()
+    val dateCreated = varchar(name = "date_created", length = 20).default(LocalDateTime.now().toDatabaseString())
 
     override val primaryKey = PrimaryKey(id, name = "PK_RESULT_ID")
 }

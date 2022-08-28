@@ -1,6 +1,5 @@
 package com.example.plugins
 
-import com.example.models.Seller
 import com.example.repository.*
 import com.example.repository.impl.*
 import com.example.routings.city.deleteCities
@@ -11,6 +10,10 @@ import com.example.routings.comment.addNewResultComment
 import com.example.routings.comment.addNewSellerComment
 import com.example.routings.comment.getResultComments
 import com.example.routings.comment.getSellerComments
+import com.example.routings.customer.deleteCustomers
+import com.example.routings.customer.getCustomers
+import com.example.routings.customer.insertNewCustomer
+import com.example.routings.customer.updateCustomer
 import com.example.routings.food_category.deleteFoodCategories
 import com.example.routings.food_category.getFoodCategories
 import com.example.routings.food_category.insertNewFoodCategory
@@ -21,6 +24,10 @@ import com.example.routings.location.insertNewLocation
 import com.example.routings.location.updateLocation
 import com.example.routings.rating.rateToResult
 import com.example.routings.rating.rateToSeller
+import com.example.routings.result.deleteResults
+import com.example.routings.result.getResults
+import com.example.routings.result.insertNewResult
+import com.example.routings.result.updateResult
 import com.example.routings.result_category.deleteResultCategories
 import com.example.routings.result_category.getResultCategories
 import com.example.routings.result_category.insertNewResultCategory
@@ -36,6 +43,8 @@ import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
 import com.example.routings.user.insertNewUser
 import com.example.routings.user.updateUser
+import com.example.usecases.InsertCustomerUseCase
+import com.example.usecases.InsertResultUseCase
 import com.example.usecases.InsertSellerUseCase
 import com.example.usecases.InsertUserUseCase
 import com.example.utils.ValidateUserEmail
@@ -70,6 +79,26 @@ fun Application.configureRouting() {
             getSellers(sellerRepository)
             updateSeller(sellerRepository)
             deleteSellers(sellerRepository)
+
+
+            // Customer section
+            val customerRepository: CustomerRepository = CustomerRepositoryImpl()
+            val insertCustomerUseCase = InsertCustomerUseCase(customerRepository)
+
+            insertNewCustomer(insertCustomerUseCase)
+            getCustomers(customerRepository)
+            updateCustomer(customerRepository)
+            deleteCustomers(customerRepository)
+
+
+            // Result section
+            val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
+            val insertResultUseCase = InsertResultUseCase(resultsRepository)
+
+            insertNewResult(insertResultUseCase)
+            getResults(resultsRepository)
+            updateResult(resultsRepository)
+            deleteResults(resultsRepository)
 
 
             // State Section

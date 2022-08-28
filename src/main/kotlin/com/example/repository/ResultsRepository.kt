@@ -23,8 +23,8 @@ interface ResultsRepository {
     suspend fun getResultsByDateAdded(dateAdded: String): ServiceResult<List<ResultResponse?>>
     suspend fun getResultsByPrepareDuration(minutes: Int): ServiceResult<List<ResultResponse?>>
 
-    suspend fun updateResult(results: Results): ServiceResult<ResultResponse>
+    suspend fun updateResultById(resultId: Long, result: Results): ServiceResult<Results>
 
-    suspend fun deleteResultById(resultId: Long)
-    suspend fun deleteResults()
+    suspend fun deleteResultById(sellerId: Long, resultId: Long): ServiceResult<List<ResultResponse?>>
+    suspend fun deleteResults(sellerId: Long): ServiceResult<List<ResultResponse?>>
 }

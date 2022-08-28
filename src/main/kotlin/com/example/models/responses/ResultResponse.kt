@@ -14,6 +14,6 @@ data class ResultResponse(
     val discount: Int?,
 //    val rating: Double?,
 //    val vote_count: Long?,
-    val date_created: String?,
-    val prepare_duration: Int?
+    val prepare_duration: Int?,
+    val date_created: String?
 )
