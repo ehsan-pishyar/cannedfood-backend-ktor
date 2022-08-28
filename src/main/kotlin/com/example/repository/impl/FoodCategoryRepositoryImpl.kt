@@ -57,10 +57,9 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun getFoodCategoryById(foodCategoryId: Int): ServiceResult<FoodCategoryResponse> {
         return try {
             dbQuery {
-                (FoodCategoryTable innerJoin SellerCategoryTable).select {
+                (FoodCategoryTable innerJoin ResultCategoryTable).select {
                     (FoodCategoryTable.id eq foodCategoryId)
                 }
-                    .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                     .map { rowToFoodCategoryResponse(it)!! }
                     .single()
             }.let {
@@ -77,7 +76,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun getFoodCategoriesByTitle(foodCategoryTitle: String?): ServiceResult<List<FoodCategoryResponse?>> {
         return try {
             dbQuery {
-                (FoodCategoryTable innerJoin SellerCategoryTable).select {
+                (FoodCategoryTable innerJoin ResultCategoryTable).select {
                     (FoodCategoryTable.title eq "$foodCategoryTitle%")
                 }
                     .orderBy(FoodCategoryTable.id to SortOrder.ASC)
@@ -154,7 +153,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
     override suspend fun deleteFoodCategories(): ServiceResult<List<FoodCategoryResponse?>> {
         return try {
             dbQuery {
-                ResultCategoryTable.deleteAll()
+                FoodCategoryTable.deleteAll()
                 ServiceResult.Success(selectFoodCategories())
             }
         } catch (e: Exception) {

@@ -130,11 +130,11 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
         }
     }
 
-    override suspend fun deleteResultCategoriesOfSellerCategory(resultsCategoryId: Int): ServiceResult<List<ResultsCategoryResponse?>> {
+    override suspend fun deleteResultCategoriesOfSellerCategory(sellerCategoryId: Int): ServiceResult<List<ResultsCategoryResponse?>> {
         return try {
             dbQuery {
                 ResultCategoryTable.deleteWhere {
-                    (ResultCategoryTable.id eq resultsCategoryId)
+                    (ResultCategoryTable.sellerCategoryId eq sellerCategoryId)
                 }
                 ServiceResult.Success(selectResultsCategories())
             }
@@ -149,7 +149,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
     override suspend fun deleteResultCategories(): ServiceResult<List<ResultsCategoryResponse?>> {
         return try {
             dbQuery {
-                CityTable.deleteAll()
+                ResultCategoryTable.deleteAll()
                 ServiceResult.Success(selectResultsCategories())
             }
         } catch (e: Exception) {

@@ -12,7 +12,7 @@ fun Route.deleteResultCategories(
     resultCategoryRepository: ResultCategoryRepository
 ) {
     route(Routes.RESULT_CATEGORY_ROUTE) {
-        delete("/{id}/delete") {
+        delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
             resultCategoryRepository.deleteResultCategoryById(id).let { rcResponse ->
@@ -24,11 +24,50 @@ fun Route.deleteResultCategories(
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Result Categories received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = rcResponse.errorCode
                         )
+                    }
+                }
+            }
+        }
+
+        delete("/delete/") {
+
+            val scId = call.request.queryParameters["sc_id"]?.toInt()
+            scId?.let {
+                resultCategoryRepository.deleteResultCategoriesOfSellerCategory(scId).let {
+                    when(it) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = it.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
+                    }
+                }
+            }?: kotlin.run {
+                resultCategoryRepository.deleteResultCategories().let {
+                    when(it) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = it.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
                     }
                 }
             }

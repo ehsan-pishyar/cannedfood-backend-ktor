@@ -34,7 +34,7 @@ fun Route.deleteSellers(
             }
         }
 
-        delete("/") {
+        delete("/delete/") {
             sellerRepository.deleteSellers().let {
                 when(it) {
                     is ServiceResult.Success -> {

@@ -17,7 +17,7 @@ fun Route.updateUser(
         put(Routes.UPDATE_ROUTE) {
             val id = call.parameters["id"]!!.toLong()
             call.receiveOrNull<User>()?.let { user ->
-                userRepository.updateUser(id, user).let {
+                userRepository.updateUserById(id, user).let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(

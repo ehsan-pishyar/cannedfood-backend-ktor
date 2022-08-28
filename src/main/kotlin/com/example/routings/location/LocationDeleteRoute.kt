@@ -25,10 +25,9 @@ fun Route.deleteLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No Locations received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = locationsResponse.errorCode
+                                message = locationsResponse.errorCode.message
                             )
                         }
                     }
@@ -36,10 +35,10 @@ fun Route.deleteLocations(
             }
         }
 
-        delete("/{city_id}/delete") {
+        delete("/delete/") {
 
-            val cityId = call.parameters["city_id"]!!.toInt()
-            cityId.let {
+            val cityId = call.parameters["city_id"]?.toInt()
+            cityId?.let {
                 locationRepository.deleteLocationsOfCity(cityId).let { locationsResponse ->
                     when(locationsResponse) {
                         is ServiceResult.Success -> {
@@ -49,32 +48,28 @@ fun Route.deleteLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! No Locations received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = locationsResponse.errorCode
+                                message = locationsResponse.errorCode.message
                             )
                         }
                     }
                 }
-            }
-        }
-
-        delete("/") {
-            locationRepository.deleteLocations().let { locationsResponse ->
-                when(locationsResponse) {
-                    is ServiceResult.Success -> {
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = locationsResponse.data
-                        )
-                    }
-                    is ServiceResult.Error -> {
-                        println("Error! No Locations received from database")
-                        call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = locationsResponse.errorCode
-                        )
+            } ?: kotlin.run {
+                locationRepository.deleteLocations().let { locationsResponse ->
+                    when(locationsResponse) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = locationsResponse.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = locationsResponse.errorCode.message
+                            )
+                        }
                     }
                 }
             }

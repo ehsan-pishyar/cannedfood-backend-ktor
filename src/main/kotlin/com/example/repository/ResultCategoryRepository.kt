@@ -30,7 +30,7 @@ interface ResultCategoryRepository {
         resultsCategoryId: Int
     ): ServiceResult<List<ResultsCategoryResponse?>>
     suspend fun deleteResultCategoriesOfSellerCategory(
-        resultsCategoryId: Int
+        sellerCategoryId: Int
     ): ServiceResult<List<ResultsCategoryResponse?>>
     suspend fun deleteResultCategories(): ServiceResult<List<ResultsCategoryResponse?>>
 }

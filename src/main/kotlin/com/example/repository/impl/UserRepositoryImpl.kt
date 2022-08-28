@@ -50,12 +50,13 @@ class UserRepositoryImpl : UserRepository {
      */
     override suspend fun getUsers(): ServiceResult<List<User?>> {
         return try {
-            val users = dbQuery {
+            dbQuery {
                 UserTable.selectAll()
                     .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
+            }.let {
+                ServiceResult.Success(it)
             }
-            ServiceResult.Success(users)
         }catch (e: Exception) {
             println(e)
             when(e) {
@@ -68,34 +69,37 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun getUserById(userId: Long): ServiceResult<User?> {
+    override suspend fun getUserById(userId: Long): ServiceResult<User> {
         return try {
-            val user = dbQuery {
-                UserTable.select(UserTable.id eq userId)
-                    .map { rowToUser(it) }
-                    .singleOrNull()
+            dbQuery {
+                UserTable.select {
+                    (UserTable.id eq userId)
+                }
+                    .map { rowToUser(it)!! }
+                    .single()
+            }.let {
+                ServiceResult.Success(it)
             }
-            ServiceResult.Success(user)
         } catch (e: Exception) {
             println(e)
-            when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by id")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun getUsersByEmail(email: String): ServiceResult<List<User?>> {
+    override suspend fun getUsersByEmail(email: String?): ServiceResult<List<User?>> {
         return try {
-            val users = dbQuery {
-                UserTable.select { UserTable.email like "$email%" }
+            dbQuery {
+                UserTable.select {
+                    (UserTable.email like "$email%")
+                }
                     .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
+            }.let {
+                ServiceResult.Success(it)
             }
-            ServiceResult.Success(users)
         }catch (e: Exception) {
             println(e)
             when (e) {
@@ -112,11 +116,12 @@ class UserRepositoryImpl : UserRepository {
     /**
      * آپدیت اطلاعات کاربر با استفاده از کاربری که بهش پاس میدیم
      */
-    override suspend fun updateUser(userId: Long, user: User): ServiceResult<User> {
+    override suspend fun updateUserById(userId: Long, user: User): ServiceResult<User> {
         return try {
             dbQuery {
-                UserTable.update({ UserTable.id eq userId }) {
-                    (id eq user.id)
+                UserTable.update({
+                    UserTable.id eq userId
+                }) {
                     it[id] = userId
                     it[email] = user.email
                     it[password] = hash(user.password)
@@ -125,7 +130,7 @@ class UserRepositoryImpl : UserRepository {
 
                 transaction {
                     UserTable.select {
-                        UserTable.id eq userId
+                        (UserTable.id eq userId)
                     }
                         .map { rowToUser(it) }
                         .single()
@@ -144,17 +149,33 @@ class UserRepositoryImpl : UserRepository {
     /**
      * عملیات حذف کاربر بر اساس id اونها
      */
-    override suspend fun deleteUser(userId: Long) {
-        dbQuery {
-            UserTable.deleteWhere {
-                UserTable.id eq userId
+    override suspend fun deleteUserById(userId: Long): ServiceResult<List<User?>> {
+        return try {
+            dbQuery {
+                UserTable.deleteWhere {
+                    (UserTable.id eq userId)
+                }
+                ServiceResult.Success(selectUserList())
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
     }
 
-    override suspend fun deleteUsers() {
-        dbQuery {
-            UserTable.deleteAll()
+    override suspend fun deleteUsers(): ServiceResult<List<User?>> {
+        return try {
+            dbQuery {
+                UserTable.deleteAll()
+                ServiceResult.Success(selectUserList())
+            }
+        } catch (e: Exception) {
+            when(e) {
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+            }
         }
     }
 
@@ -173,5 +194,13 @@ class UserRepositoryImpl : UserRepository {
             user_type = row[UserTable.userType],
             date_created = row[UserTable.dateCreated]
         )
+    }
+
+    private fun selectUserList(): List<User?> {
+        return transaction {
+            UserTable.selectAll()
+                .orderBy(UserTable.dateCreated to SortOrder.DESC)
+                .map { rowToUser(it) }
+        }
     }
 }

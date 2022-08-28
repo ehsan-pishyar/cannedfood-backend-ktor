@@ -15,31 +15,29 @@ fun Route.deleteFoodCategories(
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
-            id.let {
-                foodCategoryRepository.deleteFoodCategoryById(it).let { fcResponse ->
-                    when(fcResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = fcResponse.data
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No Food Categories received from database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = fcResponse.errorCode
-                            )
-                        }
+            foodCategoryRepository.deleteFoodCategoryById(id).let { fcResponse ->
+                when(fcResponse) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = fcResponse.data
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = fcResponse.errorCode.message
+                        )
                     }
                 }
             }
         }
 
-        delete("/{rc_id}/delete") {
+        delete("/delete/") {
 
-            val rcId = call.parameters["rc_id"]!!.toInt()
-            rcId.let {
+            val rcId = call.parameters["rc_id"]?.toInt()
+
+            rcId?.let {
                 foodCategoryRepository.deleteFoodCategoriesOfResultCategory(rcId).let { fcResponse ->
                     when(fcResponse) {
                         is ServiceResult.Success -> {
@@ -52,32 +50,31 @@ fun Route.deleteFoodCategories(
                             println("Error! No Food Categories received from database")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = fcResponse.errorCode
+                                message = fcResponse.errorCode.message
+                            )
+                        }
+                    }
+                }
+            } ?: kotlin.run {
+                foodCategoryRepository.deleteFoodCategories().let { fcResponse ->
+                    when(fcResponse) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = fcResponse.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = fcResponse.errorCode.message
                             )
                         }
                     }
                 }
             }
-        }
 
-        delete("/") {
-            foodCategoryRepository.deleteFoodCategories().let { fcResponse ->
-                when(fcResponse) {
-                    is ServiceResult.Success -> {
-                        call.respond(
-                            status = HttpStatusCode.OK,
-                            message = fcResponse.data
-                        )
-                    }
-                    is ServiceResult.Error -> {
-                        println("Error! No Food Categories received from database")
-                        call.respond(
-                            status = HttpStatusCode.BadRequest,
-                            message = fcResponse.errorCode
-                        )
-                    }
-                }
-            }
+
         }
     }
 }

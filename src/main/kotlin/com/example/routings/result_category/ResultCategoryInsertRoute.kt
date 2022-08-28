@@ -1,8 +1,6 @@
 package com.example.routings.result_category
 
-import com.example.models.City
 import com.example.models.ResultCategory
-import com.example.repository.CityRepository
 import com.example.repository.ResultCategoryRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
@@ -35,10 +33,9 @@ fun Route.insertNewResultCategory(
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Result Category received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = rcResponse.errorCode
+                            message = rcResponse.errorCode.message
                         )
                     }
                 }

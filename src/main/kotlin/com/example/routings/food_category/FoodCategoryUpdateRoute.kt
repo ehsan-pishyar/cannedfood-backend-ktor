@@ -18,31 +18,27 @@ fun Route.updateFoodCategory(
         put(Routes.UPDATE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
+            val foodCategory = call.receiveOrNull<FoodCategory>() ?: kotlin.run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Error! Check your json file"
+                )
+                return@put
+            }
 
-            id.let {
-                val foodCategory = call.receiveOrNull<FoodCategory>() ?: kotlin.run {
-                    call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Error! Check your json file"
-                    )
-                    return@put
-                }
-
-                foodCategoryRepository.updateFoodCategory(it, foodCategory).let { fcResponse ->
-                    when(fcResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = fcResponse.data
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No Food Category received from database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = fcResponse.errorCode
-                            )
-                        }
+            foodCategoryRepository.updateFoodCategory(id, foodCategory).let { fcResponse ->
+                when(fcResponse) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = fcResponse.data
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = fcResponse.errorCode.message
+                        )
                     }
                 }
             }

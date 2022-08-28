@@ -15,7 +15,7 @@ fun Route.deleteUsers(
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toLong()
-            userRepository.deleteUser(id)
+            userRepository.deleteUserById(id)
             userRepository.getUsers().let {
                 when(it) {
                     is ServiceResult.Success -> {

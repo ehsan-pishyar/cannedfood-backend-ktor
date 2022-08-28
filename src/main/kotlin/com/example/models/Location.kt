@@ -18,7 +18,7 @@ data class City(
 
 @Serializable
 data class Location(
-    val id: Long = randomIdGenerator(),
+    val id: Long = 0L,
     val title: String = "",
     val lat: Double = 0.0,
     val lon: Double = 0.0,

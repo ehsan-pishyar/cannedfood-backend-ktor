@@ -39,12 +39,13 @@ data class Seller(
 @Serializable
 data class Customer(
     val id: Long = 0L,
-    val user_id: Long = 0,                  // This seller belongs to user {user_id}
+    val user_id: Long = 0L,                  // This seller belongs to user {user_id}
     val first_name: String = "",
     val last_name: String = "",
+    val email: String = "",
     val picture: String = "",               // User picture image path
     val phone_number: Long = 0L,
-    val address: String = "",
+    val location_id: Long = 0L,
     val sex: UserSex = UserSex.UNKNOWN,     // Male, Female
     val birth_date: String = "",
     val date_created: String = ""
