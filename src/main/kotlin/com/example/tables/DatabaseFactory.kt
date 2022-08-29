@@ -1,6 +1,9 @@
 package com.example.tables
 
 import com.example.utils.Constants
+import com.example.utils.Constants.FLYWAY_DB_PASSWORD
+import com.example.utils.Constants.FLYWAY_DB_URL
+import com.example.utils.Constants.FLYWAY_DB_USERNAME
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers.IO
@@ -12,14 +15,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
-    private val dbUrl = "jdbc:postgresql:cannedfood_db"
-    private val dbUsername = "postgres"
-    private val dbPassword = "55989525"
-
     fun init(){
         Database.connect(hikari())
 
-        val flyway: Flyway = Flyway.configure().dataSource(dbUrl, dbUsername, dbPassword).load()
+        val flyway: Flyway = Flyway.configure().dataSource(FLYWAY_DB_URL, FLYWAY_DB_USERNAME, FLYWAY_DB_PASSWORD).load()
         flyway.baseline()
         flyway.migrate()
 

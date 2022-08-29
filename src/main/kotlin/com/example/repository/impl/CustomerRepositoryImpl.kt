@@ -2,6 +2,7 @@ package com.example.repository.impl
 
 import com.example.models.Customer
 import com.example.models.User
+import com.example.models.responses.CustomerDetailsResponse
 import com.example.models.responses.CustomerResponse
 import com.example.models.responses.LocationResponse
 import com.example.repository.CustomerRepository
@@ -46,7 +47,7 @@ class CustomerRepositoryImpl : CustomerRepository {
     override suspend fun getCustomers(): ServiceResult<List<CustomerResponse?>> {
         return try {
             dbQuery {
-                (CustomerTable innerJoin UserTable).selectAll()
+                (CustomerTable innerJoin UserTable innerJoin LocationTable).selectAll()
                     .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                     .map { rowToCustomerResponse(it) }
             }.let {
@@ -61,8 +62,8 @@ class CustomerRepositoryImpl : CustomerRepository {
         }
     }
 
-    override suspend fun getCustomerById(customerId: Long): ServiceResult<CustomerResponse> {
-        lateinit var customerResponse: CustomerResponse
+    override suspend fun getCustomerById(customerId: Long): ServiceResult<CustomerDetailsResponse> {
+        lateinit var customerDetailsResponse: CustomerDetailsResponse
         return try {
             dbQuery {
                 val customer = transaction {
@@ -86,7 +87,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                         .map { rowToUser(it) }
                         .single()
                 }
-                customerResponse = CustomerResponse(
+                customerDetailsResponse = CustomerDetailsResponse(
                     id = customer?.id,
                     first_name = customer?.first_name,
                     last_name = customer?.last_name,
@@ -97,7 +98,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                     date_created = customer?.date_created
                 )
             }
-            ServiceResult.Success(customerResponse)
+            ServiceResult.Success(customerDetailsResponse)
         } catch (e: Exception) {
             println(e)
             when(e) {
@@ -126,6 +127,14 @@ class CustomerRepositoryImpl : CustomerRepository {
                         .map { rowToCustomer(it) }
                         .singleOrNull()
                 }
+
+                val location = transaction {
+                    (LocationTable innerJoin CityTable innerJoin StateTable).select {
+                        (LocationTable.id eq customer?.location_id!!)
+                    }
+                        .map { rowToLocationResponse(it) }
+                        .singleOrNull()
+                }
                 customerResponse = CustomerResponse(
                     id = customer?.id,
                     first_name = customer?.first_name,
@@ -133,6 +142,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                     email = user?.email,
                     picture = customer?.picture,
                     sex = customer?.sex?.toString(),
+                    location = location?.title,
                     date_created = customer?.date_created
                 )
             }
@@ -187,7 +197,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                 CustomerTable.deleteAll()
 
                 transaction {
-                    (CustomerTable innerJoin UserTable).selectAll()
+                    (CustomerTable innerJoin UserTable innerJoin LocationTable).selectAll()
                         .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                         .map { rowToCustomerResponse(it) }
                 }
@@ -211,7 +221,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                 }
 
                 transaction {
-                    (CustomerTable innerJoin UserTable).selectAll()
+                    (CustomerTable innerJoin UserTable innerJoin LocationTable).selectAll()
                         .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                         .map { rowToCustomerResponse(it) }
                 }
@@ -254,6 +264,7 @@ class CustomerRepositoryImpl : CustomerRepository {
             email = row[UserTable.email],
             picture = row[CustomerTable.picture],
             sex = row[CustomerTable.sex].toString(),
+            location = row[LocationTable.title],
             date_created = row[CustomerTable.dateCreated]
         )
     }
