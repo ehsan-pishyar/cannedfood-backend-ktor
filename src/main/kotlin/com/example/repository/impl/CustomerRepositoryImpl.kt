@@ -235,11 +235,11 @@ class CustomerRepositoryImpl : CustomerRepository {
             user_id = row[CustomerTable.userId],
             first_name = row[CustomerTable.firstName],
             last_name = row[CustomerTable.lastName],
-            picture = row[CustomerTable.picture],
+            picture = row[CustomerTable.picture]!!,
             phone_number = row[CustomerTable.phoneNumber],
             location_id = row[CustomerTable.locationId],
-            sex = row[CustomerTable.sex],
-            birth_date = row[CustomerTable.birthDate],
+            sex = row[CustomerTable.sex]!!,
+            birth_date = row[CustomerTable.birthDate]!!,
             date_created = row[CustomerTable.dateCreated]
         )
     }

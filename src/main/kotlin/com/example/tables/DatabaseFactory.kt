@@ -5,19 +5,29 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
+    private val dbUrl = "jdbc:postgresql:cannedfood_db"
+    private val dbUsername = "postgres"
+    private val dbPassword = "55989525"
+
     fun init(){
         Database.connect(hikari())
 
-//        val flyway: Flyway = Flyway.configure().dataSource(hikari()).load()
-//        flyway.migrate()
+        val flyway: Flyway = Flyway.configure().dataSource(dbUrl, dbUsername, dbPassword).load()
+        flyway.baseline()
+        flyway.migrate()
 
         transaction {
+//            SchemaUtils.drop(StateTable, CityTable, LocationTable, SellerCategoryTable, ResultCategoryTable,
+//                FoodCategoryTable, SellerRatingTable, ResultRatingTable, SellerCommentTable, ResultCommentTable,
+//                CustomerTable, UserTable, ResultsTable, SellerTable, SellerOpenStatusTable)
+
             SchemaUtils.create(StateTable, CityTable, LocationTable, SellerCategoryTable, ResultCategoryTable,
             FoodCategoryTable, SellerRatingTable, ResultRatingTable, SellerCommentTable, ResultCommentTable,
                 SellerTable, UserTable, SellerOpenStatusTable)

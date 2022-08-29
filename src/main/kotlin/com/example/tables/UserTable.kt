@@ -46,11 +46,11 @@ object CustomerTable: Table() {
     val userId = long("user_id") references UserTable.id
     val firstName = varchar(name = "first_name", length = 50)
     val lastName = varchar(name = "last_name", length = 50)
-    val picture = varchar(name = "picture", length = 500)
+    val picture = varchar(name = "picture", length = 500).nullable().default("avatar.png")
     val phoneNumber = long("phone_number")
     val locationId = long("location_id") references LocationTable.id
-    val sex = enumeration<UserSex>("sex")
-    val birthDate = varchar(name = "birth_date", length = 255)
+    val sex = enumeration<UserSex>("sex").nullable()
+    val birthDate = varchar(name = "birth_date", length = 255).nullable()
     val dateCreated = varchar(name = "date_created", length = 50).default(LocalDateTime.now().toDatabaseString())
 
     override val primaryKey = PrimaryKey(id, name = "PK_CUSTOMER_ID")
