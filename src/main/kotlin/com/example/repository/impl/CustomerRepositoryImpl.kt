@@ -62,6 +62,12 @@ class CustomerRepositoryImpl : CustomerRepository {
         }
     }
 
+    /**
+     * خوب قراره یه مشتری رو بر اساس شناسه پیدا کنیم، یعنی جزئیات مشتری رو داشته باشیم. این مشتری قراره به جدول های دیگه هم رفرنس داشته باشه.
+     * مثلا ایمیل این مشتری چیه که این ایمیل توی جدول کاربر هستش که مشتری رو به اون کاربر اختصاص یا رفرنس دادیم.
+     * و اینکه لوکیشن این مشتری کجاست که بر اساس اون لوکیشنی که مشتری رو بهش اختصاص دادیم میاد از جدول لوکیشن اون مکان، شهر و استان مشتری رو برامون بر میگردونه.
+     * چون قراره توی آبجکت مشتری، آبجکت لوکیشن رو هم برگردونه، واسه همین باید یه ترنزکشن هم به آبجکت لوکیشن بزنیم تا لوکیشن رو برگردونیم.
+     */
     override suspend fun getCustomerById(customerId: Long): ServiceResult<CustomerDetailsResponse> {
         lateinit var customerDetailsResponse: CustomerDetailsResponse
         return try {
@@ -108,17 +114,20 @@ class CustomerRepositoryImpl : CustomerRepository {
         }
     }
 
+    // TODO: 8/31/2022 Fix this shit
     override suspend fun getCustomerByEmail(email: String?): ServiceResult<CustomerResponse?> {
         lateinit var customerResponse: CustomerResponse
         return try {
             dbQuery {
                 val user = transaction {
                     UserTable.select {
-                        (UserTable.email eq email!!)
+                        (UserTable.email like "$email%")
                     }
                         .map { rowToUser(it) }
                         .singleOrNull()
                 }
+                println("user email: " + user?.email)
+                println("user id: " + user?.id)
 
                 val customer = transaction {
                     CustomerTable.select {
@@ -127,6 +136,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                         .map { rowToCustomer(it) }
                         .singleOrNull()
                 }
+                println("customer user id: " + customer?.user_id)
 
                 val location = transaction {
                     (LocationTable innerJoin CityTable innerJoin StateTable).select {

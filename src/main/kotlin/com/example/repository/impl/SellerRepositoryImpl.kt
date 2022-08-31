@@ -26,10 +26,13 @@ class SellerRepositoryImpl : SellerRepository {
                     it[banner] = seller.banner
                     it[stateId] = seller.state_id
                     it[cityId] = seller.city_id
+                    it[locationId] = seller.location_id
+                    it[sellerCategoryId] = seller.seller_category_id
+                    it[resultCategoryId] = seller.result_category_id
+                    it[foodCategoryId] = seller.food_category_id
                     it[deliveryFee] = seller.delivery_fee
                     it[deliveryDuration] = seller.delivery_duration
                     it[phoneNumber] = seller.phone_number
-                    it[dateCreated] = seller.date_created
                 }
                     .resultedValues?.single().let {
                         ServiceResult.Success(rowToSeller(it)!!)
@@ -61,7 +64,7 @@ class SellerRepositoryImpl : SellerRepository {
     }
 
     override suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse> {
-        var sellerDetailsResponse: SellerDetailsResponse? = null
+        lateinit var sellerDetailsResponse: SellerDetailsResponse
         dbQuery {
             val seller = transaction {
                 (SellerTable).select {
@@ -90,9 +93,9 @@ class SellerRepositoryImpl : SellerRepository {
                 date_created = seller.date_created
             )
         }
-        return sellerDetailsResponse?.let {
+        return sellerDetailsResponse.let {
             ServiceResult.Success(it)
-        } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+        }
     }
 
     override suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> {
@@ -375,6 +378,7 @@ class SellerRepositoryImpl : SellerRepository {
                     it[locationId] = seller.location_id
                     it[sellerCategoryId] = seller.seller_category_id
                     it[resultCategoryId] = seller.result_category_id
+                    it[foodCategoryId] = seller.food_category_id
                     it[deliveryFee] = seller.delivery_fee
                     it[deliveryDuration] = seller.delivery_duration
                     it[phoneNumber] = seller.phone_number
@@ -445,14 +449,17 @@ class SellerRepositoryImpl : SellerRepository {
 
         return Seller(
             id = row[SellerTable.id],
+            user_id = row[SellerTable.userId],
             title = row[SellerTable.title],
             description = row[SellerTable.description]!!,
             logo = row[SellerTable.logo]!!,
             banner = row[SellerTable.banner]!!,
             state_id = row[SellerTable.stateId],
             city_id = row[SellerTable.cityId],
+            location_id = row[SellerTable.locationId],
             seller_category_id = row[SellerTable.sellerCategoryId],
             result_category_id = row[SellerTable.resultCategoryId],
+            food_category_id = row[SellerTable.foodCategoryId],
             delivery_fee = row[SellerTable.deliveryFee]!!,
             delivery_duration = row[SellerTable.deliveryDuration]!!,
             phone_number = row[SellerTable.phoneNumber]!!,
@@ -496,9 +503,9 @@ class SellerRepositoryImpl : SellerRepository {
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
-            date_created = row[ResultsTable.dateCreated],
-            prepare_duration = row[ResultsTable.prepareDuration]!!
-        )
+            prepare_duration = row[ResultsTable.prepareDuration]!!,
+            date_created = row[ResultsTable.dateCreated]
+            )
     }
 
     private fun rowToLocationResponse(row: ResultRow?): LocationResponse? {

@@ -32,7 +32,7 @@ data class SellerDetailsResponse(
     val logo: String?,
     val banner: String?,
     val location: LocationResponse? = null,
-    val results: List<ResultResponse?> = emptyList(),
+    val results: List<ResultResponse?>? = emptyList(),
 //    val rating: Double?,
 //    val vote_count: Long?,
     val comments: List<SellerCommentResponse?> = emptyList(),
