@@ -18,7 +18,7 @@ fun Route.getCustomers(
             val id = params["id"]?.toLong()
             val email = params["email"]
 
-            if (id == null && email == null) {
+            if (params.isEmpty()) {
                 customerRepository.getCustomers().let {
                     when(it) {
                         is ServiceResult.Success -> {

@@ -50,7 +50,7 @@ object CustomerTable: Table() {
     val phoneNumber = long("phone_number")
     val locationId = long("location_id") references LocationTable.id
     val sex = enumeration<UserSex>("sex").nullable()
-    val birthDate = varchar(name = "birth_date", length = 255).nullable()
+    val birthDate = varchar(name = "birth_date", length = 255).nullable().default(LocalDateTime.now().toDatabaseString())
     val dateCreated = varchar(name = "date_created", length = 50).default(LocalDateTime.now().toDatabaseString())
 
     override val primaryKey = PrimaryKey(id, name = "PK_CUSTOMER_ID")

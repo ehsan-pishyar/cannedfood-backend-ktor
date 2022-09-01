@@ -7,6 +7,7 @@ import com.example.models.responses.CustomerResponse
 import com.example.models.responses.LocationResponse
 import com.example.repository.CustomerRepository
 import com.example.tables.*
+import com.example.tables.CustomerTable.locationId
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
@@ -47,7 +48,11 @@ class CustomerRepositoryImpl : CustomerRepository {
     override suspend fun getCustomers(): ServiceResult<List<CustomerResponse?>> {
         return try {
             dbQuery {
-                (CustomerTable innerJoin UserTable innerJoin LocationTable).selectAll()
+                CustomerTable
+                    .innerJoin(UserTable, {userId}, {id})
+                    .innerJoin(LocationTable, {locationId}, {id})
+//                (CustomerTable innerJoin UserTable innerJoin LocationTable)
+                    .selectAll()
                     .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                     .map { rowToCustomerResponse(it) }
             }.let {
