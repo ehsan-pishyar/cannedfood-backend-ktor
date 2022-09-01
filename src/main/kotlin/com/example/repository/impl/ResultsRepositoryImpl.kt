@@ -3,6 +3,7 @@ package com.example.repository.impl
 import com.example.models.FoodCategory
 import com.example.models.ResultCategory
 import com.example.models.Results
+import com.example.models.Seller
 import com.example.models.responses.ResultResponse
 import com.example.repository.ResultsRepository
 import com.example.tables.*
@@ -43,10 +44,18 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
+    /**
+     * به خاطر اینکه هم جدول seller دارای ستون foodCategoryId هستش و هم جدول result این ستون رو داره، و اینکه این ستون چون رفرنس میده
+     * به جدول FoodCategoryTable، واسه همین اگه بخوایم بدون شرط و به صورت عادی innerJoin بدیم این 3 تا جدول رو، بهمون خطا میده که
+     * دو تا جدول result و seller دارن به جدول foodCategory رفرنس میدن و این کار امکان پذیر نیست. واسه همین باید توی innerJoin، شرط هم بذاریم
+     * تا این خطا برطرف بشه
+     */
     override suspend fun getResults(): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                ResultsTable.innerJoin(SellerTable).innerJoin(FoodCategoryTable).innerJoin(ResultRatingTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id}) // Join SellerTable Where ResultsTable.sellerId eq SellerTable.id
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id}) // Join FoodCategoryTable where ResultsTable.foodCategoryId eq FoodCategoryTable.id
                     .selectAll()
                     .orderBy(ResultsTable.dateCreated to SortOrder.ASC)
                     .map { rowToResultResponse(it) }
@@ -54,6 +63,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                 ServiceResult.Success(it)
             }
         } catch (e: Exception) {
+            println(e)
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -61,13 +71,17 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
+    // TODO: 9/1/2022 Use ResultDetailsResponse for result details
     override suspend fun getResultById(resultId: Long): ServiceResult<ResultResponse?> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.id eq resultId)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .map { rowToResultResponse(it) }
                     .single()
             }.let {
                 ServiceResult.Success(it)
@@ -83,10 +97,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByTitle(resultTitle: String): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.title like "$resultTitle%")
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -101,10 +119,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByDescription(description: String?): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.title like "$description%")
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -119,10 +141,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsBySellerId(sellerId: Long): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.sellerId eq sellerId)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -157,6 +183,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     ResultsTable.select {
                         (ResultsTable.foodCategoryId eq foodCategory?.id!!)
                     }
+                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                         .map { rowToResultResponse(it) }
                 }.let {
                     ServiceResult.Success(it)
@@ -186,6 +213,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     ResultsTable.select {
                         (ResultsTable.foodCategoryId eq foodCategory?.id!!)
                     }
+                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                         .map { rowToResultResponse(it) }
                 }.let {
                     ServiceResult.Success(it)
@@ -202,10 +230,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByFoodCategoryId(foodCategoryId: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.foodCategoryId eq foodCategoryId)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -220,10 +252,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByPrice(price: Long): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.price lessEq price)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -246,10 +282,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByDiscount(discount: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.title greaterEq discount)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -264,10 +304,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByDateAdded(dateAdded: String): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.dateCreated like dateAdded)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -282,10 +326,14 @@ class ResultsRepositoryImpl : ResultsRepository {
     override suspend fun getResultsByPrepareDuration(minutes: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable)
+                ResultsTable
+                    .innerJoin(SellerTable, {sellerId}, {id})
+                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
                         (ResultsTable.prepareDuration lessEq minutes)
-                    }.map { rowToResultResponse(it) }
+                    }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                    .map { rowToResultResponse(it) }
             }.let {
                 ServiceResult.Success(it)
             }
@@ -340,7 +388,10 @@ class ResultsRepositoryImpl : ResultsRepository {
                 }
 
                 transaction {
-                    (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable).select {
+                    ResultsTable
+                        .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
+                        .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
+                        .select {
                         (ResultsTable.sellerId eq sellerId)
                     }
                         .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
@@ -363,7 +414,10 @@ class ResultsRepositoryImpl : ResultsRepository {
                 ResultsTable.deleteAll()
 
                 transaction {
-                    (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable innerJoin FoodCategoryTable).select {
+                    ResultsTable
+                        .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
+                        .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
+                        .select {
                         (ResultsTable.sellerId eq sellerId)
                     }
                         .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
@@ -394,7 +448,7 @@ class ResultsRepositoryImpl : ResultsRepository {
             discount = row[ResultsTable.discount]!!,
             prepare_duration = row[ResultsTable.prepareDuration]!!,
             date_created = row[ResultsTable.dateCreated]
-            )
+        )
     }
 
     private fun rowToResultResponse(row: ResultRow?): ResultResponse? {
@@ -402,16 +456,16 @@ class ResultsRepositoryImpl : ResultsRepository {
 
         return ResultResponse(
             id = row[ResultsTable.id],
-            seller = row[SellerTable.title],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
-            food_category = row[FoodCategoryTable.title],
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
             prepare_duration = row[ResultsTable.prepareDuration]!!,
+            seller = row[SellerTable.title],
+            food_category = row[FoodCategoryTable.title],
             date_created = row[ResultsTable.dateCreated]
-            )
+        )
     }
 
     private fun rowToResultCategory(row: ResultRow?): ResultCategory? {

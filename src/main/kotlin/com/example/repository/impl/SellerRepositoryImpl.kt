@@ -60,6 +60,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
+    // TODO: 9/1/2022 Fix this shit
     override suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse> {
         var sellerDetailsResponse: SellerDetailsResponse? = null
         dbQuery {
@@ -489,15 +490,15 @@ class SellerRepositoryImpl : SellerRepository {
 
         return ResultResponse(
             id = row[ResultsTable.id],
-            seller = row[SellerTable.title],
             title = row[ResultsTable.title],
             description = row[ResultsTable.description]!!,
-            food_category = row[FoodCategoryTable.title],
             image_path = row[ResultsTable.imagePath],
             price = row[ResultsTable.price],
             discount = row[ResultsTable.discount]!!,
+            prepare_duration = row[ResultsTable.prepareDuration]!!,
+            seller = row[SellerTable.title],
+            food_category = row[FoodCategoryTable.title],
             date_created = row[ResultsTable.dateCreated],
-            prepare_duration = row[ResultsTable.prepareDuration]!!
         )
     }
 
@@ -535,7 +536,10 @@ class SellerRepositoryImpl : SellerRepository {
 
     private fun getResults(sellerId: Long): List<ResultResponse?> {
         return transaction {
-            (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable).select {
+            ResultsTable
+                .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
+                .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
+                .select {
                 (ResultsTable.sellerId eq sellerId)
             }
                 .orderBy(ResultsTable.dateCreated to SortOrder.DESC)

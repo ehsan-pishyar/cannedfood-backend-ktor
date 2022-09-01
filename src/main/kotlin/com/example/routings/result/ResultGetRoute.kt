@@ -27,6 +27,25 @@ fun Route.getResults(
             val prepareDuration = params["prepare_duration"]?.toInt()
             val dateCreated = params["date_created"]
 
+            if (params.isEmpty()) {
+                resultsRepository.getResults().let {
+                    when(it) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.MultiStatus,
+                                message = it.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
+                    }
+                }
+            }
+
             id?.let { resultId ->
                 resultsRepository.getResultById(resultId).let {
                     when(it) {
@@ -219,25 +238,6 @@ fun Route.getResults(
 
             dateCreated?.let { resultDateCreated ->
                 resultsRepository.getResultsByDateAdded(resultDateCreated).let {
-                    when(it) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = it.data
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = it.errorCode.message
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (params == null) {
-                resultsRepository.getResults().let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(
