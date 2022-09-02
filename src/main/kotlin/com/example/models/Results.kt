@@ -8,6 +8,8 @@ data class Results(
     val seller_id: Long = 0L,
     val title: String = "",
     val description: String = "",
+    val seller_category_id: Int = 0,
+    val result_category_id: Int = 0,
     val food_category_id: Int = 0,
     val image_path: String = "",
     val price: Long = 0L,

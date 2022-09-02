@@ -1,6 +1,8 @@
 package com.example.models.responses
 
 import com.example.models.FoodCategory
+import com.example.models.ResultComment
+import com.example.models.ResultRating
 import com.example.models.Seller
 import kotlinx.serialization.Serializable
 
@@ -27,7 +29,9 @@ data class ResultDetailsResponse(
     val price: Long?,
     val discount: Int?,
     val prepare_duration: Int?,
-    val seller: Seller?,
-    val food_category: FoodCategory?,
+    val seller: SellerResponse?,
+    val food_category: String?,
+    val rating: Double?,
+    val comments: List<ResultCommentResponse?> = emptyList(),
     val date_created: String?
 )

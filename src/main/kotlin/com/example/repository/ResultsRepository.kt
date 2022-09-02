@@ -1,6 +1,7 @@
 package com.example.repository
 
 import com.example.models.Results
+import com.example.models.responses.ResultDetailsResponse
 import com.example.models.responses.ResultResponse
 import com.example.utils.ServiceResult
 
@@ -9,7 +10,7 @@ interface ResultsRepository {
     suspend fun insertResult(result: Results): ServiceResult<Results>
 
     suspend fun getResults(): ServiceResult<List<ResultResponse?>>
-    suspend fun getResultById(resultId: Long): ServiceResult<ResultResponse?>
+    suspend fun getResultDetails(resultId: Long): ServiceResult<ResultDetailsResponse?>
     suspend fun getResultsByTitle(resultTitle: String): ServiceResult<List<ResultResponse?>>
     suspend fun getResultsByDescription(description: String?): ServiceResult<List<ResultResponse?>>
     suspend fun getResultsBySellerId(sellerId: Long): ServiceResult<List<ResultResponse?>>

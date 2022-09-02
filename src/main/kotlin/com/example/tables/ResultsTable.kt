@@ -9,6 +9,8 @@ object ResultsTable: Table() {
     val sellerId = long("seller_id") references SellerTable.id
     val title = varchar(name = "title", length = 100)
     val description = varchar(name = "description", length = 500).nullable()
+    val sellerCategoryId = integer("seller_category_id") references SellerCategoryTable.id
+    val resultCategoryId = integer("result_category_id") references ResultCategoryTable.id
     val foodCategoryId = integer("food_category_id") references FoodCategoryTable.id
     val imagePath = varchar(name = "image_path", length = 500)
     val price = long("price")

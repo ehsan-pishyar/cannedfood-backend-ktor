@@ -19,9 +19,9 @@ fun Route.getResults(
             val sellerId = params["seller_id"]?.toLong()
             val title = params["title"]
             val description = params["description"]
-            val fcId = params["fc_id"]?.toInt()
-            val rcId = params["rc_id"]?.toInt()
             val scId = params["sc_id"]?.toInt()
+            val rcId = params["rc_id"]?.toInt()
+            val fcId = params["fc_id"]?.toInt()
             val price = params["price"]?.toLong()
             val discount = params["discount"]?.toInt()
             val prepareDuration = params["prepare_duration"]?.toInt()
@@ -47,7 +47,7 @@ fun Route.getResults(
             }
 
             id?.let { resultId ->
-                resultsRepository.getResultById(resultId).let {
+                resultsRepository.getResultDetails(resultId).let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(
@@ -122,8 +122,8 @@ fun Route.getResults(
                 }
             }
 
-            fcId?.let { resultFCID ->
-                resultsRepository.getResultsByFoodCategoryId(resultFCID).let {
+            scId?.let { resultSCID ->
+                resultsRepository.getResultsBySellerCategoryId(resultSCID).let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(
@@ -160,8 +160,8 @@ fun Route.getResults(
                 }
             }
 
-            scId?.let { resultSCID ->
-                resultsRepository.getResultsBySellerCategoryId(resultSCID).let {
+            fcId?.let { resultFCID ->
+                resultsRepository.getResultsByFoodCategoryId(resultFCID).let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(

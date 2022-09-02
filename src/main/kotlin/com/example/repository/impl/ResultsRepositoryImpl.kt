@@ -1,10 +1,10 @@
 package com.example.repository.impl
 
-import com.example.models.FoodCategory
-import com.example.models.ResultCategory
-import com.example.models.Results
-import com.example.models.Seller
+import com.example.models.*
+import com.example.models.responses.ResultCommentResponse
+import com.example.models.responses.ResultDetailsResponse
 import com.example.models.responses.ResultResponse
+import com.example.models.responses.SellerResponse
 import com.example.repository.ResultsRepository
 import com.example.tables.*
 import com.example.tables.DatabaseFactory.dbQuery
@@ -71,20 +71,37 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
-    // TODO: 9/1/2022 Use ResultDetailsResponse for result details
-    override suspend fun getResultById(resultId: Long): ServiceResult<ResultResponse?> {
+    override suspend fun getResultDetails(resultId: Long): ServiceResult<ResultDetailsResponse?> {
+        lateinit var resultDetailsResponse: ResultDetailsResponse
         return try {
             dbQuery {
-                ResultsTable
-                    .innerJoin(SellerTable, {sellerId}, {id})
-                    .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
-                    .select {
+                val result = transaction {
+                    ResultsTable.select {
                         (ResultsTable.id eq resultId)
                     }
-                    .map { rowToResultResponse(it) }
-                    .single()
+                        .map { rowToResults(it) }
+                        .single()
+                }
+                val seller = getSeller(result!!.seller_id)
+                val foodCategory = getFoodCategory(result.food_category_id)
+                val comments = getComments(resultId)
+
+                resultDetailsResponse = ResultDetailsResponse(
+                    id = result.id,
+                    title = result.title,
+                    description = result.description,
+                    image_path = result.image_path,
+                    price = result.price,
+                    discount = result.discount,
+                    prepare_duration = result.prepare_duration,
+                    seller = seller,
+                    food_category = foodCategory!!.title,
+                    rating = result.rating,
+                    comments = comments,
+                    date_created = result.date_created
+                )
             }.let {
-                ServiceResult.Success(it)
+                ServiceResult.Success(resultDetailsResponse)
             }
         } catch (e: Exception) {
             when (e) {
@@ -123,7 +140,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     .innerJoin(SellerTable, {sellerId}, {id})
                     .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
                     .select {
-                        (ResultsTable.title like "$description%")
+                        (ResultsTable.description like "$description%")
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
@@ -160,34 +177,16 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
+    // TODO: 9/2/2022 Fix this shit
     override suspend fun getResultsBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                val resultCategory = transaction {
-                    ResultCategoryTable.select {
-                        (ResultCategoryTable.sellerCategoryId eq sellerCategoryId)
-                    }
-                        .map { rowToResultCategory(it) }
-                        .single()
+                ResultsTable.select {
+                    (ResultsTable.sellerCategoryId eq sellerCategoryId)
                 }
-
-                val foodCategory = transaction {
-                    FoodCategoryTable.select {
-                        (FoodCategoryTable.resultCategoryId eq resultCategory?.id!!)
-                    }
-                        .map { rowToFoodCategory(it) }
-                        .single()
-                }
-
-                transaction {
-                    ResultsTable.select {
-                        (ResultsTable.foodCategoryId eq foodCategory?.id!!)
-                    }
-                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
-                        .map { rowToResultResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                    .map { rowToResultResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
             }
         } catch (e: Exception) {
             when (e) {
@@ -198,26 +197,16 @@ class ResultsRepositoryImpl : ResultsRepository {
 
     }
 
+    // TODO: 9/2/2022 Fix this shit
     override suspend fun getResultsByResultCategoryId(resultCategoryId: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
-                val foodCategory = transaction {
-                    FoodCategoryTable.select {
-                        (FoodCategoryTable.resultCategoryId eq resultCategoryId)
-                    }
-                        .map { rowToFoodCategory(it) }
-                        .single()
+                ResultsTable.select {
+                    (ResultsTable.resultCategoryId eq resultCategoryId)
                 }
-
-                transaction {
-                    ResultsTable.select {
-                        (ResultsTable.foodCategoryId eq foodCategory?.id!!)
-                    }
-                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
-                        .map { rowToResultResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                    .map { rowToResultResponse(it) }
+            }.let {
+                ServiceResult.Success(it)
             }
         } catch (e: Exception) {
             when (e) {
@@ -474,8 +463,21 @@ class ResultsRepositoryImpl : ResultsRepository {
         return ResultCategory(
             id = row[ResultCategoryTable.id],
             title = row[ResultCategoryTable.title],
-            image_path = row[ResultCategoryTable.imagePath]!!,
             seller_category_id = row[ResultCategoryTable.sellerCategoryId]
+        )
+    }
+
+    private fun rowToSellerResponse(row: ResultRow?): SellerResponse? {
+        if (row == null) return null
+
+        return SellerResponse(
+            id = row[SellerTable.id],
+            title = row[SellerTable.title],
+            description = row[SellerTable.description]!!,
+            logo = row[SellerTable.logo]!!,
+            banner = row[SellerTable.banner]!!,
+            delivery_fee = row[SellerTable.deliveryFee]!!,
+            delivery_duration = row[SellerTable.deliveryDuration]!!
         )
     }
 
@@ -488,5 +490,46 @@ class ResultsRepositoryImpl : ResultsRepository {
             image_path = row[FoodCategoryTable.imagePath]!!,
             result_category_id = row[FoodCategoryTable.resultCategoryId]
         )
+    }
+
+    private fun rowToResultComments(row: ResultRow?): ResultCommentResponse? {
+        if (row == null) return null
+
+        return ResultCommentResponse(
+            from = row[UserTable.email],
+            message = row[ResultCommentTable.message]
+        )
+    }
+
+    private fun getSeller(sellerId: Long): SellerResponse {
+        return transaction {
+            SellerTable.select {
+                (SellerTable.id eq sellerId)
+            }
+                .map { rowToSellerResponse(it)!! }
+                .single()
+        }
+    }
+
+    private fun getFoodCategory(foodCategoryId: Int): FoodCategory? {
+        return transaction {
+            FoodCategoryTable.select {
+                (FoodCategoryTable.id eq foodCategoryId)
+            }
+                .map { rowToFoodCategory(it) }
+                .singleOrNull()
+        }
+    }
+
+    private fun getComments(resultId: Long): List<ResultCommentResponse?> {
+        return transaction {
+            ResultCommentTable
+                .innerJoin(CustomerTable, {fromCustomerId}, {id})
+                .innerJoin(UserTable, {CustomerTable.userId}, {id})
+                .select {
+                    (ResultCommentTable.toResultId eq resultId)
+                }
+                .map { rowToResultComments(it) }
+        }
     }
 }
