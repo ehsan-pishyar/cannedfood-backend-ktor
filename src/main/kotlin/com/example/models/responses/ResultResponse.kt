@@ -1,9 +1,5 @@
 package com.example.models.responses
 
-import com.example.models.FoodCategory
-import com.example.models.ResultComment
-import com.example.models.ResultRating
-import com.example.models.Seller
 import kotlinx.serialization.Serializable
 
 @Serializable

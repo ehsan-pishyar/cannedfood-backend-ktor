@@ -10,7 +10,6 @@ import com.example.utils.ServiceResult
 import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class SellerRepositoryImpl : SellerRepository {
@@ -67,7 +66,7 @@ class SellerRepositoryImpl : SellerRepository {
         lateinit var sellerDetailsResponse: SellerDetailsResponse
         dbQuery {
             val seller = transaction {
-                (SellerTable).select {
+                SellerTable.select {
                     (SellerTable.id eq sellerId)
                 }
                     .map { rowToSeller(it) }
@@ -505,7 +504,7 @@ class SellerRepositoryImpl : SellerRepository {
             discount = row[ResultsTable.discount]!!,
             prepare_duration = row[ResultsTable.prepareDuration]!!,
             date_created = row[ResultsTable.dateCreated]
-            )
+        )
     }
 
     private fun rowToLocationResponse(row: ResultRow?): LocationResponse? {
@@ -525,8 +524,26 @@ class SellerRepositoryImpl : SellerRepository {
         if (row == null) return null
 
         return SellerCommentResponse(
-            from = row[CustomerTable.firstName + CustomerTable.lastName],
+            from = row[CustomerTable.firstName],
             message = row[SellerCommentTable.message]
+        )
+    }
+
+    private fun rowToFoodCategory(row: ResultRow?): FoodCategory? {
+        if (row == null) return null
+
+        return FoodCategory(
+            id = row[SellerCategoryTable.id]
+        )
+    }
+
+    private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
+        if (row == null) return null
+
+        return SellerOpenStatus(
+            id = row[SellerOpenStatusTable.id],
+            seller_id = row[SellerOpenStatusTable.sellerId],
+            is_open = row[SellerOpenStatusTable.isOpen]
         )
     }
 
@@ -542,7 +559,10 @@ class SellerRepositoryImpl : SellerRepository {
 
     private fun getResults(sellerId: Long): List<ResultResponse?> {
         return transaction {
-            (ResultsTable innerJoin SellerTable innerJoin FoodCategoryTable).select {
+            ResultsTable
+                .innerJoin(SellerTable, {ResultsTable.sellerId}, {id})
+                .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
+            .select {
                 (ResultsTable.sellerId eq sellerId)
             }
                 .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
@@ -580,23 +600,5 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                 .singleOrNull()
         }
-    }
-
-    private fun rowToFoodCategory(row: ResultRow?): FoodCategory? {
-        if (row == null) return null
-
-        return FoodCategory(
-            id = row[SellerCategoryTable.id]
-        )
-    }
-
-    private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
-        if (row == null) return null
-
-        return SellerOpenStatus(
-            id = row[SellerOpenStatusTable.id],
-            seller_id = row[SellerOpenStatusTable.sellerId],
-            is_open = row[SellerOpenStatusTable.isOpen]
-        )
     }
 }

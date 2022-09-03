@@ -16,7 +16,6 @@ import com.example.utils.toDatabaseString
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import java.time.LocalDateTime
@@ -140,7 +139,7 @@ class CommentRepositoryImpl : CommentRepository {
         if (row == null) return null
 
         return SellerCommentResponse(
-            from = row[CustomerTable.firstName + CustomerTable.lastName],
+            from = row[CustomerTable.firstName],
             message = row[SellerCommentTable.message]
         )
     }
@@ -149,7 +148,7 @@ class CommentRepositoryImpl : CommentRepository {
         if (row == null) return null
 
         return ResultCommentResponse(
-            from = row[CustomerTable.firstName + CustomerTable.lastName],
+            from = row[CustomerTable.firstName],
             message = row[SellerCommentTable.message]
         )
     }

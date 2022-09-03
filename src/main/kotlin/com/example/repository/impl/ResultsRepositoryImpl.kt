@@ -177,7 +177,6 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
-    // TODO: 9/2/2022 Fix this shit
     override suspend fun getResultsBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
@@ -197,7 +196,6 @@ class ResultsRepositoryImpl : ResultsRepository {
 
     }
 
-    // TODO: 9/2/2022 Fix this shit
     override suspend fun getResultsByResultCategoryId(resultCategoryId: Int): ServiceResult<List<ResultResponse?>> {
         return try {
             dbQuery {
@@ -454,16 +452,6 @@ class ResultsRepositoryImpl : ResultsRepository {
             seller = row[SellerTable.title],
             food_category = row[FoodCategoryTable.title],
             date_created = row[ResultsTable.dateCreated]
-        )
-    }
-
-    private fun rowToResultCategory(row: ResultRow?): ResultCategory? {
-        if (row == null) return null
-
-        return ResultCategory(
-            id = row[ResultCategoryTable.id],
-            title = row[ResultCategoryTable.title],
-            seller_category_id = row[ResultCategoryTable.sellerCategoryId]
         )
     }
 
