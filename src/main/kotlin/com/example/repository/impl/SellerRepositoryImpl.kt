@@ -475,6 +475,7 @@ class SellerRepositoryImpl : SellerRepository {
             description = row[SellerTable.description],
             logo = row[SellerTable.logo],
             banner = row[SellerTable.banner],
+            rating = row[SellerRatingTable.rating].toDouble(),
             delivery_fee = row[SellerTable.deliveryFee],
             delivery_duration = row[SellerTable.deliveryDuration],
         )
@@ -528,15 +529,7 @@ class SellerRepositoryImpl : SellerRepository {
             message = row[SellerCommentTable.message]
         )
     }
-
-    private fun rowToFoodCategory(row: ResultRow?): FoodCategory? {
-        if (row == null) return null
-
-        return FoodCategory(
-            id = row[SellerCategoryTable.id]
-        )
-    }
-
+    
     private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
         if (row == null) return null
 
