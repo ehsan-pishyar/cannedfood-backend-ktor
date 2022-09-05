@@ -22,7 +22,6 @@ class CityRepositoryImpl : CityRepository {
                     it[stateId] = city.state_id
                 }
                     .resultedValues?.singleOrNull()?.let {
-//                        val stateResponse = getState(city.state_id)
                         ServiceResult.Success(rowToCity(it))
                     } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
@@ -165,11 +164,9 @@ class CityRepositoryImpl : CityRepository {
 
                  transaction {
                      CityTable.select {
-                         CityTable.id eq cityId
+                         (CityTable.id eq cityId)
                      }
-                         .map {
-                             rowToCity(it)
-                         }
+                         .map { rowToCity(it) }
                          .singleOrNull()
                  }.let {
                      ServiceResult.Success(it)
@@ -189,13 +186,7 @@ class CityRepositoryImpl : CityRepository {
                 CityTable.deleteWhere {
                     CityTable.id eq cityId
                 }
-
-                transaction {
-                    (CityTable innerJoin StateTable).selectAll()
-                        .orderBy(CityTable.id to SortOrder.ASC)
-                        .limit(20)
-                        .map { rowToCityResponse(it) }
-                }.let {
+                getAllCities().let {
                     ServiceResult.Success(it)
                 }
             }
@@ -213,12 +204,7 @@ class CityRepositoryImpl : CityRepository {
                 CityTable.deleteWhere {
                     CityTable.stateId eq stateId
                 }
-                transaction {
-                    (CityTable innerJoin StateTable).selectAll()
-                        .orderBy(CityTable.id to SortOrder.ASC)
-                        .limit(20)
-                        .map { rowToCityResponse(it) }
-                }.let {
+                getCitiesOfStates(stateId).let {
                     ServiceResult.Success(it)
                 }
             }
@@ -234,12 +220,7 @@ class CityRepositoryImpl : CityRepository {
         return try {
             dbQuery {
                 CityTable.deleteAll()
-                transaction {
-                    (CityTable innerJoin StateTable).selectAll()
-                        .orderBy(CityTable.id to SortOrder.ASC)
-                        .limit(20)
-                        .map { rowToCityResponse(it) }
-                }.let {
+                getAllCities().let {
                     ServiceResult.Success(it)
                 }
             }
@@ -269,6 +250,24 @@ class CityRepositoryImpl : CityRepository {
             title = row[CityTable.title],
             state = row[StateTable.title]
         )
+    }
+
+    private fun getCitiesOfStates(stateId: Int): List<CityResponse> {
+        return transaction {
+            (CityTable innerJoin StateTable).select {
+                (CityTable.stateId eq stateId)
+            }
+                .orderBy(CityTable.id to SortOrder.ASC)
+                .map { rowToCityResponse(it)!! }
+        }
+    }
+
+    private fun getAllCities(): List<CityResponse?> {
+        return transaction {
+            (CityTable innerJoin StateTable).selectAll()
+                .orderBy(CityTable.id to SortOrder.ASC)
+                .map { rowToCityResponse(it) }
+        }
     }
 
 //    private fun getState(stateId: Int): State? {

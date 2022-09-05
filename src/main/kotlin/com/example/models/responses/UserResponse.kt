@@ -1,6 +1,5 @@
 package com.example.models.responses
 
-import com.example.models.FoodCategory
 import com.example.models.ResponseErrors
 import com.example.models.User
 import kotlinx.serialization.Serializable
@@ -20,8 +19,7 @@ data class SellerResponse(
     val banner: String?,
     val rating: Double? = null,
     val delivery_fee: Long?,
-    val delivery_duration: Int?,
-    val food_categories: List<FoodCategory?> = emptyList()
+    val delivery_duration: Int?
 )
 
 @Serializable
