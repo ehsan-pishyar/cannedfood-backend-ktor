@@ -121,7 +121,8 @@ class CommentRepositoryImpl : CommentRepository {
         return SellerComment(
             id = row[SellerCommentTable.id],
             from_customer_id = row[SellerCommentTable.fromCustomerId],
-            message = row[SellerCommentTable.message]
+            message = row[SellerCommentTable.message],
+            date_created = row[SellerCommentTable.dateCreated]
         )
     }
 
@@ -131,7 +132,8 @@ class CommentRepositoryImpl : CommentRepository {
         return ResultComment(
             id = row[ResultCommentTable.id],
             from_customer_id = row[ResultCommentTable.fromCustomerId],
-            message = row[ResultCommentTable.message]
+            message = row[ResultCommentTable.message],
+            date_created = row[ResultCommentTable.dateCreated]
         )
     }
 
@@ -140,7 +142,8 @@ class CommentRepositoryImpl : CommentRepository {
 
         return SellerCommentResponse(
             from = row[CustomerTable.firstName],
-            message = row[SellerCommentTable.message]
+            message = row[SellerCommentTable.message],
+            date_created = row[SellerCommentTable.dateCreated]
         )
     }
 
@@ -149,7 +152,8 @@ class CommentRepositoryImpl : CommentRepository {
 
         return ResultCommentResponse(
             from = row[CustomerTable.firstName],
-            message = row[SellerCommentTable.message]
+            message = row[SellerCommentTable.message],
+            date_created = row[SellerCommentTable.dateCreated]
         )
     }
 }

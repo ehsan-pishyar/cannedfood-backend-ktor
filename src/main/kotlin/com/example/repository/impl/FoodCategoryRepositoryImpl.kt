@@ -6,7 +6,6 @@ import com.example.repository.FoodCategoryRepository
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.tables.FoodCategoryTable
 import com.example.tables.ResultCategoryTable
-import com.example.tables.SellerCategoryTable
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -77,7 +76,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
         return try {
             dbQuery {
                 (FoodCategoryTable innerJoin ResultCategoryTable).select {
-                    (FoodCategoryTable.title eq "$foodCategoryTitle%")
+                    (FoodCategoryTable.title like "$foodCategoryTitle%")
                 }
                     .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                     .map { rowToFoodCategoryResponse(it)!! }

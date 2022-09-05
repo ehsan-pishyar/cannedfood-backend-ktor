@@ -26,9 +26,9 @@ class LocationRepositoryImpl: LocationRepository {
                     it[lon] = location.lon
                     it[cityId] = location.city_id
                 }
-                    .resultedValues?.singleOrNull()?.let {
+                    .resultedValues?.single().let {
                         ServiceResult.Success(rowToLocation(it)!!)
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    }
             }
         } catch (e: Exception) {
             when (e) {
@@ -51,12 +51,8 @@ class LocationRepositoryImpl: LocationRepository {
                 ServiceResult.Success(it)
             }
         } catch (e: Exception) {
-            println(e)
             when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by username")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -73,12 +69,8 @@ class LocationRepositoryImpl: LocationRepository {
                 ServiceResult.Success(it)
             }
         } catch (e: Exception) {
-            println(e)
             when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by username")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -88,18 +80,14 @@ class LocationRepositoryImpl: LocationRepository {
         return try {
             dbQuery {
                 (LocationTable innerJoin CityTable innerJoin StateTable)
-                    .select { LocationTable.title like  "$locationTitle%" }
+                    .select { LocationTable.title like "$locationTitle%" }
                     .map { rowToLocationResponse(it)!! }
             }.let {
                 ServiceResult.Success(it)
             }
         } catch (e: Exception) {
-            println(e)
             when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by username")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -148,12 +136,8 @@ class LocationRepositoryImpl: LocationRepository {
                 }
             }
         } catch (e: Exception) {
-            println(e)
             when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by username")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
