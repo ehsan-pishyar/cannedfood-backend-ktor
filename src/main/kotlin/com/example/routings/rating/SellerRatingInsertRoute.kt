@@ -10,13 +10,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.rateToSeller(
-    ratingRepository: RatingRepository
-) {
+fun Route.rateToSeller(ratingRepository: RatingRepository) {
     route(Routes.SELLERS_ROUTE) {
         post(Routes.SELLER_RATE_ROUTE) {
 
             val sellerId = call.parameters["seller_id"]!!.toLong()
+
             val request = call.receiveOrNull<SellerRating>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
@@ -30,11 +29,10 @@ fun Route.rateToSeller(
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = sellerRating.data!!
+                            message = sellerRating.data
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = sellerRating.errorCode.message

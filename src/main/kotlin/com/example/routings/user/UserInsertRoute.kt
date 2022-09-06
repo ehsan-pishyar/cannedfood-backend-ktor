@@ -16,25 +16,27 @@ import io.ktor.server.routing.*
  * مثلا ایمیل کاربر چک بشه که طبق ساختار درست باشه و همینطور تاریخ ثبت نام کاربر توی همون usecase اضافه بشه به دیتابیس.
  * وقتی کاربر رو به usecase پاس میدیم، یه آبجکتی به نام UserResponse برامون برمیگردونه تا اونو بعد از ثبت نام کاربر نمایش بده.
  */
-fun Route.insertNewUser(
-    insertUserUseCase: InsertUserUseCase
-) {
+fun Route.insertNewUser(insertUserUseCase: InsertUserUseCase) {
     route(Routes.USERS_ROUTE) {
         post(Routes.CREATE_ROUTE) {
 
             val request = call.receiveOrNull<User>() ?: kotlin.run {
-                call.respond(HttpStatusCode.BadRequest)
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Error! Check your json file"
+                )
                 return@post
             }
 
-            val userResponse = insertUserUseCase(request)
-            // val userResponse = insertUserUseCase(ServiceResult.Success(request))
-            var httpStatus = if (userResponse.errors.isEmpty()) HttpStatusCode.Created else HttpStatusCode.BadRequest
+            insertUserUseCase(request).let {
+                val httpStatus = if (it.errors.isEmpty()) HttpStatusCode.Created else HttpStatusCode.BadRequest
 
-            call.respond(
-                status = httpStatus,
-                message = userResponse
-            )
+                call.respond(
+                    status = httpStatus,
+                    message = it
+                )
+            }
+            // val userResponse = insertUserUseCase(ServiceResult.Success(request))
         }
     }
 }

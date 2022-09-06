@@ -8,14 +8,32 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getStates(
-    stateRepository: StateRepository
-){
+fun Route.getStates(stateRepository: StateRepository){
     route(Routes.STATE_ROUTE) {
         get("/") {
+
             val params = call.request.rawQueryParameters
             val id = params["id"]?.toInt()
             val title = params["title"]
+
+            if (params.isEmpty()) {
+                stateRepository.getStates().let { statesResponse ->
+                    when(statesResponse) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = statesResponse.data
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = statesResponse.errorCode.message
+                            )
+                        }
+                    }
+                }
+            }
 
             id?.let { stateId ->
                 stateRepository.getStateById(stateId).let { stateResponse ->
@@ -27,7 +45,6 @@ fun Route.getStates(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! State not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = stateResponse.errorCode.message
@@ -47,30 +64,9 @@ fun Route.getStates(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! State not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = stateResponse.errorCode.message
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (id == null && title == null) {
-                stateRepository.getStates().let { statesResponse ->
-                    when(statesResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = statesResponse.data
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No States in database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = statesResponse.errorCode.message
                             )
                         }
                     }

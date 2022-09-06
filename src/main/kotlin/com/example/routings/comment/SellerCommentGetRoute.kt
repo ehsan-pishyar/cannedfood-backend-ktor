@@ -8,13 +8,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getSellerComments(
-    commentRepository: CommentRepository
-) {
+fun Route.getSellerComments(commentRepository: CommentRepository) {
     route(Routes.SELLERS_ROUTE) {
         get(Routes.COMMENT_SELLER_GET_ROUTE) {
 
             val sellerId = call.parameters["seller_id"]!!.toLong()
+
             commentRepository.getSellerComments(sellerId).let { sellerComments ->
                 when(sellerComments) {
                     is ServiceResult.Success -> {

@@ -8,13 +8,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteFoodCategories(
-    foodCategoryRepository: FoodCategoryRepository
-) {
+fun Route.deleteFoodCategories(foodCategoryRepository: FoodCategoryRepository) {
     route(Routes.FOOD_CATEGORY_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
+
             foodCategoryRepository.deleteFoodCategoryById(id).let { fcResponse ->
                 when(fcResponse) {
                     is ServiceResult.Success -> {
@@ -73,8 +72,6 @@ fun Route.deleteFoodCategories(
                     }
                 }
             }
-
-
         }
     }
 }

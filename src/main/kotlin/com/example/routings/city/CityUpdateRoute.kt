@@ -10,38 +10,33 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.updateCity(
-    cityRepository: CityRepository
-) {
+fun Route.updateCity(cityRepository: CityRepository) {
     route(Routes.CITY_ROUTE) {
         put(Routes.UPDATE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
 
-            id.let {
-                val city = call.receiveOrNull<City>() ?: kotlin.run {
-                    call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Error! Check your json file"
-                    )
-                    return@put
-                }
+            val city = call.receiveOrNull<City>() ?: kotlin.run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Error! Check your json file"
+                )
+                return@put
+            }
 
-                cityRepository.updateCity(it, city).let { cityResponse ->
-                    when(cityResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = cityResponse.data!!
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No City received from database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = cityResponse.errorCode
-                            )
-                        }
+            cityRepository.updateCity(id, city).let { cityResponse ->
+                when(cityResponse) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = cityResponse.data!!
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = cityResponse.errorCode.message
+                        )
                     }
                 }
             }

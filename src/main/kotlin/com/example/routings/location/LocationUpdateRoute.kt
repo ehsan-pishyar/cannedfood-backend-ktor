@@ -10,37 +10,33 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.updateLocation(
-    locationRepository: LocationRepository
-) {
+fun Route.updateLocation(locationRepository: LocationRepository) {
     route(Routes.LOCATION_ROUTE) {
         put(Routes.UPDATE_ROUTE) {
+
             val id = call.parameters["id"]!!.toLong()
 
-            id.let {
-                val location = call.receiveOrNull<Location>() ?: kotlin.run {
-                    call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = "Error! Check your json file"
-                    )
-                    return@put
-                }
+            val location = call.receiveOrNull<Location>() ?: kotlin.run {
+                call.respond(
+                    status = HttpStatusCode.BadRequest,
+                    message = "Error! Check your json file"
+                )
+                return@put
+            }
 
-                locationRepository.updateLocation(it, location).let { locationResponse ->
-                    when(locationResponse) {
-                        is ServiceResult.Success -> {
-                            call.respond(
-                                status = HttpStatusCode.OK,
-                                message = locationResponse.data!!
-                            )
-                        }
-                        is ServiceResult.Error -> {
-                            println("Error! No Location received from database")
-                            call.respond(
-                                status = HttpStatusCode.BadRequest,
-                                message = locationResponse.errorCode
-                            )
-                        }
+            locationRepository.updateLocation(id, location).let { locationResponse ->
+                when(locationResponse) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = locationResponse.data!!
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = locationResponse.errorCode
+                        )
                     }
                 }
             }

@@ -10,13 +10,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.addNewSellerComment(
-    commentRepository: CommentRepository
-) {
+fun Route.addNewSellerComment(commentRepository: CommentRepository) {
     route(Routes.SELLERS_ROUTE) {
         post(Routes.COMMENT_SELLER_ADD_ROUTE) {
 
             val sellerId = call.parameters["seller_id"]!!.toLong()
+
             val request = call.receiveOrNull<SellerComment>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
@@ -30,7 +29,7 @@ fun Route.addNewSellerComment(
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = sellerComments.data!!
+                            message = sellerComments.data
                         )
                     }
                     is ServiceResult.Error -> {

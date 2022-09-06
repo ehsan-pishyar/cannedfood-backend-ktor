@@ -17,9 +17,7 @@ class StateRepositoryImpl : StateRepository {
                 StateTable.selectAll()
                     .orderBy(StateTable.id to SortOrder.ASC)
                     .map { rowToState(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -35,9 +33,7 @@ class StateRepositoryImpl : StateRepository {
                     StateTable.id eq stateId
                 }.map { rowToState(it)!! }
                     .single()
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -53,9 +49,7 @@ class StateRepositoryImpl : StateRepository {
                     StateTable.title like "$stateTitle%"
                 }.orderBy(StateTable.id to SortOrder.ASC)
                     .map { rowToState(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)

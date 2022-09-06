@@ -10,12 +10,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.updateSeller(
-    sellerRepository: SellerRepository
-) {
+fun Route.updateSeller(sellerRepository: SellerRepository) {
     route(Routes.SELLERS_ROUTE) {
         put(Routes.UPDATE_ROUTE) {
+
             val id = call.parameters["id"]!!.toLong()
+
             call.receiveOrNull<Seller>()?.let { seller ->
                 sellerRepository.updateSeller(id, seller).let {
                     when(it) {

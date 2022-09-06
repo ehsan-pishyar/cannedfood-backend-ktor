@@ -8,15 +8,13 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteUsers(
-    userRepository: UserRepository
-) {
+fun Route.deleteUsers(userRepository: UserRepository) {
     route(Routes.USERS_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toLong()
-            userRepository.deleteUserById(id)
-            userRepository.getUsers().let {
+
+            userRepository.deleteUserById(id).let {
                 when(it) {
                     is ServiceResult.Success -> {
                         call.respond(
@@ -27,7 +25,7 @@ fun Route.deleteUsers(
                     is ServiceResult.Error -> {
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = "No User Found"
+                            message = it.errorCode.message
                         )
                     }
                 }
@@ -35,8 +33,8 @@ fun Route.deleteUsers(
         }
 
         delete("/") {
-            userRepository.deleteUsers()
-            userRepository.getUsers().let {
+
+            userRepository.deleteUsers().let {
                 when(it) {
                     is ServiceResult.Success -> {
                         call.respond(
@@ -47,7 +45,7 @@ fun Route.deleteUsers(
                     is ServiceResult.Error -> {
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = "No User Found"
+                            message = it.errorCode.message
                         )
                     }
                 }

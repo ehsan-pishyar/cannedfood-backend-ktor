@@ -8,13 +8,12 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteResultCategories(
-    resultCategoryRepository: ResultCategoryRepository
-) {
+fun Route.deleteResultCategories(resultCategoryRepository: ResultCategoryRepository) {
     route(Routes.RESULT_CATEGORY_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toInt()
+
             resultCategoryRepository.deleteResultCategoryById(id).let { rcResponse ->
                 when (rcResponse) {
                     is ServiceResult.Success -> {
@@ -36,6 +35,7 @@ fun Route.deleteResultCategories(
         delete("/delete/") {
 
             val scId = call.request.queryParameters["sc_id"]?.toInt()
+
             scId?.let {
                 resultCategoryRepository.deleteResultCategoriesOfSellerCategory(scId).let {
                     when(it) {
@@ -53,7 +53,7 @@ fun Route.deleteResultCategories(
                         }
                     }
                 }
-            }?: kotlin.run {
+            } ?: kotlin.run {
                 resultCategoryRepository.deleteResultCategories().let {
                     when(it) {
                         is ServiceResult.Success -> {

@@ -8,25 +8,24 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteCustomers(
-    customerRepository: CustomerRepository
-) {
+fun Route.deleteCustomers(customerRepository: CustomerRepository) {
     route(Routes.CUSTOMERS_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
             val id = call.parameters["id"]!!.toLong()
-            customerRepository.deleteCustomerById(id).let {
-                when(it) {
+
+            customerRepository.deleteCustomerById(id).let { customerResponse ->
+                when(customerResponse) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = it.data
+                            message = customerResponse.data
                         )
                     }
                     is ServiceResult.Error -> {
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = it.errorCode.message
+                            message = customerResponse.errorCode.message
                         )
                     }
                 }
@@ -35,18 +34,18 @@ fun Route.deleteCustomers(
 
         delete("/delete/") {
 
-            customerRepository.deleteCustomers().let {
-                when(it) {
+            customerRepository.deleteCustomers().let { customerResponse ->
+                when(customerResponse) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = it.data
+                            message = customerResponse.data
                         )
                     }
                     is ServiceResult.Error -> {
                         call.respond(
                             status = HttpStatusCode.BadRequest,
-                            message = it.errorCode.message
+                            message = customerResponse.errorCode.message
                         )
                     }
                 }

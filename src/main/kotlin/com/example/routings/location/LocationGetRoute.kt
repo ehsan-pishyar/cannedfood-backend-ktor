@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getLocations(
-    locationRepository: LocationRepository
-) {
+fun Route.getLocations(locationRepository: LocationRepository) {
     route(Routes.LOCATION_ROUTE) {
         get("/") {
 
@@ -29,7 +27,6 @@ fun Route.getLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Location not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationResponse.errorCode
@@ -69,7 +66,6 @@ fun Route.getLocations(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Location not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = locationsResponse.errorCode

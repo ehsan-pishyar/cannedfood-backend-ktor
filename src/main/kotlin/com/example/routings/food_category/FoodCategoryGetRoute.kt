@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getFoodCategories(
-    foodCategoryRepository: FoodCategoryRepository
-) {
+fun Route.getFoodCategories(foodCategoryRepository: FoodCategoryRepository) {
     route(Routes.FOOD_CATEGORY_ROUTE) {
         get("/") {
 
@@ -57,7 +55,6 @@ fun Route.getFoodCategories(
                 }
             }
 
-            TODO("FIX this shit")
             title?.let { fcTitle ->
                 foodCategoryRepository.getFoodCategoriesByTitle(fcTitle).let { fcResponse ->
                     when(fcResponse) {

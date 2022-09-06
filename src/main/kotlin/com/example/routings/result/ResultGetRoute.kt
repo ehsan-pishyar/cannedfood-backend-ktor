@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getResults(
-    resultsRepository: ResultsRepository
-) {
+fun Route.getResults(resultsRepository: ResultsRepository) {
     route(Routes.RESULT_ROUTE) {
         get("/") {
 

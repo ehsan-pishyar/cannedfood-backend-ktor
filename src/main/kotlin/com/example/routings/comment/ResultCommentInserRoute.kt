@@ -17,6 +17,7 @@ fun Route.addNewResultComment(
         post(Routes.COMMENT_RESULT_ADD_ROUTE) {
 
             val resultId = call.parameters["result_id"]!!.toLong()
+
             val request = call.receiveOrNull<ResultComment>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
@@ -30,7 +31,7 @@ fun Route.addNewResultComment(
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = resultComments.data!!
+                            message = resultComments.data
                         )
                     }
                     is ServiceResult.Error -> {

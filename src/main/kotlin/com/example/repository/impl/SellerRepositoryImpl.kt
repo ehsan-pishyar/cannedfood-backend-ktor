@@ -69,9 +69,9 @@ class SellerRepositoryImpl : SellerRepository {
                     .single()
             }
 
-            val location = getLocation(seller!!.location_id)
-            val results = getResults(seller.id)
-            val comments = getComments(seller.id)
+            val location = selectLocationById(seller!!.location_id)
+            val results = selectResults(seller.id)
+            val comments = selectComments(seller.id)
 
             sellerDetailsResponse = SellerDetailsResponse(
                 id = seller.id,
@@ -179,7 +179,7 @@ class SellerRepositoryImpl : SellerRepository {
     override suspend fun getSellersByLocationTitle(locationTitle: String?): ServiceResult<List<SellerResponse?>> {
         return try {
             dbQuery {
-                val location = getLocationByTitle(locationTitle)
+                val location = selectLocationByTitle(locationTitle)
 
                 transaction {
                     SellerTable.select {
@@ -200,7 +200,7 @@ class SellerRepositoryImpl : SellerRepository {
     override suspend fun getSellerByResultId(resultId: Long): ServiceResult<SellerResponse?> {
         return try {
             dbQuery {
-                val result = getResultById(resultId)
+                val result = selectResultById(resultId)
 
                 transaction {
                     SellerTable.select {
@@ -278,14 +278,7 @@ class SellerRepositoryImpl : SellerRepository {
                         .map { rowToSellerOpenStatus(it)!! }
                         .single()
                 }
-
-                transaction {
-                    SellerTable.select {
-                        (SellerTable.id eq status.seller_id)
-                    }
-                        .orderBy(SellerTable.dateCreated to SortOrder.DESC)
-                        .map { rowToSellerResponse(it) }
-                }.let { ServiceResult.Success(it) }
+                ServiceResult.Success(selectSellersById(status.seller_id))
             }
         } catch (e: Exception) {
             when(e) {
@@ -373,11 +366,7 @@ class SellerRepositoryImpl : SellerRepository {
                 SellerTable.deleteWhere {
                     (SellerTable.id eq sellerId)
                 }
-
-                transaction {
-                    SellerTable.selectAll()
-                        .map { rowToSellerResponse(it) }
-                }.let { ServiceResult.Success(it) }
+                ServiceResult.Success(selectSellers())
             }
         } catch (e: Exception) {
             when(e) {
@@ -391,11 +380,7 @@ class SellerRepositoryImpl : SellerRepository {
         return try {
             dbQuery {
                 SellerTable.deleteAll()
-
-                transaction {
-                    SellerTable.selectAll()
-                        .map { rowToSellerResponse(it) }
-                }.let { ServiceResult.Success(it) }
+                ServiceResult.Success(selectSellers())
             }
         } catch (e: Exception) {
             when(e) {
@@ -503,7 +488,24 @@ class SellerRepositoryImpl : SellerRepository {
         )
     }
 
-    private fun getLocation(locationId: Long): LocationResponse {
+    private fun selectSellersById(id: Long): List<SellerResponse> {
+        return transaction {
+            SellerTable.select {
+                (SellerTable.id eq id)
+            }
+                .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                .map { rowToSellerResponse(it)!! }
+        }
+    }
+
+    private fun selectSellers(): List<SellerResponse?> {
+        return transaction {
+            SellerTable.selectAll()
+                .map { rowToSellerResponse(it) }
+        }
+    }
+
+    private fun selectLocationById(locationId: Long): LocationResponse {
         return transaction {
             (LocationTable innerJoin CityTable innerJoin StateTable).select {
                 (LocationTable.id eq locationId)
@@ -513,7 +515,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    private fun getResults(sellerId: Long): List<ResultResponse?> {
+    private fun selectResults(sellerId: Long): List<ResultResponse?> {
         return transaction {
             ResultsTable
                 .innerJoin(SellerTable, {ResultsTable.sellerId}, {id})
@@ -526,7 +528,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    private fun getResultById(resultId: Long): Results {
+    private fun selectResultById(resultId: Long): Results {
         return transaction {
             (ResultsTable).select {
                 (ResultsTable.id eq resultId)
@@ -536,7 +538,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    private fun getComments(sellerId: Long): List<SellerCommentResponse?> {
+    private fun selectComments(sellerId: Long): List<SellerCommentResponse?> {
         return transaction {
             (SellerCommentTable innerJoin CustomerTable).select {
                 (SellerCommentTable.toSellerId eq sellerId)
@@ -546,7 +548,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    private fun getLocationByTitle(locationTitle: String?): LocationResponse?{
+    private fun selectLocationByTitle(locationTitle: String?): LocationResponse?{
         return transaction {
             (LocationTable innerJoin CityTable innerJoin StateTable).select {
                 (LocationTable.title like "$locationTitle%")

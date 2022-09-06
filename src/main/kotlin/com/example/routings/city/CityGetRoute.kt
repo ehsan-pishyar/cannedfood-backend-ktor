@@ -8,18 +8,16 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getCities(
-    cityRepository: CityRepository
-) {
+fun Route.getCities(cityRepository: CityRepository) {
     route(Routes.CITY_ROUTE) {
         get("/") {
 
             val params = call.request.rawQueryParameters
-            val stateId = params["state_id"]?.toInt()
+            val stateId = params["state_id"]!!.toInt()
             val id = params["id"]?.toInt()
             val title = params["title"]
 
-            if (stateId != null && id == null && title == null) {
+            if (id == null && title == null) {
                 cityRepository.getCities(stateId).let { citiesResponse ->
                     when(citiesResponse) {
                         is ServiceResult.Success -> {
@@ -29,37 +27,35 @@ fun Route.getCities(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found or state id you entered is invalid")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = citiesResponse.errorCode.message
                             )
                         }
                     }
                 }
             }
 
-            if (stateId != null && id != null) {
+            id?.let {
                 cityRepository.getCityById(id).let { cityResponse ->
                     when(cityResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = cityResponse.data!!
+                                message = cityResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = cityResponse.errorCode
+                                message = cityResponse.errorCode.message
                             )
                         }
                     }
                 }
             }
 
-            if (stateId != null && title != null) {
+            title?.let {
                 cityRepository.getCitiesByTitle(title).let { citiesResponse ->
                     when(citiesResponse) {
                         is ServiceResult.Success -> {
@@ -69,10 +65,9 @@ fun Route.getCities(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! City not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = citiesResponse.errorCode
+                                message = citiesResponse.errorCode.message
                             )
                         }
                     }

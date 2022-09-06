@@ -10,11 +10,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.insertNewCity(
-    cityRepository: CityRepository
-) {
+fun Route.insertNewCity(cityRepository: CityRepository) {
     route(Routes.CITY_ROUTE) {
-        post("/create") {
+        post(Routes.CREATE_ROUTE) {
 
             val request = call.receiveOrNull<City>() ?: kotlin.run {
                 call.respond(
@@ -24,19 +22,20 @@ fun Route.insertNewCity(
                 return@post
             }
 
-            when (val cityResponse = cityRepository.insertCity(request)) {
-                is ServiceResult.Success -> {
-                    call.respond(
-                        status = HttpStatusCode.OK,
-                        message = cityResponse.data!!
-                    )
-                }
-                is ServiceResult.Error -> {
-                    println("Error! No City received from database")
-                    call.respond(
-                        status = HttpStatusCode.BadRequest,
-                        message = cityResponse.errorCode.message
-                    )
+            cityRepository.insertCity(request).let { city ->
+                when(city) {
+                    is ServiceResult.Success -> {
+                        call.respond(
+                            status = HttpStatusCode.OK,
+                            message = city.data
+                        )
+                    }
+                    is ServiceResult.Error -> {
+                        call.respond(
+                            status = HttpStatusCode.BadRequest,
+                            message = city.errorCode.message
+                        )
+                    }
                 }
             }
         }

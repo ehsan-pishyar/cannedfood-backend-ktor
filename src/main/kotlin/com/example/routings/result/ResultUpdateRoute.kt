@@ -10,9 +10,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.updateResult(
-    resultsRepository: ResultsRepository
-) {
+fun Route.updateResult(resultsRepository: ResultsRepository) {
     route(Routes.RESULT_ROUTE) {
         put(Routes.UPDATE_ROUTE) {
 

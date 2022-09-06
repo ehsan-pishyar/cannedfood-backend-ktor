@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getCustomers(
-    customerRepository: CustomerRepository
-) {
+fun Route.getCustomers(customerRepository: CustomerRepository) {
     route(Routes.CUSTOMERS_ROUTE) {
         get("/") {
 
@@ -19,18 +17,18 @@ fun Route.getCustomers(
             val email = params["email"]
 
             if (params.isEmpty()) {
-                customerRepository.getCustomers().let {
-                    when(it) {
+                customerRepository.getCustomers().let { customerResponse ->
+                    when(customerResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = customerResponse.data
                             )
                         }
                         is ServiceResult.Error -> {
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = it.errorCode.message
+                                message = customerResponse.errorCode.message
                             )
                         }
                     }
@@ -38,18 +36,18 @@ fun Route.getCustomers(
             }
 
             id?.let { customerId ->
-                customerRepository.getCustomerById(customerId).let {
-                    when(it) {
+                customerRepository.getCustomerById(customerId).let { customerDetails ->
+                    when(customerDetails) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = customerDetails.data
                             )
                         }
                         is ServiceResult.Error -> {
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = it.errorCode.message
+                                message = customerDetails.errorCode.message
                             )
                         }
                     }
@@ -57,18 +55,18 @@ fun Route.getCustomers(
             }
 
             email?.let { customerEmail ->
-                customerRepository.getCustomerByEmail(customerEmail).let {
-                    when(it) {
+                customerRepository.getCustomerByEmail(customerEmail).let { customerResponse ->
+                    when(customerResponse) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data!!
+                                message = customerResponse.data!!
                             )
                         }
                         is ServiceResult.Error -> {
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = it.errorCode.message
+                                message = customerResponse.errorCode.message
                             )
                         }
                     }

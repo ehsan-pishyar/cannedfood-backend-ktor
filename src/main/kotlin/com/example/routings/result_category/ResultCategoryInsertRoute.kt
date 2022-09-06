@@ -10,9 +10,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.insertNewResultCategory(
-    resultCategoryRepository: ResultCategoryRepository
-) {
+fun Route.insertNewResultCategory(resultCategoryRepository: ResultCategoryRepository) {
     route(Routes.RESULT_CATEGORY_ROUTE) {
         post(Routes.CREATE_ROUTE) {
 

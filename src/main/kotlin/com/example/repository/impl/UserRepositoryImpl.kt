@@ -10,7 +10,6 @@ import com.example.utils.ServiceResult
 import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
@@ -23,7 +22,7 @@ class UserRepositoryImpl : UserRepository {
      * ثبت کاربر در دیتابیس. با استفاده از اطلاعات کاربری که بهش پاس میدیم میاد این اطلاعات رو توی سلول های جدول قرار میده
      * و در آخر هم کاربری که با موفقیت ثبت کردیم توی دیتابیس رو برامون برمیگردونه تا نشون بدیم
      */
-    override suspend fun insertUser(user: User): ServiceResult<User?> {
+    override suspend fun insertUser(user: User): ServiceResult<User> {
         return try {
             dbQuery {
                 UserTable.insert { ut ->
@@ -33,9 +32,7 @@ class UserRepositoryImpl : UserRepository {
                     ut[userType] = user.user_type
                     ut[dateCreated] = user.date_created
                 }
-                    .resultedValues?.singleOrNull()?.let {
-                        ServiceResult.Success(rowToUser(it))
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToUser(it)!!) }
             }
         } catch (e: Exception) {
             when(e){
@@ -54,16 +51,10 @@ class UserRepositoryImpl : UserRepository {
                 UserTable.selectAll()
                     .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         }catch (e: Exception) {
-            println(e)
             when(e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response users")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -77,11 +68,8 @@ class UserRepositoryImpl : UserRepository {
                 }
                     .map { rowToUser(it)!! }
                     .single()
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -97,16 +85,10 @@ class UserRepositoryImpl : UserRepository {
                 }
                     .orderBy(UserTable.id to SortOrder.ASC)
                     .map(::rowToUser)
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         }catch (e: Exception) {
-            println(e)
             when (e) {
-                is ExposedSQLException -> {
-                    println("An Error occurred due to response user by email")
-                    ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                }
+                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
         }
@@ -127,16 +109,7 @@ class UserRepositoryImpl : UserRepository {
                     it[password] = hash(user.password)
                     it[userType] = user.user_type
                 }
-
-                transaction {
-                    UserTable.select {
-                        (UserTable.id eq userId)
-                    }
-                        .map { rowToUser(it) }
-                        .single()
-                }.let {
-                    ServiceResult.Success(it!!)
-                }
+                ServiceResult.Success(selectUserById(userId))
             }
         } catch (e: Exception) {
             when(e) {
@@ -155,7 +128,7 @@ class UserRepositoryImpl : UserRepository {
                 UserTable.deleteWhere {
                     (UserTable.id eq userId)
                 }
-                ServiceResult.Success(selectUserList())
+                ServiceResult.Success(selectUsers())
             }
         } catch (e: Exception) {
             when(e) {
@@ -169,7 +142,7 @@ class UserRepositoryImpl : UserRepository {
         return try {
             dbQuery {
                 UserTable.deleteAll()
-                ServiceResult.Success(selectUserList())
+                ServiceResult.Success(selectUsers())
             }
         } catch (e: Exception) {
             when(e) {
@@ -196,11 +169,21 @@ class UserRepositoryImpl : UserRepository {
         )
     }
 
-    private fun selectUserList(): List<User?> {
+    private fun selectUsers(): List<User?> {
         return transaction {
             UserTable.selectAll()
                 .orderBy(UserTable.dateCreated to SortOrder.DESC)
                 .map { rowToUser(it) }
+        }
+    }
+
+    private fun selectUserById(id: Long): User {
+        return transaction {
+            UserTable.select {
+                (UserTable.id eq id)
+            }
+                .map { rowToUser(it)!! }
+                .single()
         }
     }
 }

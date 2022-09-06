@@ -6,22 +6,16 @@ import com.example.utils.ServiceResult
 import com.example.utils.toDatabaseString
 import java.time.LocalDateTime
 
-class InsertResultUseCase(
-    private val resultsRepository: ResultsRepository
-) {
+class InsertResultUseCase(private val resultsRepository: ResultsRepository) {
 
-    suspend operator fun invoke(result: ServiceResult<Results>): Results? {
-        return when(result) {
-            is ServiceResult.Success -> {
-                val response = resultsRepository.insertResult(result.data.copy(
-                    date_created = LocalDateTime.now().toDatabaseString()
-                ))
-                when(response) {
-                    is ServiceResult.Success -> response.data
-                    else -> null
-                }
+    suspend operator fun invoke(result: Results): Results {
+        resultsRepository.insertResult(result.copy(
+            date_created = LocalDateTime.now().toDatabaseString()
+        )).let {
+            return when(it) {
+                is ServiceResult.Success -> it.data
+                else -> result
             }
-            is ServiceResult.Error -> null
         }
     }
 }

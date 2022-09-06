@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getSellerCategories(
-    sellerCategoryRepository: SellerCategoryRepository
-) {
+fun Route.getSellerCategories(sellerCategoryRepository: SellerCategoryRepository) {
     route(Routes.SELLER_CATEGORY_ROUTE) {
         get("/") {
 
@@ -18,7 +16,7 @@ fun Route.getSellerCategories(
             val id = params["id"]?.toInt()
             val title = params["title"]
 
-            if (id == null && title == null) {
+            if (params.isEmpty()) {
                 sellerCategoryRepository.getSellersCategories().let { scResponse ->
                     when(scResponse) {
                         is ServiceResult.Success -> {
@@ -28,10 +26,9 @@ fun Route.getSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Seller Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = scResponse.errorCode
+                                message = scResponse.errorCode.message
                             )
                         }
                     }
@@ -48,10 +45,9 @@ fun Route.getSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Seller Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = scResponse.errorCode
+                                message = scResponse.errorCode.message
                             )
                         }
                     }
@@ -68,10 +64,9 @@ fun Route.getSellerCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Seller Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = scResponse.errorCode
+                                message = scResponse.errorCode.message
                             )
                         }
                     }

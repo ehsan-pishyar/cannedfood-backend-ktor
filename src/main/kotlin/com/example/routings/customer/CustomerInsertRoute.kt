@@ -9,9 +9,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.insertNewCustomer(
-    insertCustomerUseCase: InsertCustomerUseCase
-) {
+fun Route.insertNewCustomer(insertCustomerUseCase: InsertCustomerUseCase) {
     route(Routes.CUSTOMERS_ROUTE){
         post(Routes.CREATE_ROUTE) {
 
@@ -23,7 +21,7 @@ fun Route.insertNewCustomer(
                 return@post
             }
 
-            insertCustomerUseCase.invoke(request)?.let {
+            insertCustomerUseCase.invoke(request).let {
                 call.respond(
                     status = HttpStatusCode.OK,
                     message = it

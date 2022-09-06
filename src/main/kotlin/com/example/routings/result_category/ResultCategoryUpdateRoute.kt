@@ -10,9 +10,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.updateResultCategory(
-    resultCategoryRepository: ResultCategoryRepository
-) {
+fun Route.updateResultCategory(resultCategoryRepository: ResultCategoryRepository) {
     route(Routes.RESULT_CATEGORY_ROUTE) {
         put(Routes.UPDATE_ROUTE) {
 
@@ -31,11 +29,10 @@ fun Route.updateResultCategory(
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = it.data!!
+                            message = it.data
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Result Category received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = it.errorCode.message

@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.deleteResults(
-    resultsRepository: ResultsRepository
-) {
+fun Route.deleteResults(resultsRepository: ResultsRepository) {
     route(Routes.RESULT_ROUTE) {
         delete(Routes.DELETE_ROUTE) {
 
@@ -38,6 +36,7 @@ fun Route.deleteResults(
         delete("/delete/") {
 
             val sellerId = call.request.queryParameters["seller_id"]!!.toLong()
+
             resultsRepository.deleteResults(sellerId).let {
                 when(it) {
                     is ServiceResult.Success -> {

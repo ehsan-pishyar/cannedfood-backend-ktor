@@ -1,7 +1,6 @@
 package com.example.routings.food_category
 
 import com.example.models.FoodCategory
-import com.example.models.ResultCategory
 import com.example.repository.FoodCategoryRepository
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
@@ -11,9 +10,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.insertNewFoodCategory(
-    foodCategoryRepository: FoodCategoryRepository
-) {
+fun Route.insertNewFoodCategory(foodCategoryRepository: FoodCategoryRepository) {
     route(Routes.FOOD_CATEGORY_ROUTE) {
         post(Routes.CREATE_ROUTE) {
 
@@ -34,7 +31,6 @@ fun Route.insertNewFoodCategory(
                         )
                     }
                     is ServiceResult.Error -> {
-                        println("Error! No Food Category received from database")
                         call.respond(
                             status = HttpStatusCode.BadRequest,
                             message = fcResponse.errorCode

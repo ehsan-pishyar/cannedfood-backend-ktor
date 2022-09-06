@@ -8,9 +8,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.getResultCategories(
-    resultCategoryRepository: ResultCategoryRepository
-){
+fun Route.getResultCategories(resultCategoryRepository: ResultCategoryRepository){
     route(Routes.RESULT_CATEGORY_ROUTE){
         get("/") {
 
@@ -29,7 +27,6 @@ fun Route.getResultCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Result Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = rcResponse.errorCode.message
@@ -68,7 +65,6 @@ fun Route.getResultCategories(
                             )
                         }
                         is ServiceResult.Error -> {
-                            println("Error! Result Category not found")
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
                                 message = rcResponse.errorCode
