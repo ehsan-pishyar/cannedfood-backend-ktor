@@ -16,7 +16,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class LocationRepositoryImpl: LocationRepository {
 
-    override suspend fun insertLocation(location: Location): ServiceResult<Location?> {
+    override suspend fun insertLocation(location: Location): ServiceResult<Location> {
         return try {
             dbQuery {
                 LocationTable.insert {
@@ -26,9 +26,7 @@ class LocationRepositoryImpl: LocationRepository {
                     it[lon] = location.lon
                     it[cityId] = location.city_id
                 }
-                    .resultedValues?.single().let {
-                        ServiceResult.Success(rowToLocation(it)!!)
-                    }
+                    .resultedValues?.single().let { ServiceResult.Success(rowToLocation(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -42,14 +40,10 @@ class LocationRepositoryImpl: LocationRepository {
         return try {
             dbQuery {
                 (LocationTable innerJoin CityTable innerJoin StateTable)
-                    .select {
-                        LocationTable.cityId eq cityId
-                    }
+                    .select { LocationTable.cityId eq cityId }
                     .orderBy(LocationTable.id to SortOrder.ASC)
                     .map { rowToLocationResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -65,9 +59,7 @@ class LocationRepositoryImpl: LocationRepository {
                     .select { LocationTable.id eq locationId }
                         .map { rowToLocationResponse(it)!! }
                         .singleOrNull()
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -82,9 +74,7 @@ class LocationRepositoryImpl: LocationRepository {
                 (LocationTable innerJoin CityTable innerJoin StateTable)
                     .select { LocationTable.title like "$locationTitle%" }
                     .map { rowToLocationResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -101,9 +91,7 @@ class LocationRepositoryImpl: LocationRepository {
                 }
                     .map { rowToLocationResponse(it) }
                     .single()
-            }.let {
-                ServiceResult.Success(it!!)
-            }
+            }.let { ServiceResult.Success(it!!) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -124,16 +112,7 @@ class LocationRepositoryImpl: LocationRepository {
                     it[lon] = location.lon
                     it[cityId] = location.city_id
                 }
-
-                transaction {
-                    LocationTable.select {
-                        LocationTable.id eq locationId
-                    }
-                        .map { rowToLocation(it) }
-                        .singleOrNull()
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(selectLocationById(locationId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -149,15 +128,7 @@ class LocationRepositoryImpl: LocationRepository {
                 LocationTable.deleteWhere {
                     LocationTable.id eq locationId
                 }
-
-                transaction {
-                    (LocationTable innerJoin CityTable innerJoin StateTable).selectAll()
-                        .orderBy(LocationTable.id to SortOrder.ASC)
-                        .limit(20)
-                        .map { rowToLocationResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(getLocationsResponse())
             }
         } catch (e: Exception) {
             when(e) {
@@ -179,11 +150,8 @@ class LocationRepositoryImpl: LocationRepository {
                         LocationTable.cityId eq cityId
                     }
                         .orderBy(LocationTable.id to SortOrder.ASC)
-                        .limit(20)
                         .map { rowToLocationResponse(it)!! }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                }.let { ServiceResult.Success(it) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -197,14 +165,7 @@ class LocationRepositoryImpl: LocationRepository {
         return try {
             dbQuery {
                 LocationTable.deleteAll()
-
-                transaction {
-                    (LocationTable innerJoin CityTable innerJoin StateTable).selectAll()
-                        .orderBy(LocationTable.id to SortOrder.ASC)
-                        .map { rowToLocationResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(getLocationsResponse())
             }
         } catch (e: Exception) {
             when(e) {
@@ -237,5 +198,23 @@ class LocationRepositoryImpl: LocationRepository {
             city = row[CityTable.title],
             state = row[StateTable.title]
         )
+    }
+
+    private fun selectLocationById(id: Long): Location {
+        return transaction {
+            LocationTable.select {
+                LocationTable.id eq id
+            }
+                .map { rowToLocation(it)!! }
+                .single()
+        }
+    }
+
+    private fun getLocationsResponse(): List<LocationResponse?> {
+        return transaction {
+            (LocationTable innerJoin CityTable innerJoin StateTable).selectAll()
+                .orderBy(LocationTable.id to SortOrder.ASC)
+                .map { rowToLocationResponse(it) }
+        }
     }
 }

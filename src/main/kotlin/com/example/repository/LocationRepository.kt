@@ -6,7 +6,7 @@ import com.example.utils.ServiceResult
 
 interface LocationRepository {
 
-    suspend fun insertLocation(location: Location): ServiceResult<Location?>
+    suspend fun insertLocation(location: Location): ServiceResult<Location>
 
     suspend fun getLocations(cityId: Int): ServiceResult<List<LocationResponse?>>
     suspend fun getLocationById(locationId: Long): ServiceResult<LocationResponse?>

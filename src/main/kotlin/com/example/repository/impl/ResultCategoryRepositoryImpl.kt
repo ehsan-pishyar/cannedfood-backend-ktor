@@ -21,9 +21,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
                     it[imagePath] = resultCategory.image_path
                     it[sellerCategoryId] = resultCategory.seller_category_id
                 }
-                    .resultedValues?.single()?.let {
-                        ServiceResult.Success(rowToResultCategory(it)!!)
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToResultCategory(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -41,9 +39,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
                 }
                     .orderBy(ResultCategoryTable.id to SortOrder.ASC)
                     .map { rowToResultsCategoryResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -60,9 +56,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
                 }
                     .map { rowToResultsCategoryResponse(it)!! }
                     .single()
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -79,9 +73,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
                 }
                     .orderBy(ResultCategoryTable.id to SortOrder.ASC)
                     .map { rowToResultsCategoryResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -195,9 +187,7 @@ class ResultCategoryRepositoryImpl : ResultCategoryRepository {
             ResultCategoryTable.select {
                 (ResultCategoryTable.id eq resultsCategoryId)
             }
-                .map {
-                    rowToResultCategory(it)!!
-                }
+                .map { rowToResultCategory(it)!! }
                 .single()
         }
     }

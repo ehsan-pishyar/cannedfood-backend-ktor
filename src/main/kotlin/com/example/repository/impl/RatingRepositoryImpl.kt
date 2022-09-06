@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.*
 
 class RatingRepositoryImpl : RatingRepository {
 
-    override suspend fun addRateToSeller(sellerId: Long, sellerRating: SellerRating): ServiceResult<SellerRating?> {
+    override suspend fun addRateToSeller(sellerId: Long, sellerRating: SellerRating): ServiceResult<SellerRating> {
         return try {
             dbQuery {
                 SellerRatingTable.insert {
@@ -23,9 +23,7 @@ class RatingRepositoryImpl : RatingRepository {
                     it[rating] = sellerRating.rating
                     it[toSellerId] = sellerId
                 }
-                    .resultedValues?.singleOrNull().let {
-                        ServiceResult.Success(rowToSellerRating(it))
-                    }
+                    .resultedValues?.single().let { ServiceResult.Success(rowToSellerRating(it)!!) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -35,7 +33,7 @@ class RatingRepositoryImpl : RatingRepository {
         }
     }
 
-    override suspend fun addRateToResult(resultId: Long, resultRating: ResultRating): ServiceResult<ResultRating?> {
+    override suspend fun addRateToResult(resultId: Long, resultRating: ResultRating): ServiceResult<ResultRating> {
         return try {
             dbQuery {
                 ResultRatingTable.insert {
@@ -43,9 +41,7 @@ class RatingRepositoryImpl : RatingRepository {
                     it[rating] = resultRating.rating
                     it[toResultId] = resultId
                 }
-                    .resultedValues?.singleOrNull().let {
-                        ServiceResult.Success(rowToResultRating(it))
-                    }
+                    .resultedValues?.single().let { ServiceResult.Success(rowToResultRating(it)!!) }
             }
         } catch (e: Exception) {
             when(e) {

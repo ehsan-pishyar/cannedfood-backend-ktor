@@ -24,7 +24,7 @@ class CommentRepositoryImpl : CommentRepository {
     override suspend fun addCommentForSeller(
         sellerId: Long,
         sellerComment: SellerComment
-    ): ServiceResult<SellerComment?> {
+    ): ServiceResult<SellerComment> {
 
         return try {
             dbQuery {
@@ -35,9 +35,7 @@ class CommentRepositoryImpl : CommentRepository {
                     it[toSellerId] = sellerId
                     it[dateCreated] = LocalDateTime.now().toDatabaseString()
                 }
-                    .resultedValues?.singleOrNull()?.let {
-                        ServiceResult.Success(rowToSellerComment(it))
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToSellerComment(it)!!) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -50,7 +48,7 @@ class CommentRepositoryImpl : CommentRepository {
     override suspend fun addCommentForResult(
         resultId: Long,
         resultComment: ResultComment
-    ): ServiceResult<ResultComment?> {
+    ): ServiceResult<ResultComment> {
 
         return try {
             dbQuery {
@@ -61,9 +59,7 @@ class CommentRepositoryImpl : CommentRepository {
                     it[toResultId] = resultId
                     it[dateCreated] = LocalDateTime.now().toDatabaseString()
                 }
-                    .resultedValues?.singleOrNull()?.let {
-                        ServiceResult.Success(rowToResultComment(it))
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToResultComment(it)!!) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -80,12 +76,8 @@ class CommentRepositoryImpl : CommentRepository {
                     (SellerCommentTable.toSellerId eq sellerId)
                 }
                     .orderBy(SellerCommentTable.dateCreated to SortOrder.DESC)
-                    .map {
-                        rowToSellerCommentResponse(it)
-                    }
-            }.let {
-                ServiceResult.Success(it)
-            }
+                    .map { rowToSellerCommentResponse(it) }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -101,12 +93,8 @@ class CommentRepositoryImpl : CommentRepository {
                     (ResultCommentTable.toResultId eq resultId)
                 }
                     .orderBy(ResultCommentTable.dateCreated to SortOrder.DESC)
-                    .map {
-                        rowToResultCommentResponse(it)
-                    }
-            }.let {
-                ServiceResult.Success(it)
-            }
+                    .map { rowToResultCommentResponse(it) }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)

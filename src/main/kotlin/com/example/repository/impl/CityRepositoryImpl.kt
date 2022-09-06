@@ -14,16 +14,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class CityRepositoryImpl : CityRepository {
 
-    override suspend fun insertCity(city: City): ServiceResult<City?> {
+    override suspend fun insertCity(city: City): ServiceResult<City> {
         return try {
             dbQuery {
                 CityTable.insert {
                     it[title] = city.title
                     it[stateId] = city.state_id
                 }
-                    .resultedValues?.singleOrNull()?.let {
-                        ServiceResult.Success(rowToCity(it))
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToCity(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -41,9 +39,7 @@ class CityRepositoryImpl : CityRepository {
                 }
                     .orderBy(CityTable.id to SortOrder.ASC)
                     .map { rowToCityResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -92,16 +88,14 @@ class CityRepositoryImpl : CityRepository {
 //        }
     }
 
-    override suspend fun getCityById(cityId: Int): ServiceResult<CityResponse?> {
+    override suspend fun getCityById(cityId: Int): ServiceResult<CityResponse> {
         return try {
             dbQuery {
                 (CityTable innerJoin StateTable).select {
                     (CityTable.id eq cityId)
-                }.map { rowToCityResponse(it) }
-                    .singleOrNull()
-            }.let {
-                ServiceResult.Success(it)
-            }
+                }.map { rowToCityResponse(it)!! }
+                    .single()
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -139,9 +133,7 @@ class CityRepositoryImpl : CityRepository {
                 }
                     .orderBy(CityTable.id to SortOrder.ASC)
                     .map { rowToCityResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -161,16 +153,7 @@ class CityRepositoryImpl : CityRepository {
                     it[title] = city.title
                     it[stateId] = city.state_id
                 }
-
-                 transaction {
-                     CityTable.select {
-                         (CityTable.id eq cityId)
-                     }
-                         .map { rowToCity(it) }
-                         .singleOrNull()
-                 }.let {
-                     ServiceResult.Success(it)
-                 }
+                 ServiceResult.Success(selectCityById(cityId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -186,9 +169,7 @@ class CityRepositoryImpl : CityRepository {
                 CityTable.deleteWhere {
                     CityTable.id eq cityId
                 }
-                getAllCities().let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(selectCities())
             }
         } catch (e: Exception) {
             when (e) {
@@ -204,9 +185,7 @@ class CityRepositoryImpl : CityRepository {
                 CityTable.deleteWhere {
                     CityTable.stateId eq stateId
                 }
-                getCitiesOfStates(stateId).let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(selectCitiesOfStates(stateId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -220,9 +199,7 @@ class CityRepositoryImpl : CityRepository {
         return try {
             dbQuery {
                 CityTable.deleteAll()
-                getAllCities().let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(selectCities())
             }
         } catch (e: Exception) {
             when (e) {
@@ -252,7 +229,7 @@ class CityRepositoryImpl : CityRepository {
         )
     }
 
-    private fun getCitiesOfStates(stateId: Int): List<CityResponse> {
+    private fun selectCitiesOfStates(stateId: Int): List<CityResponse> {
         return transaction {
             (CityTable innerJoin StateTable).select {
                 (CityTable.stateId eq stateId)
@@ -262,11 +239,21 @@ class CityRepositoryImpl : CityRepository {
         }
     }
 
-    private fun getAllCities(): List<CityResponse?> {
+    private fun selectCities(): List<CityResponse?> {
         return transaction {
             (CityTable innerJoin StateTable).selectAll()
                 .orderBy(CityTable.id to SortOrder.ASC)
                 .map { rowToCityResponse(it) }
+        }
+    }
+
+    private fun selectCityById(id: Int): City {
+        return transaction {
+            CityTable.select {
+                (CityTable.id eq id)
+            }
+                .map { rowToCity(it)!! }
+                .single()
         }
     }
 

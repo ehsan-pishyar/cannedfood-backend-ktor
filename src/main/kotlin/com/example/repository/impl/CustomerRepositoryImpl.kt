@@ -32,9 +32,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                     it[sex] = customer.sex
                     it[birthDate] = customer.birth_date
                 }
-                    .resultedValues?.single().let {
-                        ServiceResult.Success(rowToCustomer(it)!!)
-                    }
+                    .resultedValues?.single().let { ServiceResult.Success(rowToCustomer(it)!!) }
             }
         } catch (e: Exception) {
             println(e)
@@ -55,9 +53,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                     .selectAll()
                     .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                     .map { rowToCustomerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             println(e)
             when(e) {
@@ -79,19 +75,13 @@ class CustomerRepositoryImpl : CustomerRepository {
             dbQuery {
                 val customer = selectCustomer(customerId)
                 val location = selectLocation(customer!!.location_id)
+                val user = selectUserById(customer.user_id)
 
-                val user = transaction {
-                    UserTable.select {
-                        (UserTable.id eq customer.user_id)
-                    }
-                        .map { rowToUser(it) }
-                        .single()
-                }
                 customerDetailsResponse = CustomerDetailsResponse(
                     id = customer.id,
                     first_name = customer.first_name,
                     last_name = customer.last_name,
-                    email = user?.email,
+                    email = user.email,
                     picture = customer.picture,
                     sex = customer.sex.toString(),
                     location = location,
@@ -100,7 +90,6 @@ class CustomerRepositoryImpl : CustomerRepository {
             }
             ServiceResult.Success(customerDetailsResponse)
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -113,14 +102,7 @@ class CustomerRepositoryImpl : CustomerRepository {
         lateinit var customerResponse: CustomerResponse
         return try {
             dbQuery {
-                val user = transaction {
-                    UserTable.select {
-                        (UserTable.email like "$email%")
-                    }
-                        .map { rowToUser(it) }
-                        .singleOrNull()
-                }
-
+                val user = selectUserByEmail(email)
                 val customer = selectCustomer(user!!.id)
                 val location = selectLocation(customer!!.location_id)
 
@@ -137,7 +119,6 @@ class CustomerRepositoryImpl : CustomerRepository {
             }
             ServiceResult.Success(customerResponse)
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -160,13 +141,9 @@ class CustomerRepositoryImpl : CustomerRepository {
                     it[sex] = customer.sex
                     it[birthDate] = customer.birth_date
                 }
-
-                selectCustomer(customerId).let {
-                    ServiceResult.Success(it!!)
-                }
+                ServiceResult.Success(selectCustomer(customerId)!!)
             }
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -178,13 +155,9 @@ class CustomerRepositoryImpl : CustomerRepository {
         return try {
             dbQuery {
                 CustomerTable.deleteAll()
-
-                getCustomersResponse().let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(getCustomersResponse())
             }
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -198,13 +171,9 @@ class CustomerRepositoryImpl : CustomerRepository {
                 CustomerTable.deleteWhere {
                     (CustomerTable.id eq customerId)
                 }
-
-                getCustomersResponse().let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(getCustomersResponse())
             }
         } catch (e: Exception) {
-            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -290,6 +259,26 @@ class CustomerRepositoryImpl : CustomerRepository {
             (CustomerTable innerJoin UserTable innerJoin LocationTable).selectAll()
                 .orderBy(CustomerTable.dateCreated to SortOrder.DESC)
                 .map { rowToCustomerResponse(it) }
+        }
+    }
+
+    private fun selectUserById(userId: Long): User {
+        return transaction {
+            UserTable.select {
+                (UserTable.id eq userId)
+            }
+                .map { rowToUser(it)!! }
+                .single()
+        }
+    }
+
+    private fun selectUserByEmail(email: String?): User? {
+        return transaction {
+            UserTable.select {
+                (UserTable.email like "$email%")
+            }
+                .map { rowToUser(it) }
+                .singleOrNull()
         }
     }
 }

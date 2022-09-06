@@ -32,9 +32,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     it[prepareDuration] = result.prepare_duration
                     it[dateCreated] = result.date_created
                 }
-                    .resultedValues?.singleOrNull()?.let {
-                        ServiceResult.Success(rowToResults(it)!!)
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToResults(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -59,11 +57,8 @@ class ResultsRepositoryImpl : ResultsRepository {
                     .selectAll()
                     .orderBy(ResultsTable.dateCreated to SortOrder.ASC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
-            println(e)
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -75,16 +70,10 @@ class ResultsRepositoryImpl : ResultsRepository {
         lateinit var resultDetailsResponse: ResultDetailsResponse
         return try {
             dbQuery {
-                val result = transaction {
-                    ResultsTable.select {
-                        (ResultsTable.id eq resultId)
-                    }
-                        .map { rowToResults(it) }
-                        .single()
-                }
-                val seller = getSeller(result!!.seller_id)
-                val foodCategory = getFoodCategory(result.food_category_id)
-                val comments = getComments(resultId)
+                val result = selectResultById(resultId)
+                val seller = selectSeller(result.seller_id)
+                val foodCategory = selectFoodCategory(result.food_category_id)
+                val comments = selectComments(resultId)
 
                 resultDetailsResponse = ResultDetailsResponse(
                     id = result.id,
@@ -100,9 +89,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     comments = comments,
                     date_created = result.date_created
                 )
-            }.let {
-                ServiceResult.Success(resultDetailsResponse)
-            }
+            }.let { ServiceResult.Success(resultDetailsResponse) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -122,9 +109,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -144,9 +129,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -166,9 +149,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -183,10 +164,9 @@ class ResultsRepositoryImpl : ResultsRepository {
                 ResultsTable.select {
                     (ResultsTable.sellerCategoryId eq sellerCategoryId)
                 }
+                    .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -203,9 +183,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     (ResultsTable.resultCategoryId eq resultCategoryId)
                 }
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -225,9 +203,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -247,9 +223,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -277,9 +251,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -299,9 +271,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -321,9 +291,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                     }
                     .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
                     .map { rowToResultResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -347,17 +315,9 @@ class ResultsRepositoryImpl : ResultsRepository {
                     it[price] = result.price
                     it[discount] = result.discount
                     it[prepareDuration] = result.prepare_duration
+                    it[dateCreated] = result.date_created
                 }
-
-                transaction {
-                    ResultsTable.select {
-                        (ResultsTable.id eq resultId)
-                    }
-                        .map { rowToResults(it)!! }
-                        .single()
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                ServiceResult.Success(selectResultById(resultId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -373,19 +333,7 @@ class ResultsRepositoryImpl : ResultsRepository {
                 ResultsTable.deleteWhere {
                     (ResultsTable.id eq resultId)
                 }
-
-                transaction {
-                    ResultsTable
-                        .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
-                        .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
-                        .select {
-                        (ResultsTable.sellerId eq sellerId)
-                    }
-                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
-                        .map { rowToResultResponse(it) }
-                }
-            }.let {
-                ServiceResult.Success(it)
+                ServiceResult.Success(getResultResponseBySellerId(sellerId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -399,19 +347,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         return try {
             dbQuery {
                 ResultsTable.deleteAll()
-
-                transaction {
-                    ResultsTable
-                        .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
-                        .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
-                        .select {
-                        (ResultsTable.sellerId eq sellerId)
-                    }
-                        .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
-                        .map { rowToResultResponse(it) }
-                }
-            }.let {
-                ServiceResult.Success(it)
+                ServiceResult.Success(getResultResponseBySellerId(sellerId))
             }
         } catch (e: Exception) {
             when (e) {
@@ -485,11 +421,12 @@ class ResultsRepositoryImpl : ResultsRepository {
 
         return ResultCommentResponse(
             from = row[UserTable.email],
-            message = row[ResultCommentTable.message]
+            message = row[ResultCommentTable.message],
+            date_created = row[ResultCommentTable.dateCreated]
         )
     }
 
-    private fun getSeller(sellerId: Long): SellerResponse {
+    private fun selectSeller(sellerId: Long): SellerResponse {
         return transaction {
             SellerTable.select {
                 (SellerTable.id eq sellerId)
@@ -499,7 +436,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
-    private fun getFoodCategory(foodCategoryId: Int): FoodCategory? {
+    private fun selectFoodCategory(foodCategoryId: Int): FoodCategory? {
         return transaction {
             FoodCategoryTable.select {
                 (FoodCategoryTable.id eq foodCategoryId)
@@ -509,7 +446,7 @@ class ResultsRepositoryImpl : ResultsRepository {
         }
     }
 
-    private fun getComments(resultId: Long): List<ResultCommentResponse?> {
+    private fun selectComments(resultId: Long): List<ResultCommentResponse?> {
         return transaction {
             ResultCommentTable
                 .innerJoin(CustomerTable, {fromCustomerId}, {id})
@@ -518,6 +455,29 @@ class ResultsRepositoryImpl : ResultsRepository {
                     (ResultCommentTable.toResultId eq resultId)
                 }
                 .map { rowToResultComments(it) }
+        }
+    }
+
+    private fun selectResultById(id: Long): Results {
+        return transaction {
+            ResultsTable.select {
+                (ResultsTable.id eq id)
+            }
+                .map { rowToResults(it)!! }
+                .single()
+        }
+    }
+
+    private fun getResultResponseBySellerId(sellerId: Long): List<ResultResponse?> {
+        return transaction {
+            ResultsTable
+                .innerJoin(SellerTable, { ResultsTable.sellerId }, {id})
+                .innerJoin(FoodCategoryTable, {ResultsTable.foodCategoryId}, {id})
+                .select {
+                    (ResultsTable.sellerId eq sellerId)
+                }
+                .orderBy(ResultsTable.dateCreated to SortOrder.DESC)
+                .map { rowToResultResponse(it) }
         }
     }
 }

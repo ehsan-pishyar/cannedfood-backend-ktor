@@ -17,12 +17,8 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
             dbQuery {
                 SellerCategoryTable.selectAll()
                     .orderBy(SellerCategoryTable.id to SortOrder.ASC)
-                    .map {
-                        rowToSellerCategory(it)
-                    }
-            }.let {
-                ServiceResult.Success(it)
-            }
+                    .map { rowToSellerCategory(it) }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -37,13 +33,9 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
                 SellerCategoryTable.select {
                     (SellerCategoryTable.id eq id)
                 }
-                    .map {
-                        rowToSellerCategory(it)
-                    }
+                    .map { rowToSellerCategory(it) }
                     .single()
-            }.let {
-                ServiceResult.Success(it!!)
-            }
+            }.let { ServiceResult.Success(it!!) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -58,12 +50,8 @@ class SellerCategoryRepositoryImpl : SellerCategoryRepository {
                 SellerCategoryTable.select {
                     (SellerCategoryTable.title like "$title%")
                 }
-                    .map {
-                        rowToSellerCategory(it)
-                    }
-            }.let {
-                ServiceResult.Success(it)
-            }
+                    .map { rowToSellerCategory(it) }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)

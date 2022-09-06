@@ -22,9 +22,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
                     it[imagePath] = foodCategory.image_path
                     it[resultCategoryId] = foodCategory.result_category_id
                 }
-                    .resultedValues?.single()?.let {
-                        ServiceResult.Success(rowToFoodCategory(it)!!)
-                    } ?: ServiceResult.Error(ErrorCode.DATABASE_ERROR)
+                    .resultedValues?.single().let { ServiceResult.Success(rowToFoodCategory(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -42,9 +40,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
                 }
                     .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                     .map { rowToFoodCategoryResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -61,9 +57,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
                 }
                     .map { rowToFoodCategoryResponse(it)!! }
                     .single()
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -80,9 +74,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
                 }
                     .orderBy(FoodCategoryTable.id to SortOrder.ASC)
                     .map { rowToFoodCategoryResponse(it)!! }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -198,9 +190,7 @@ class FoodCategoryRepositoryImpl : FoodCategoryRepository {
             FoodCategoryTable.select {
                 (FoodCategoryTable.id eq foodCategoryId)
             }
-                .map {
-                    rowToFoodCategory(it)!!
-                }
+                .map { rowToFoodCategory(it)!! }
                 .single()
         }
     }

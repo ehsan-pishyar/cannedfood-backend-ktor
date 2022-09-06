@@ -33,9 +33,7 @@ class SellerRepositoryImpl : SellerRepository {
                     it[deliveryDuration] = seller.delivery_duration
                     it[phoneNumber] = seller.phone_number
                 }
-                    .resultedValues?.single().let {
-                        ServiceResult.Success(rowToSeller(it)!!)
-                    }
+                    .resultedValues?.single().let { ServiceResult.Success(rowToSeller(it)!!) }
             }
         } catch (e: Exception) {
             when (e) {
@@ -51,9 +49,7 @@ class SellerRepositoryImpl : SellerRepository {
                 SellerTable.selectAll()
                     .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when (e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -92,9 +88,7 @@ class SellerRepositoryImpl : SellerRepository {
                 date_created = seller.date_created
             )
         }
-        return sellerDetailsResponse.let {
-            ServiceResult.Success(it)
-        }
+        return sellerDetailsResponse.let { ServiceResult.Success(it) }
     }
 
     override suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> {
@@ -105,9 +99,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.id to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -124,9 +116,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.id to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -143,9 +133,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.id to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -162,9 +150,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.id to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -181,9 +167,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.id to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -203,9 +187,7 @@ class SellerRepositoryImpl : SellerRepository {
                     }
                         .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                         .map { rowToSellerResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                }.let { ServiceResult.Success(it) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -226,9 +208,7 @@ class SellerRepositoryImpl : SellerRepository {
                     }
                         .map { rowToSellerResponse(it) }
                         .singleOrNull()
-                }.let {
-                    ServiceResult.Success(it!!)
-                }
+                }.let { ServiceResult.Success(it!!) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -246,9 +226,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -265,9 +243,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -283,9 +259,7 @@ class SellerRepositoryImpl : SellerRepository {
                     (SellerTable.foodCategoryId eq foodCategoryId)
                 }
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -311,9 +285,7 @@ class SellerRepositoryImpl : SellerRepository {
                     }
                         .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                         .map { rowToSellerResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                }.let { ServiceResult.Success(it) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -331,9 +303,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -350,9 +320,7 @@ class SellerRepositoryImpl : SellerRepository {
                 }
                     .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
                     .map { rowToSellerResponse(it) }
-            }.let {
-                ServiceResult.Success(it)
-            }
+            }.let { ServiceResult.Success(it) }
         } catch (e: Exception) {
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -389,9 +357,7 @@ class SellerRepositoryImpl : SellerRepository {
                     }
                         .map { rowToSeller(it) }
                         .single()
-                }.let {
-                    ServiceResult.Success(it!!)
-                }
+                }.let { ServiceResult.Success(it!!) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -411,9 +377,7 @@ class SellerRepositoryImpl : SellerRepository {
                 transaction {
                     SellerTable.selectAll()
                         .map { rowToSellerResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                }.let { ServiceResult.Success(it) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -431,9 +395,7 @@ class SellerRepositoryImpl : SellerRepository {
                 transaction {
                     SellerTable.selectAll()
                         .map { rowToSellerResponse(it) }
-                }.let {
-                    ServiceResult.Success(it)
-                }
+                }.let { ServiceResult.Success(it) }
             }
         } catch (e: Exception) {
             when(e) {
@@ -526,10 +488,11 @@ class SellerRepositoryImpl : SellerRepository {
 
         return SellerCommentResponse(
             from = row[CustomerTable.firstName],
-            message = row[SellerCommentTable.message]
+            message = row[SellerCommentTable.message],
+            date_created = row[SellerCommentTable.dateCreated]
         )
     }
-    
+
     private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
         if (row == null) return null
 
@@ -588,9 +551,7 @@ class SellerRepositoryImpl : SellerRepository {
             (LocationTable innerJoin CityTable innerJoin StateTable).select {
                 (LocationTable.title like "$locationTitle%")
             }
-                .map {
-                    rowToLocationResponse(it)!!
-                }
+                .map { rowToLocationResponse(it)!! }
                 .singleOrNull()
         }
     }
