@@ -2,6 +2,7 @@ package com.example.repository
 
 import com.example.models.Seller
 import com.example.models.responses.SellerDetailsResponse
+import com.example.models.responses.SellerListResponse
 import com.example.models.responses.SellerResponse
 import com.example.utils.ServiceResult
 
@@ -9,7 +10,7 @@ interface SellerRepository {
 
     suspend fun insertSeller(seller: Seller): ServiceResult<Seller>
 
-    suspend fun getSellers(): ServiceResult<List<SellerResponse?>>
+    suspend fun getSellers(offset: Long): ServiceResult<SellerListResponse?>
     suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse>
     suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> // get similar sellers by part of string passed
     suspend fun getSellersByDescription(description: String?): ServiceResult<List<SellerResponse?>>

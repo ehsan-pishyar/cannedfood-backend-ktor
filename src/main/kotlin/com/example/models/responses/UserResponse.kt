@@ -23,6 +23,13 @@ data class SellerResponse(
 )
 
 @Serializable
+data class SellerListResponse(
+    val total_results: Int?,
+    val pages: Int?,
+    val sellers: List<SellerResponse> = emptyList()
+)
+
+@Serializable
 data class SellerDetailsResponse(
     val id: Long?,
     val title: String?,

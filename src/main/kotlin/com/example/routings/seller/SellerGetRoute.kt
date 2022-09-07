@@ -24,14 +24,15 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
             val foodCategoryId = params["food_category_id"]?.toInt()
             val deliveryFee = params["delivery_fee"]?.toLong()
             val deliveryDuration = params["delivery_duration"]?.toInt()
+            val offset = params["offset"]?.toLong()
 
             if (params.isEmpty()) {
-                sellerRepository.getSellers().let {
+                sellerRepository.getSellers(offset!!).let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {

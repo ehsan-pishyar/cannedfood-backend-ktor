@@ -43,15 +43,24 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellers(): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellers(offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.selectAll()
-                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                val sellers = transaction {
+                    SellerTable.selectAll()
+                        .limit(20, offset = offset + 20)
+                        .orderBy(SellerTable.dateCreated to SortOrder.DESC)
+                        .map { rowToSellerResponse(it) }
+                }
+
+                ServiceResult.Success(SellerListResponse(
+                    total_results = sellers.size,
+                    pages = sellers.size / 20,
+                    sellers = sellers as List<SellerResponse>
+                ))
+            }
         } catch (e: Exception) {
-            when (e) {
+            when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
             }
