@@ -19,15 +19,16 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
             val stateId = params["state_id"]?.toInt()
             val cityId = params["city_id"]?.toInt()
             val locationId = params["location_id"]?.toLong()
-            val sellerCategoryId = params["seller_category_id"]?.toInt()
-            val resultCategoryId = params["result_category_id"]?.toInt()
-            val foodCategoryId = params["food_category_id"]?.toInt()
+            val locationTitle = params["location_title"]
+            val resultID = params["result_id"]?.toLong()
+            val sellerCategoryId = params["sc_id"]?.toInt()
+            val resultCategoryId = params["rc_id"]?.toInt()
+            val foodCategoryId = params["fc_id"]?.toInt()
             val deliveryFee = params["delivery_fee"]?.toLong()
             val deliveryDuration = params["delivery_duration"]?.toInt()
-            val offset = params["offset"]?.toLong()
 
-            if (params.isEmpty()) {
-                sellerRepository.getSellers(offset!!).let {
+            if(params.isEmpty()) {
+                sellerRepository.getSellers().let {
                     when(it) {
                         is ServiceResult.Success -> {
                             call.respond(
@@ -70,7 +71,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -89,7 +90,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -108,7 +109,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -127,7 +128,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -146,7 +147,45 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
+                    }
+                }
+            }
+
+            locationTitle?.let { sellerLocationTitle ->
+                sellerRepository.getSellersByLocationTitle(sellerLocationTitle).let {
+                    when(it) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = it.data!!
+                            )
+                        }
+                        is ServiceResult.Error -> {
+                            call.respond(
+                                status = HttpStatusCode.BadRequest,
+                                message = it.errorCode.message
+                            )
+                        }
+                    }
+                }
+            }
+
+            resultID?.let { sellerResultId ->
+                sellerRepository.getSellerByResultId(sellerResultId).let {
+                    when(it) {
+                        is ServiceResult.Success -> {
+                            call.respond(
+                                status = HttpStatusCode.OK,
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -165,7 +204,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -184,7 +223,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -203,7 +242,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -222,7 +261,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {
@@ -241,7 +280,7 @@ fun Route.getSellers(sellerRepository: SellerRepository) {
                         is ServiceResult.Success -> {
                             call.respond(
                                 status = HttpStatusCode.OK,
-                                message = it.data
+                                message = it.data!!
                             )
                         }
                         is ServiceResult.Error -> {

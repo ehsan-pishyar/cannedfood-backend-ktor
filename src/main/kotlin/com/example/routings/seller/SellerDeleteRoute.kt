@@ -19,7 +19,7 @@ fun Route.deleteSellers(sellerRepository: SellerRepository) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = it.data
+                            message = it.data!!
                         )
                     }
                     is ServiceResult.Error -> {
@@ -39,7 +39,7 @@ fun Route.deleteSellers(sellerRepository: SellerRepository) {
                     is ServiceResult.Success -> {
                         call.respond(
                             status = HttpStatusCode.OK,
-                            message = it.data
+                            message = it.data!!
                         )
                     }
                     is ServiceResult.Error -> {

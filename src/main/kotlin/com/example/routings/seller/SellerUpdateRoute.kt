@@ -2,6 +2,7 @@ package com.example.routings.seller
 
 import com.example.models.Seller
 import com.example.repository.SellerRepository
+import com.example.utils.ErrorCode
 import com.example.utils.Routes
 import com.example.utils.ServiceResult
 import io.ktor.http.*
@@ -28,7 +29,7 @@ fun Route.updateSeller(sellerRepository: SellerRepository) {
                         is ServiceResult.Error -> {
                             call.respond(
                                 status = HttpStatusCode.BadRequest,
-                                message = "Database Error"
+                                message = it.errorCode.message
                             )
                         }
                     }
@@ -36,7 +37,7 @@ fun Route.updateSeller(sellerRepository: SellerRepository) {
             } ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = "Check your json file"
+                    message = ErrorCode.JSON_ERROR
                 )
                 return@put
             }

@@ -17,16 +17,15 @@ data class SellerResponse(
     val description: String?,
     val logo: String?,
     val banner: String?,
-    val rating: Double? = null,
     val delivery_fee: Long?,
     val delivery_duration: Int?
 )
 
 @Serializable
 data class SellerListResponse(
-    val total_results: Int?,
-    val pages: Int?,
-    val sellers: List<SellerResponse> = emptyList()
+    val total_results: Int = 0,
+    val pages: Int = 1,
+    val sellers: List<SellerResponse?> = emptyList()
 )
 
 @Serializable

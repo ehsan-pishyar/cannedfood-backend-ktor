@@ -10,24 +10,24 @@ interface SellerRepository {
 
     suspend fun insertSeller(seller: Seller): ServiceResult<Seller>
 
-    suspend fun getSellers(offset: Long): ServiceResult<SellerListResponse?>
+    suspend fun getSellers(offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse>
-    suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> // get similar sellers by part of string passed
-    suspend fun getSellersByDescription(description: String?): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByStateId(stateId: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByCityId(cityId: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByLocationId(locationId: Long): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByLocationTitle(locationTitle: String?): ServiceResult<List<SellerResponse?>>
+    suspend fun getSellersByTitle(sellerTitle: String?, offset: Long = 0L): ServiceResult<SellerListResponse?> // get similar sellers by part of string passed
+    suspend fun getSellersByDescription(description: String?, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByStateId(stateId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByCityId(cityId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByLocationId(locationId: Long, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByLocationTitle(locationTitle: String?, offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellerByResultId(resultId: Long): ServiceResult<SellerResponse?>
-    suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByResultCategoryId(resultCategoryId: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByFoodCategoryId(foodCategoryId: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByOpenStatus(isOpen: Boolean): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByDeliveryDuration(minutes: Int): ServiceResult<List<SellerResponse?>>
-    suspend fun getSellersByDeliveryFee(fee: Long): ServiceResult<List<SellerResponse?>>
+    suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByResultCategoryId(resultCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByFoodCategoryId(foodCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByOpenStatus(isOpen: Boolean, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByDeliveryDuration(minutes: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun getSellersByDeliveryFee(fee: Long, offset: Long = 0L): ServiceResult<SellerListResponse?>
 
     suspend fun updateSeller(sellerId: Long, seller: Seller): ServiceResult<Seller>
 
-    suspend fun deleteSellerById(sellerId: Long): ServiceResult<List<SellerResponse?>>
-    suspend fun deleteSellers(): ServiceResult<List<SellerResponse?>>
+    suspend fun deleteSellerById(sellerId: Long, offset: Long = 0L): ServiceResult<SellerListResponse?>
+    suspend fun deleteSellers(offset: Long = 0L): ServiceResult<SellerListResponse?>
 }

@@ -2,6 +2,7 @@ package com.example.routings.seller
 
 import com.example.models.Seller
 import com.example.usecases.InsertSellerUseCase
+import com.example.utils.ErrorCode
 import com.example.utils.Routes
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,7 +17,7 @@ fun Route.insertNewSeller(insertSellerUseCase: InsertSellerUseCase) {
             val request = call.receiveOrNull<Seller>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = "Error! Check Json file"
+                    message = ErrorCode.JSON_ERROR
                 )
                 return@post
             }

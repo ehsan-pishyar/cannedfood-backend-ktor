@@ -7,6 +7,7 @@ import com.example.tables.*
 import com.example.tables.DatabaseFactory.dbQuery
 import com.example.utils.ErrorCode
 import com.example.utils.ServiceResult
+import com.example.utils.initPage
 import com.example.utils.randomIdGenerator
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
@@ -46,18 +47,8 @@ class SellerRepositoryImpl : SellerRepository {
     override suspend fun getSellers(offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                val sellers = transaction {
-                    SellerTable.selectAll()
-                        .limit(20, offset = offset + 20)
-                        .orderBy(SellerTable.dateCreated to SortOrder.DESC)
-                        .map { rowToSellerResponse(it) }
-                }
-
-                ServiceResult.Success(SellerListResponse(
-                    total_results = sellers.size,
-                    pages = sellers.size / 20,
-                    sellers = sellers as List<SellerResponse>
-                ))
+                val sellers = selectSellers(offset)
+                sellerListResponsePopulating(sellers)
             }
         } catch (e: Exception) {
             when(e) {
@@ -70,15 +61,8 @@ class SellerRepositoryImpl : SellerRepository {
     override suspend fun getSellerDetails(sellerId: Long): ServiceResult<SellerDetailsResponse> {
         lateinit var sellerDetailsResponse: SellerDetailsResponse
         dbQuery {
-            val seller = transaction {
-                SellerTable.select {
-                    (SellerTable.id eq sellerId)
-                }
-                    .map { rowToSeller(it) }
-                    .single()
-            }
-
-            val location = selectLocationById(seller!!.location_id)
+            val seller = selectSellerById(sellerId)
+            val location = selectLocationById(seller.location_id)
             val results = selectResults(seller.id)
             val comments = selectComments(seller.id)
 
@@ -97,19 +81,24 @@ class SellerRepositoryImpl : SellerRepository {
                 date_created = seller.date_created
             )
         }
-        return sellerDetailsResponse.let { ServiceResult.Success(it) }
+        return ServiceResult.Success(sellerDetailsResponse)
     }
 
-    override suspend fun getSellersByTitle(sellerTitle: String?): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByTitle(sellerTitle: String?, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.title like "$sellerTitle%")
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.title like "$sellerTitle%")
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -117,16 +106,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByDescription(description: String?): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByDescription(description: String?, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.description like "$description%")
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.description like "$description%")
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -134,16 +128,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByStateId(stateId: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByStateId(stateId: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.stateId eq stateId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.stateId eq stateId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -151,16 +150,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByCityId(cityId: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByCityId(cityId: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.cityId eq cityId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.cityId eq cityId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -168,16 +172,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByLocationId(locationId: Long): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByLocationId(locationId: Long, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.locationId eq locationId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.locationId eq locationId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.id to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -185,20 +194,22 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByLocationTitle(locationTitle: String?): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByLocationTitle(locationTitle: String?, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
                 val location = selectLocationByTitle(locationTitle)
 
-                transaction {
+                val sellers = transaction {
                     SellerTable.select {
                         (SellerTable.locationId eq location?.id!!)
                     }
                         .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                         .map { rowToSellerResponse(it) }
-                }.let { ServiceResult.Success(it) }
+                }
+                sellerListResponsePopulating(sellers)
             }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -227,16 +238,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.sellerCategoryId eq sellerCategoryId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.sellerCategoryId eq sellerCategoryId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -244,16 +260,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByResultCategoryId(resultCategoryId: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByResultCategoryId(resultCategoryId: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.resultCategoryId eq resultCategoryId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.resultCategoryId eq resultCategoryId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.dateCreated to SortOrder.DESC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -261,15 +282,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByFoodCategoryId(foodCategoryId: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByFoodCategoryId(foodCategoryId: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.foodCategoryId eq foodCategoryId)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.foodCategoryId eq foodCategoryId)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -277,7 +304,7 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByOpenStatus(isOpen: Boolean): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByOpenStatus(isOpen: Boolean, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
                 val status = transaction {
@@ -287,9 +314,11 @@ class SellerRepositoryImpl : SellerRepository {
                         .map { rowToSellerOpenStatus(it)!! }
                         .single()
                 }
-                ServiceResult.Success(selectSellersById(status.seller_id))
+                val sellers = selectSellersById(status.seller_id)
+                sellerListResponsePopulating(sellers)
             }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -297,16 +326,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByDeliveryDuration(minutes: Int): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByDeliveryDuration(minutes: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.deliveryDuration lessEq minutes)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.deliveryDuration lessEq minutes)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -314,16 +348,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByDeliveryFee(fee: Long): ServiceResult<List<SellerResponse?>> {
+    override suspend fun getSellersByDeliveryFee(fee: Long, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
-                SellerTable.select {
-                    (SellerTable.deliveryFee lessEq fee)
+                val sellers = transaction {
+                    SellerTable.select {
+                        (SellerTable.deliveryFee lessEq fee)
+                    }
+                        .limit(20, offset)
+                        .orderBy(SellerTable.dateCreated to SortOrder.ASC)
+                        .map { rowToSellerResponse(it) }
                 }
-                    .orderBy(SellerTable.deliveryDuration to SortOrder.ASC)
-                    .map { rowToSellerResponse(it) }
-            }.let { ServiceResult.Success(it) }
+                sellerListResponsePopulating(sellers)
+            }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -369,15 +408,17 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun deleteSellerById(sellerId: Long): ServiceResult<List<SellerResponse?>> {
+    override suspend fun deleteSellerById(sellerId: Long, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
                 SellerTable.deleteWhere {
                     (SellerTable.id eq sellerId)
                 }
-                ServiceResult.Success(selectSellers())
+                val sellers = selectSellers(offset)
+                sellerListResponsePopulating(sellers)
             }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -385,13 +426,15 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun deleteSellers(): ServiceResult<List<SellerResponse?>> {
+    override suspend fun deleteSellers(offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
                 SellerTable.deleteAll()
-                ServiceResult.Success(selectSellers())
+                val sellers = selectSellers(offset)
+                sellerListResponsePopulating(sellers)
             }
         } catch (e: Exception) {
+            println(e)
             when(e) {
                 is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
                 else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
@@ -431,7 +474,6 @@ class SellerRepositoryImpl : SellerRepository {
             description = row[SellerTable.description],
             logo = row[SellerTable.logo],
             banner = row[SellerTable.banner],
-            rating = row[SellerRatingTable.rating].toDouble(),
             delivery_fee = row[SellerTable.deliveryFee],
             delivery_duration = row[SellerTable.deliveryDuration],
         )
@@ -507,9 +549,21 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    private fun selectSellers(): List<SellerResponse?> {
+    private fun selectSellerById(id: Long): Seller {
+        return transaction {
+            SellerTable.select {
+                (SellerTable.id eq id)
+            }
+                .map { rowToSeller(it)!! }
+                .single()
+        }
+    }
+
+    private fun selectSellers(offset: Long): List<SellerResponse?> {
         return transaction {
             SellerTable.selectAll()
+                .limit(20, offset = offset)
+                .orderBy(SellerTable.dateCreated to SortOrder.DESC)
                 .map { rowToSellerResponse(it) }
         }
     }
@@ -565,5 +619,13 @@ class SellerRepositoryImpl : SellerRepository {
                 .map { rowToLocationResponse(it)!! }
                 .singleOrNull()
         }
+    }
+
+    private fun sellerListResponsePopulating(sellers: List<SellerResponse?>): ServiceResult<SellerListResponse?> {
+        return ServiceResult.Success(SellerListResponse(
+            total_results = sellers.size,
+            pages = initPage(sellers.size),
+            sellers = sellers
+        ))
     }
 }

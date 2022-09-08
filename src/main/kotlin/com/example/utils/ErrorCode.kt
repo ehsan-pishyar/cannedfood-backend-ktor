@@ -14,6 +14,7 @@ enum class ErrorCode(val message: String) {
     INVALID_CITY_QUERY("You must pass a city name or zip prefix."),
     USER_EXISTS("This user is already exists."),
     SELLER_EXISTS("Seller already exists"),
-    SELLER_404("Seller not found")
+    SELLER_404("Seller not found"),
+    JSON_ERROR("Error! Check your JSON codes")
 //    INVALID_API_KEY("Bad API key. Use x-api-key in the header.")
 }
