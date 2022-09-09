@@ -29,7 +29,7 @@ object DatabaseFactory {
 
             SchemaUtils.create(StateTable, CityTable, LocationTable, SellerCategoryTable, ResultCategoryTable,
             FoodCategoryTable, SellerRatingTable, ResultRatingTable, SellerCommentTable, ResultCommentTable,
-                SellerTable, UserTable, SellerOpenStatusTable)
+                SellerTable, UserTable, SellerOpenStatusTable, SellerOpenHourTable, SellerCloseHourTable)
         }
     }
 

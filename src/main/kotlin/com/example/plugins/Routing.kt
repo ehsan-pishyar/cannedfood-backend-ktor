@@ -38,6 +38,7 @@ import com.example.routings.seller.insertNewSeller
 import com.example.routings.seller.updateSeller
 import com.example.routings.seller_category.deleteSellerCategories
 import com.example.routings.seller_category.getSellerCategories
+import com.example.routings.seller_open_status.*
 import com.example.routings.state.getStates
 import com.example.routings.user.deleteUsers
 import com.example.routings.user.getUsers
@@ -64,7 +65,6 @@ fun Application.configureRouting() {
             val userRepository: UserRepository = UserRepositoryImpl()
             val emailValidation = ValidateUserEmail()
             val insertUserUseCase = InsertUserUseCase(emailValidation, userRepository)
-
             insertNewUser(insertUserUseCase)
             getUsers(userRepository)
             updateUser(userRepository)
@@ -74,7 +74,6 @@ fun Application.configureRouting() {
             // Seller Section
             val sellerRepository: SellerRepository = SellerRepositoryImpl()
             val insertSellerUseCase = InsertSellerUseCase(sellerRepository)
-
             insertNewSeller(insertSellerUseCase)
             getSellers(sellerRepository)
             updateSeller(sellerRepository)
@@ -84,7 +83,6 @@ fun Application.configureRouting() {
             // Customer section
             val customerRepository: CustomerRepository = CustomerRepositoryImpl()
             val insertCustomerUseCase = InsertCustomerUseCase(customerRepository)
-
             insertNewCustomer(insertCustomerUseCase)
             getCustomers(customerRepository)
             updateCustomer(customerRepository)
@@ -94,7 +92,6 @@ fun Application.configureRouting() {
             // Result section
             val resultsRepository: ResultsRepository = ResultsRepositoryImpl()
             val insertResultUseCase = InsertResultUseCase(resultsRepository)
-
             insertNewResult(insertResultUseCase)
             getResults(resultsRepository)
             updateResult(resultsRepository)
@@ -103,13 +100,11 @@ fun Application.configureRouting() {
 
             // State Section
             val stateRepository: StateRepository = StateRepositoryImpl()
-
             getStates(stateRepository)
 
 
             // City Section
             val cityRepository: CityRepository = CityRepositoryImpl()
-
             insertNewCity(cityRepository)
             getCities(cityRepository)
             updateCity(cityRepository)
@@ -118,7 +113,6 @@ fun Application.configureRouting() {
 
             // Location Section
             val locationRepository: LocationRepository = LocationRepositoryImpl()
-
             insertNewLocation(locationRepository)
             getLocations(locationRepository)
             updateLocation(locationRepository)
@@ -127,14 +121,12 @@ fun Application.configureRouting() {
 
             // Seller Category Section
             val sellerCategoryRepository: SellerCategoryRepository = SellerCategoryRepositoryImpl()
-
             getSellerCategories(sellerCategoryRepository)
             deleteSellerCategories(sellerCategoryRepository)
 
 
             // Results Category Section
             val resultCategoryRepository: ResultCategoryRepository = ResultCategoryRepositoryImpl()
-
             insertNewResultCategory(resultCategoryRepository)
             getResultCategories(resultCategoryRepository)
             updateResultCategory(resultCategoryRepository)
@@ -143,7 +135,6 @@ fun Application.configureRouting() {
 
             // Food Category Section
             val foodCategoryRepository: FoodCategoryRepository = FoodCategoryRepositoryImpl()
-
             insertNewFoodCategory(foodCategoryRepository)
             getFoodCategories(foodCategoryRepository)
             updateFoodCategory(foodCategoryRepository)
@@ -152,18 +143,29 @@ fun Application.configureRouting() {
 
             // Rating Section
             val ratingRepository: RatingRepository = RatingRepositoryImpl()
-
             rateToSeller(ratingRepository)
             rateToResult(ratingRepository)
 
 
             // Comment Section
             val commentRepository: CommentRepository = CommentRepositoryImpl()
-
             addNewSellerComment(commentRepository)
             addNewResultComment(commentRepository)
             getSellerComments(commentRepository)
             getResultComments(commentRepository)
+
+
+            // Seller Open Status Section
+            val sellerOpenStatusRepository: SellerOpenStatusRepository = SellerOpenStatusRepositoryImpl()
+            insertNewSellerOpenHours(sellerOpenStatusRepository)
+            insertNewSellerCloseHours(sellerOpenStatusRepository)
+            getSellerOpenStatus(sellerOpenStatusRepository)
+            updateSellerOpenHoursById(sellerOpenStatusRepository)
+            updateSellerCloseHoursById(sellerOpenStatusRepository)
+            deleteOpenStatusBySellerId(sellerOpenStatusRepository)
+            deleteCloseStatusBySellerId(sellerOpenStatusRepository)
+            deleteAllOpenStatus(sellerOpenStatusRepository)
+            deleteAllCloseStatus(sellerOpenStatusRepository)
 
         }
         // Static plugin. Try to access `/static/index.html`

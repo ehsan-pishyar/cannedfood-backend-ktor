@@ -25,6 +25,16 @@ object Routes {
 
     const val COMMENT_SELLER_ADD_ROUTE = "/{seller_id}/comments/add"
     const val COMMENT_RESULT_ADD_ROUTE = "/{result_id}/comments/add"
-    const val COMMENT_SELLER_GET_ROUTE = "/{seller_id}/comments/"
-    const val COMMENT_RESULT_GET_ROUTE = "/{result_id}/comments/"
+    const val COMMENT_SELLER_GET_ROUTE = "/{seller_id}/comments"
+    const val COMMENT_RESULT_GET_ROUTE = "/{result_id}/comments"
+
+    const val SELLER_OPEN_STATUS_ADD_ROUTE = "/{seller_id}/open-hours/add"
+    const val SELLER_CLOSE_STATUS_ADD_ROUTE = "/{seller_id}/close-hours/add"
+    const val SELLER_OPEN_STATUS_GET_ROUTE = "/{seller_id}/open-status"
+    const val SELLER_OPEN_STATUS_ROUTE = "/open-hours"
+    const val SELLER_CLOSE_STATUS_ROUTE = "/close-hours"
+    const val SELLER_OPEN_STATUS_DELETE_ROUTE = "/{seller_id}/open-hours/delete"
+    const val SELLER_CLOSE_STATUS_DELETE_ROUTE = "/{seller_id}/close-hours/delete"
+    const val SELLER_OPEN_STATUS_UPDATE_ROUTE = "/{seller_id}/open-hours/update"
+    const val SELLER_CLOSE_STATUS_UPDATE_ROUTE = "/{seller_id}/close-hours/update"
 }

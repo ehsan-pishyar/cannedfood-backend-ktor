@@ -12,13 +12,13 @@ data class UserResponse(
 
 @Serializable
 data class SellerResponse(
-    val id: Long?,
-    val title: String?,
-    val description: String?,
-    val logo: String?,
-    val banner: String?,
-    val delivery_fee: Long?,
-    val delivery_duration: Int?
+    val id: Long? = 0L,
+    val title: String? = "",
+    val description: String? = "",
+    val logo: String? = "",
+    val banner: String? = "",
+    val delivery_fee: Long? = 0L,
+    val delivery_duration: Int? = 0
 )
 
 @Serializable

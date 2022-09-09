@@ -2,6 +2,7 @@ package com.example.routings.customer
 
 import com.example.models.Customer
 import com.example.usecases.InsertCustomerUseCase
+import com.example.utils.ErrorCode
 import com.example.utils.Routes
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,7 +17,7 @@ fun Route.insertNewCustomer(insertCustomerUseCase: InsertCustomerUseCase) {
             val request = call.receiveOrNull<Customer>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
-                    message = "Check your json file"
+                    message = ErrorCode.JSON_ERROR
                 )
                 return@post
             }
