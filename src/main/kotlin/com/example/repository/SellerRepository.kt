@@ -22,7 +22,6 @@ interface SellerRepository {
     suspend fun getSellersBySellerCategoryId(sellerCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellersByResultCategoryId(resultCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellersByFoodCategoryId(foodCategoryId: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
-    suspend fun getSellersByOpenStatus(isOpen: Boolean, offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellersByDeliveryDuration(minutes: Int, offset: Long = 0L): ServiceResult<SellerListResponse?>
     suspend fun getSellersByDeliveryFee(fee: Long, offset: Long = 0L): ServiceResult<SellerListResponse?>
 

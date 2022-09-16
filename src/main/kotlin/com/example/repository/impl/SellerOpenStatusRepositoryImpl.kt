@@ -1,8 +1,8 @@
 package com.example.repository.impl
 
 import com.example.models.Seller
-import com.example.models.SellerCloseHour
-import com.example.models.SellerOpenHour
+import com.example.models.SellerCloseHours
+import com.example.models.SellerOpenHours
 import com.example.models.responses.SellerOpenStatusResponse
 import com.example.repository.SellerOpenStatusRepository
 import com.example.tables.DatabaseFactory.dbQuery
@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
 
-    override suspend fun insertSellerOpenHours(openHours: SellerOpenHour): ServiceResult<SellerOpenHour> {
+    override suspend fun insertSellerOpenHours(openHours: SellerOpenHours): ServiceResult<SellerOpenHours> {
         return try {
             dbQuery {
                 SellerOpenHourTable.insert {
@@ -42,7 +42,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun insertSellerCloseHours(closeHours: SellerCloseHour): ServiceResult<SellerCloseHour> {
+    override suspend fun insertSellerCloseHours(closeHours: SellerCloseHours): ServiceResult<SellerCloseHours> {
         return try {
             dbQuery {
                 SellerCloseHourTable.insert {
@@ -114,7 +114,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun updateSellerOpenHours(sellerId: Long, openHours: SellerOpenHour): ServiceResult<SellerOpenHour> {
+    override suspend fun updateSellerOpenHours(sellerId: Long, openHours: SellerOpenHours): ServiceResult<SellerOpenHours> {
         return try {
             dbQuery {
                 SellerOpenHourTable.update({
@@ -145,7 +145,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun updateSellerCloseHours(sellerId: Long, closeHours: SellerCloseHour): ServiceResult<SellerCloseHour> {
+    override suspend fun updateSellerCloseHours(sellerId: Long, closeHours: SellerCloseHours): ServiceResult<SellerCloseHours> {
         return try {
             dbQuery {
                 SellerCloseHourTable.update({
@@ -176,7 +176,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun deleteSellerOpenHoursById(sellerId: Long): ServiceResult<List<SellerOpenHour?>> {
+    override suspend fun deleteSellerOpenHoursById(sellerId: Long): ServiceResult<List<SellerOpenHours?>> {
         return try {
             dbQuery {
                 SellerOpenHourTable.deleteWhere {
@@ -192,7 +192,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun deleteSellersOpenHours(): ServiceResult<List<SellerOpenHour?>> {
+    override suspend fun deleteSellersOpenHours(): ServiceResult<List<SellerOpenHours?>> {
         return try {
             dbQuery {
                 SellerOpenHourTable.deleteAll()
@@ -207,7 +207,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun deleteSellerCloseHoursById(sellerId: Long): ServiceResult<List<SellerCloseHour?>> {
+    override suspend fun deleteSellerCloseHoursById(sellerId: Long): ServiceResult<List<SellerCloseHours?>> {
         return try {
             dbQuery {
                 SellerCloseHourTable.deleteWhere {
@@ -224,7 +224,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    override suspend fun deleteSellersCloseHours(): ServiceResult<List<SellerCloseHour?>> {
+    override suspend fun deleteSellersCloseHours(): ServiceResult<List<SellerCloseHours?>> {
         return try {
             dbQuery {
                 SellerCloseHourTable.deleteAll()
@@ -239,10 +239,10 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    private fun rowToSellerOpenHours(row: ResultRow?): SellerOpenHour? {
+    private fun rowToSellerOpenHours(row: ResultRow?): SellerOpenHours? {
         if (row == null) return null
 
-        return SellerOpenHour(
+        return SellerOpenHours(
             id = row[SellerOpenHourTable.id],
             seller_id = row[SellerOpenHourTable.sellerId],
             saturday = row[SellerOpenHourTable.saturday],
@@ -255,10 +255,10 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         )
     }
 
-    private fun rowToSellerCloseHours(row: ResultRow?): SellerCloseHour? {
+    private fun rowToSellerCloseHours(row: ResultRow?): SellerCloseHours? {
         if (row == null) return null
 
-        return SellerCloseHour(
+        return SellerCloseHours(
             id = row[SellerCloseHourTable.id],
             seller_id = row[SellerCloseHourTable.sellerId],
             saturday = row[SellerCloseHourTable.saturday],
@@ -280,7 +280,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         )
     }
 
-    private fun selectSellerOpenHours(): List<SellerOpenHour?> {
+    private fun selectSellerOpenHours(): List<SellerOpenHours?> {
         return transaction {
             SellerOpenHourTable.selectAll()
                 .orderBy(SellerOpenHourTable.id to SortOrder.ASC)
@@ -288,7 +288,7 @@ class SellerOpenStatusRepositoryImpl : SellerOpenStatusRepository {
         }
     }
 
-    private fun selectSellerCloseHours(): List<SellerCloseHour?> {
+    private fun selectSellerCloseHours(): List<SellerCloseHours?> {
         return transaction {
             SellerCloseHourTable.selectAll()
                 .orderBy(SellerCloseHourTable.id to SortOrder.ASC)

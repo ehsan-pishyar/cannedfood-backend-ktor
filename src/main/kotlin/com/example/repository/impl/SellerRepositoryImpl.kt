@@ -304,28 +304,6 @@ class SellerRepositoryImpl : SellerRepository {
         }
     }
 
-    override suspend fun getSellersByOpenStatus(isOpen: Boolean, offset: Long): ServiceResult<SellerListResponse?> {
-        return try {
-            dbQuery {
-                val status = transaction {
-                    SellerOpenStatusTable.select {
-                        (SellerOpenStatusTable.isOpen eq isOpen)
-                    }
-                        .map { rowToSellerOpenStatus(it)!! }
-                        .single()
-                }
-                val sellers = selectSellersById(status.seller_id)
-                sellerListResponsePopulating(sellers)
-            }
-        } catch (e: Exception) {
-            println(e)
-            when(e) {
-                is ExposedSQLException -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-                else -> ServiceResult.Error(ErrorCode.DATABASE_ERROR)
-            }
-        }
-    }
-
     override suspend fun getSellersByDeliveryDuration(minutes: Int, offset: Long): ServiceResult<SellerListResponse?> {
         return try {
             dbQuery {
@@ -526,16 +504,6 @@ class SellerRepositoryImpl : SellerRepository {
             from = row[CustomerTable.firstName],
             message = row[SellerCommentTable.message],
             date_created = row[SellerCommentTable.dateCreated]
-        )
-    }
-
-    private fun rowToSellerOpenStatus(row: ResultRow?): SellerOpenStatus? {
-        if (row == null) return null
-
-        return SellerOpenStatus(
-            id = row[SellerOpenStatusTable.id],
-            seller_id = row[SellerOpenStatusTable.sellerId],
-            is_open = row[SellerOpenStatusTable.isOpen]
         )
     }
 

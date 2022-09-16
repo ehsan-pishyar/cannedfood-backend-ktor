@@ -2,16 +2,8 @@ package com.example.models
 
 import kotlinx.serialization.Serializable
 
-// روزهای هفته رو بیاریم تا فروشنده ساعت های باز بودن رستوران خودشو وارد کنه
 @Serializable
-data class SellerOpenStatus(
-    val id: Int = 0,
-    val seller_id: Long = 0,
-    val is_open: Boolean = false
-)
-
-@Serializable
-data class SellerOpenHour(
+data class SellerOpenHours(
     val id: Long = 0L,
     val seller_id: Long = 0L,
     val saturday: Int = 0,
@@ -24,7 +16,7 @@ data class SellerOpenHour(
 )
 
 @Serializable
-data class SellerCloseHour(
+data class SellerCloseHours(
     val id: Long = 0L,
     val seller_id: Long = 0L,
     val saturday: Int = 0,

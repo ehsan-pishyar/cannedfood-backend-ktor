@@ -1,7 +1,7 @@
 package com.example.routings.seller_open_status
 
-import com.example.models.SellerCloseHour
-import com.example.models.SellerOpenHour
+import com.example.models.SellerCloseHours
+import com.example.models.SellerOpenHours
 import com.example.repository.SellerOpenStatusRepository
 import com.example.utils.ErrorCode
 import com.example.utils.Routes
@@ -16,7 +16,7 @@ fun Route.insertNewSellerOpenHours(sellerOpenStatusRepository: SellerOpenStatusR
     route(Routes.SELLERS_ROUTE) {
         post(Routes.SELLER_OPEN_STATUS_ADD_ROUTE) {
 
-            val request = call.receiveOrNull<SellerOpenHour>() ?: kotlin.run {
+            val request = call.receiveOrNull<SellerOpenHours>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = ErrorCode.JSON_ERROR
@@ -48,7 +48,7 @@ fun Route.insertNewSellerCloseHours(sellerOpenStatusRepository: SellerOpenStatus
     route(Routes.SELLERS_ROUTE) {
         post(Routes.SELLER_CLOSE_STATUS_ADD_ROUTE) {
 
-            val request = call.receiveOrNull<SellerCloseHour>() ?: kotlin.run {
+            val request = call.receiveOrNull<SellerCloseHours>() ?: kotlin.run {
                 call.respond(
                     status = HttpStatusCode.BadRequest,
                     message = ErrorCode.JSON_ERROR
